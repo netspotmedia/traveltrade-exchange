@@ -4,12 +4,24 @@ export function paystackConfigured() {
   return Boolean(process.env.PAYSTACK_SECRET_KEY)
 }
 
-export async function initializePaystack(input: { email: string; amountNaira: number; reference: string; callbackUrl: string }) {
+export async function initializePaystack(input: {
+  email: string
+  amountNaira: number
+  reference: string
+  callbackUrl: string
+  metadata?: Record<string, unknown>
+}) {
   if (!paystackConfigured()) return { configured: false as const }
   const response = await fetch(`${PAYSTACK_URL}/transaction/initialize`, {
     method: 'POST',
     headers: { Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: input.email, amount: Math.round(input.amountNaira * 100), reference: input.reference, callback_url: input.callbackUrl }),
+    body: JSON.stringify({
+      email: input.email,
+      amount: Math.round(input.amountNaira * 100),
+      reference: input.reference,
+      callback_url: input.callbackUrl,
+      ...(input.metadata ? { metadata: input.metadata } : {}),
+    }),
     cache: 'no-store',
   })
   const payload = await response.json()

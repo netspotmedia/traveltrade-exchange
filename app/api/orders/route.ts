@@ -1,10 +1,13 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { rateLimit, rateLimitError } from '@/lib/server/rate-limit'
 
 export async function POST(request: Request) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Authentication required' }, { status: 401 })
+  const allowed = await rateLimit(`orders:${user.id}`, 20, 60)
+  if (!allowed.allowed) return rateLimitError()
   const body = await request.json()
   const title = typeof body.title === 'string' ? body.title.trim() : ''
   const agencyId = typeof body.agencyId === 'string' ? body.agencyId : ''
