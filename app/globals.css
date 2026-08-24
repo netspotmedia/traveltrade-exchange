@@ -203,6 +203,7 @@
   }
   html {
     scroll-behavior: smooth;
+    scroll-padding-top: 5rem; /* keeps anchors clear of the sticky header */
     -webkit-text-size-adjust: 100%;
   }
   body {
@@ -217,6 +218,7 @@
       Arial,
       sans-serif;
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    overflow-x: clip;
   }
   ::selection {
     background-color: color-mix(in oklch, var(--brand) 22%, transparent);
@@ -246,8 +248,5 @@
   }
   .scrollbar-none::-webkit-scrollbar {
     display: none;
-  }
-  .text-balance {
-    text-wrap: balance;
   }
 }

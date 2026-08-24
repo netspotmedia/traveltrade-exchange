@@ -47,7 +47,7 @@ export function ServiceCard({ service, className }: ServiceCardProps) {
       )}
     >
       {/* Visual header — honest gradient + category icon (services have no photos yet) */}
-      <div className="relative flex h-36 items-center justify-center overflow-hidden bg-gradient-to-br from-brand/12 via-brand-soft to-secondary">
+      <div className="relative flex h-36 items-center justify-center overflow-hidden bg-gradient-to-br from-brand/12 via-brand-soft to-secondary" aria-hidden="true">
         <span className="grid size-14 place-items-center rounded-2xl bg-card text-brand shadow-card transition-transform duration-200 group-hover:scale-105">
           <Icon className="size-7" />
         </span>

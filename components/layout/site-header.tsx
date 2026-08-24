@@ -20,7 +20,7 @@ export async function SiteHeader() {
     <header className="sticky top-0 z-40 border-b border-border/80 bg-background/85 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 lg:px-8">
         <Link href="/" className="flex shrink-0 items-center gap-2.5" aria-label="TravelTrade Exchange home">
-          <span className="grid size-9 place-items-center rounded-xl bg-primary text-primary-foreground shadow-card">
+          <span className="grid size-9 place-items-center rounded-xl bg-primary text-primary-foreground shadow-card" aria-hidden="true">
             <Compass className="size-5" />
           </span>
           <span className="leading-tight">
