@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
+import { Textarea } from '@/components/ui/textarea'
 
 export function RequestForm({ serviceId }: { serviceId: string }) {
   const [title, setTitle] = useState('')
@@ -12,7 +13,7 @@ export function RequestForm({ serviceId }: { serviceId: string }) {
   async function submit(e: React.FormEvent) {
     e.preventDefault()
     setBusy(true)
-    setMessage('Submitting quote request…')
+    setMessage('')
     try {
       const r = await fetch('/api/requests', {
         method: 'POST',
@@ -28,18 +29,34 @@ export function RequestForm({ serviceId }: { serviceId: string }) {
   }
 
   return (
-    <form onSubmit={submit} className="mx-auto flex max-w-xl flex-col gap-5 rounded-3xl border bg-card p-8">
+    <form onSubmit={submit} className="flex flex-col gap-5 rounded-3xl border border-border bg-card p-6 shadow-card sm:p-8">
       <div>
         <p className="text-sm font-semibold text-primary">Request a quote</p>
-        <h1 className="mt-2 text-3xl font-semibold">Tell the agency what you need</h1>
-        <p className="mt-2 text-muted-foreground">The agency will respond with a proposal and milestone breakdown.</p>
+        <h1 className="mt-1 text-3xl font-semibold tracking-tight">Tell the agent what you need</h1>
+        <p className="mt-2 text-muted-foreground">The agent will respond with a proposal and milestone breakdown — nothing is paid yet.</p>
       </div>
-      <label className="flex flex-col gap-2 text-sm font-medium">
-        What do you need? (brief)
-        <textarea required value={title} onChange={(e) => setTitle(e.target.value)} rows={4} className="rounded-xl border bg-background px-4 py-3" placeholder="Describe your travel requirement, dates, and group size…" />
+
+      <label className="flex flex-col gap-1.5 text-sm font-medium">
+        What do you need?
+        <Textarea
+          required
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          rows={5}
+          placeholder="Describe your travel requirement — dates, group size, destinations, and anything important."
+        />
       </label>
-      <Button type="submit" disabled={busy}>Request quote</Button>
-      {message && <p className="text-sm text-muted-foreground">{message}</p>}
+
+      {message && (
+        <p role="alert" className="rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive">
+          {message}
+        </p>
+      )}
+
+      <Button type="submit" disabled={busy} size="lg" className="h-12 text-base">
+        {busy ? 'Submitting…' : 'Request a quote'}
+      </Button>
+      <p className="text-center text-xs text-muted-foreground">Free to request. You only pay when you agree on a plan.</p>
     </form>
   )
 }

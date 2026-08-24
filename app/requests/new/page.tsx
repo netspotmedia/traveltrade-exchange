@@ -1,3 +1,7 @@
+import { ArrowLeft } from 'lucide-react'
+import Link from 'next/link'
+import { SiteHeader } from '@/components/layout/site-header'
+import { BottomNav } from '@/components/layout/bottom-nav'
 import { RequestForm } from './request-form'
 
 export default async function NewRequestPage({
@@ -7,8 +11,17 @@ export default async function NewRequestPage({
 }) {
   const params = await searchParams
   return (
-    <main className="min-h-screen bg-background px-6 py-10">
-      <RequestForm serviceId={params.service ?? ''} />
-    </main>
+    <div className="min-h-screen bg-background">
+      <SiteHeader />
+      <main className="mx-auto max-w-3xl px-4 py-8 pb-24 lg:px-8">
+        <Link href="/marketplace" className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition hover:text-foreground">
+          <ArrowLeft className="size-4" /> Back to marketplace
+        </Link>
+        <div className="mt-5">
+          <RequestForm serviceId={params.service ?? ''} />
+        </div>
+      </main>
+      <BottomNav />
+    </div>
   )
 }

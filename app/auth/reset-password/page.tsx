@@ -1,10 +1,14 @@
 'use client'
 import { FormEvent, useState } from 'react'
+import { AuthShell } from '@/components/auth/auth-shell'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 
 export default function ResetPasswordPage() {
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
   const [message, setMessage] = useState('')
+  const [busy, setBusy] = useState(false)
   const [done, setDone] = useState(false)
 
   async function submit(event: FormEvent) {
@@ -14,52 +18,64 @@ export default function ResetPasswordPage() {
       setMessage('Passwords do not match.')
       return
     }
-    const r = await fetch('/api/auth/reset-password', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ password }),
-    })
-    const j = await r.json().catch(() => ({}))
-    if (r.ok) {
-      setDone(true)
-      setMessage('Password updated. You can now sign in.')
-    } else {
-      setMessage(j.error || 'Unable to update password.')
+    setBusy(true)
+    try {
+      const r = await fetch('/api/auth/reset-password', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ password }),
+      })
+      const j = await r.json().catch(() => ({}))
+      if (r.ok) {
+        setDone(true)
+      } else {
+        setMessage(j.error || 'Unable to update password.')
+      }
+    } finally {
+      setBusy(false)
     }
   }
 
   if (done) {
     return (
-      <main className="grid min-h-screen place-items-center bg-muted/40 px-5">
-        <div className="flex w-full max-w-md flex-col gap-5 rounded-2xl border border-border bg-card p-7 text-center shadow-sm">
-          <h1 className="text-3xl font-semibold tracking-tight">Password updated</h1>
-          <p className="text-sm text-muted-foreground">{message}</p>
-          <a href="/auth/login" className="rounded-lg bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground">
+      <AuthShell title="Password updated" subtitle="You can now sign in with your new password.">
+        <a href="/auth/login" className="block w-full">
+          <Button size="lg" className="h-12 w-full text-base">
             Sign in
-          </a>
-        </div>
-      </main>
+          </Button>
+        </a>
+      </AuthShell>
     )
   }
 
   return (
-    <main className="grid min-h-screen place-items-center bg-muted/40 px-5">
-      <form onSubmit={submit} className="flex w-full max-w-md flex-col gap-5 rounded-2xl border border-border bg-card p-7 shadow-sm">
-        <div>
-          <p className="font-mono text-xs font-bold uppercase tracking-widest text-primary">TravelTrade Exchange</p>
-          <h1 className="mt-3 text-3xl font-semibold tracking-tight">Choose a new password</h1>
-        </div>
-        <label className="flex flex-col gap-2 text-sm font-medium">
+    <AuthShell
+      title="Choose a new password"
+      subtitle="Pick a strong password to secure your account."
+      footer={
+        <a href="/auth/login" className="block text-center text-sm font-medium text-primary underline-offset-4 hover:underline">
+          Back to sign in
+        </a>
+      }
+    >
+      <form onSubmit={submit} className="flex flex-col gap-5">
+        <label className="flex flex-col gap-1.5 text-sm font-medium">
           New password
-          <input required minLength={8} type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="rounded-lg border border-input bg-background px-3 py-2.5 outline-none focus:ring-2 focus:ring-ring" />
+          <Input required minLength={8} type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="At least 8 characters" autoComplete="new-password" />
         </label>
-        <label className="flex flex-col gap-2 text-sm font-medium">
+        <label className="flex flex-col gap-1.5 text-sm font-medium">
           Confirm password
-          <input required minLength={8} type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)} className="rounded-lg border border-input bg-background px-3 py-2.5 outline-none focus:ring-2 focus:ring-ring" />
+          <Input required minLength={8} type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)} placeholder="Re-enter your password" autoComplete="new-password" />
         </label>
-        {message && <p role="alert" className="text-sm text-destructive">{message}</p>}
-        <button className="rounded-lg bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground">Update password</button>
+        {message && (
+          <p role="alert" className="rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive">
+            {message}
+          </p>
+        )}
+        <Button type="submit" disabled={busy} size="lg" className="h-12 text-base">
+          {busy ? 'Updating…' : 'Update password'}
+        </Button>
       </form>
-    </main>
+    </AuthShell>
   )
 }
