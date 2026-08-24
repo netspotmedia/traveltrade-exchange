@@ -1,6 +1,9 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { KybReviewActions } from './kyb-review-actions'
+import { ServiceReviewActions } from './service-review-actions'
+import { WithdrawalReviewActions } from './withdrawal-review-actions'
+import { DisputeReviewActions } from './dispute-review-actions'
 
 type AgencyRow = {
   id: string
@@ -14,6 +17,37 @@ type AgencyRow = {
   kyc_documents: { id: string; document_type: string; status: string; created_at: string }[]
 }
 
+type ServiceRow = {
+  id: string
+  title: string
+  category: string
+  description: string
+  base_price: number
+  currency: string
+  status: string
+  created_at: string
+  agencies: { name: string } | { name: string }[] | null
+}
+
+type WithdrawalRow = {
+  id: string
+  amount: number
+  currency: string
+  status: string
+  bank_name: string | null
+  account_name: string | null
+  created_at: string
+  seller: { email?: string } | null
+}
+
+type DisputeRow = {
+  id: string
+  reason: string
+  status: string
+  created_at: string
+  order: { title: string } | null
+}
+
 export default async function AdminPage() {
   const s = await createClient()
   const { data: { user } } = await s.auth.getUser()
@@ -21,13 +55,14 @@ export default async function AdminPage() {
   const { data: profile } = await s.from('profiles').select('role').eq('id', user.id).maybeSingle()
   if (profile?.role !== 'admin') redirect('/dashboard')
 
-  const [{ data: pendingAgencies }, { data: pendingServices }, { data: pendingWithdrawals }] = await Promise.all([
+  const [{ data: pendingAgencies }, { data: pendingServices }, { data: pendingWithdrawals }, { data: openDisputes }] = await Promise.all([
     s.from('agencies')
       .select('*, owner:profiles(email), kyc_documents(*)')
       .eq('verification_status', 'pending')
       .order('created_at', { ascending: true }),
-    s.from('services').select('*').eq('status', 'pending'),
-    s.from('withdrawals').select('*').eq('status', 'pending'),
+    s.from('services').select('*, agencies(name)').eq('status', 'pending').order('created_at', { ascending: true }),
+    s.from('withdrawals').select('*, seller:profiles(email)').eq('status', 'pending').order('created_at', { ascending: true }),
+    s.from('disputes').select('*, order:orders(title)').in('status', ['open', 'under_review']).order('created_at', { ascending: true }),
   ])
 
   return (
@@ -78,6 +113,77 @@ export default async function AdminPage() {
                     ))}
                   </div>
                   <KybReviewActions agencyId={a.id} />
+                </div>
+              ))
+            )}
+          </div>
+        </section>
+        <section className="rounded-2xl border bg-card p-6">
+          <h2 className="text-lg font-semibold">Pending service approvals</h2>
+          <div className="mt-4 flex flex-col gap-4">
+            {!pendingServices || pendingServices.length === 0 ? (
+              <p className="text-sm text-muted-foreground">No services awaiting moderation.</p>
+            ) : (
+              (pendingServices as ServiceRow[]).map((svc) => {
+                const agency = Array.isArray(svc.agencies) ? svc.agencies[0] : svc.agencies
+                return (
+                  <div key={svc.id} className="rounded-2xl border p-4">
+                    <div className="flex flex-wrap items-start justify-between gap-3">
+                      <div>
+                        <p className="font-semibold">{svc.title}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {agency?.name || 'Unknown agency'} · {svc.category} · ₦{Number(svc.base_price).toLocaleString()} {svc.currency}
+                        </p>
+                      </div>
+                      <span className="rounded-full bg-secondary px-3 py-1 text-xs font-medium">{svc.status}</span>
+                    </div>
+                    <p className="mt-2 text-sm text-muted-foreground">{svc.description}</p>
+                    <ServiceReviewActions serviceId={svc.id} />
+                  </div>
+                )
+              })
+            )}
+          </div>
+        </section>
+        <section className="rounded-2xl border bg-card p-6">
+          <h2 className="text-lg font-semibold">Pending withdrawals</h2>
+          <div className="mt-4 flex flex-col gap-4">
+            {!pendingWithdrawals || pendingWithdrawals.length === 0 ? (
+              <p className="text-sm text-muted-foreground">No withdrawals awaiting processing.</p>
+            ) : (
+              (pendingWithdrawals as WithdrawalRow[]).map((w) => (
+                <div key={w.id} className="rounded-2xl border p-4">
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div>
+                      <p className="font-semibold">₦{Number(w.amount).toLocaleString()} {w.currency}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {w.bank_name || 'Unknown bank'} · {w.account_name || 'Unknown name'} · {w.seller?.email || 'no email'}
+                      </p>
+                    </div>
+                    <span className="rounded-full bg-secondary px-3 py-1 text-xs font-medium">{w.status}</span>
+                  </div>
+                  <WithdrawalReviewActions withdrawalId={w.id} />
+                </div>
+              ))
+            )}
+          </div>
+        </section>
+        <section className="rounded-2xl border bg-card p-6">
+          <h2 className="text-lg font-semibold">Open disputes</h2>
+          <div className="mt-4 flex flex-col gap-4">
+            {!openDisputes || openDisputes.length === 0 ? (
+              <p className="text-sm text-muted-foreground">No open disputes.</p>
+            ) : (
+              (openDisputes as DisputeRow[]).map((d) => (
+                <div key={d.id} className="rounded-2xl border p-4">
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div>
+                      <p className="font-semibold">{d.order?.title || 'Order dispute'}</p>
+                      <p className="text-sm text-muted-foreground">{d.reason}</p>
+                    </div>
+                    <span className="rounded-full bg-secondary px-3 py-1 text-xs font-medium">{d.status}</span>
+                  </div>
+                  <DisputeReviewActions disputeId={d.id} />
                 </div>
               ))
             )}

@@ -11,20 +11,20 @@ export async function POST(request: Request) {
   const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).maybeSingle()
   if (profile?.role !== 'admin') return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
 
-  const allowed = await rateLimit(`admin_kyb:${user.id}`, 30, 60)
+  const allowed = await rateLimit(`admin_service:${user.id}`, 30, 60)
   if (!allowed.allowed) return rateLimitError()
 
   const body = await request.json().catch(() => ({}))
-  const agencyId = typeof body.agencyId === 'string' ? body.agencyId : ''
+  const serviceId = typeof body.serviceId === 'string' ? body.serviceId : ''
   const decision = body.decision
   const note = typeof body.note === 'string' ? body.note.slice(0, 2000) : null
 
-  if (!agencyId || !['approved', 'rejected'].includes(decision)) {
-    return NextResponse.json({ error: 'Agency id and a valid decision are required' }, { status: 400 })
+  if (!serviceId || !['approved', 'rejected'].includes(decision)) {
+    return NextResponse.json({ error: 'Service id and a valid decision are required' }, { status: 400 })
   }
 
-  const { data, error } = await supabase.rpc('review_agency_kyb', {
-    p_agency_id: agencyId,
+  const { data, error } = await supabase.rpc('review_service', {
+    p_service_id: serviceId,
     p_decision: decision,
     p_reviewer_id: user.id,
     p_note: note,
@@ -33,15 +33,18 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: data?.error ?? 'Unable to process review' }, { status: 400 })
   }
 
-  // Notify the agency owner.
-  const { data: agency } = await supabase.from('agencies').select('owner_id, name').eq('id', agencyId).maybeSingle()
-  if (agency) {
-    void sendNotification({
-      userId: agency.owner_id,
-      title: decision === 'approved' ? 'Agency verified' : 'Agency application not approved',
-      body: decision === 'approved' ? `Your agency "${agency.name}" has been verified. You can now sell services.` : `Your agency "${agency.name}" was not approved.${note ? ` Reason: ${note}` : ''}`,
-      event: 'agency_verification',
-    })
+  // Notify the owning agency.
+  const { data: service } = await supabase.from('services').select('title, agency_id').eq('id', serviceId).maybeSingle()
+  if (service) {
+    const { data: agency } = await supabase.from('agencies').select('owner_id').eq('id', service.agency_id).maybeSingle()
+    if (agency) {
+      void sendNotification({
+        userId: agency.owner_id,
+        title: decision === 'approved' ? 'Service published' : 'Service not approved',
+        body: decision === 'approved' ? `Your service "${service.title}" is now live on the marketplace.` : `Your service "${service.title}" was not approved.${note ? ` Reason: ${note}` : ''}`,
+        event: 'service_review',
+      })
+    }
   }
 
   return NextResponse.json({ ok: true, status: data.status })

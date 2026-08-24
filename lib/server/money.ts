@@ -67,3 +67,54 @@ export function approveMilestone(params: { milestoneId: string; actorId: string 
     p_actor_id: params.actorId,
   })
 }
+
+export function requestWithdrawal(params: {
+  userId: string
+  amount: number
+  bankName: string
+  accountName: string
+  accountNumber: string
+}) {
+  return callRpc('request_withdrawal', {
+    p_user_id: params.userId,
+    p_amount: params.amount,
+    p_bank_name: params.bankName,
+    p_account_name: params.accountName,
+    p_account_number: params.accountNumber,
+  })
+}
+
+export function processWithdrawal(params: {
+  withdrawalId: string
+  decision: 'paid' | 'rejected'
+  actorId: string
+  note?: string | null
+}) {
+  return callRpc('process_withdrawal', {
+    p_withdrawal_id: params.withdrawalId,
+    p_decision: params.decision,
+    p_actor_id: params.actorId,
+    p_note: params.note ?? null,
+  })
+}
+
+export function resolveDispute(params: {
+  disputeId: string
+  decision: 'resolved_buyer' | 'resolved_seller'
+  actorId: string
+  note?: string | null
+}) {
+  return callRpc('resolve_dispute', {
+    p_dispute_id: params.disputeId,
+    p_decision: params.decision,
+    p_actor_id: params.actorId,
+    p_note: params.note ?? null,
+  })
+}
+
+export function escalateDispute(params: { disputeId: string; actorId: string }) {
+  return callRpc('escalate_dispute', {
+    p_dispute_id: params.disputeId,
+    p_actor_id: params.actorId,
+  })
+}

@@ -43,3 +43,16 @@ export function verifyPaystackSignature(rawBody: string, signature: string | nul
   const expected = crypto.createHmac('sha512', process.env.PAYSTACK_SECRET_KEY).update(rawBody).digest('hex')
   return crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(signature))
 }
+
+export async function paystackInitiateRefund(input: { reference: string; amountKobo: number }) {
+  if (!paystackConfigured()) return { configured: false as const }
+  const response = await fetch(`${PAYSTACK_URL}/refund`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ transaction: input.reference, amount: input.amountKobo }),
+    cache: 'no-store',
+  })
+  const payload = await response.json()
+  if (!response.ok || !payload.status) throw new Error('Paystack refund failed')
+  return { configured: true as const, data: payload.data }
+}

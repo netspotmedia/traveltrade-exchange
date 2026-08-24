@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { notFound, redirect } from 'next/navigation'
 import { EscrowActions } from './escrow-actions'
+import { MessageThread } from './message-thread'
 
 type MilestoneRow = { id: string; title: string; amount: number; status: string }
 
@@ -47,6 +48,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
           </div>
           <EscrowActions orderId={id} orderStatus={order.status} milestones={milestones} isBuyer={isBuyer} isSeller={isSeller} />
         </div>
+        <MessageThread orderId={id} currentUserId={user.id} />
       </div>
     </main>
   )
