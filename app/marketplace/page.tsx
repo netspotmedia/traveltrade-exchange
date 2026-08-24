@@ -1,12 +1,236 @@
-import { ArrowLeft, CheckCircle2, MapPin, Search, ShieldCheck, Star, WalletCards } from 'lucide-react'
+import Link from 'next/link'
+import { ChevronLeft, ChevronRight, Compass, Search } from 'lucide-react'
+import { createClient } from '@/lib/supabase/server'
+import { SiteHeader } from '@/components/layout/site-header'
+import { ServiceCard } from '@/components/service-card'
+import { EmptyState } from '@/components/ui/empty-state'
+import { Button } from '@/components/ui/button'
+import { MarketplaceControls, SORT_OPTIONS } from '@/components/marketplace/marketplace-controls'
+import { formatNumber } from '@/lib/format'
 
-const services = [
-  { title: 'Lagos Executive Airport Transfer', agency: 'Skyline Concierge', category: 'Airport Transfer', location: 'Lagos, Nigeria', price: '₦45,000', rating: '4.9', initials: 'SC' },
-  { title: 'Abuja Visa & Travel Concierge', agency: 'Saffron Routes', category: 'Visa Assistance', location: 'Abuja, Nigeria', price: '₦80,000', rating: '4.8', initials: 'SR' },
-  { title: 'Cape Town Corporate Retreat', agency: 'Northstar Travel Co.', category: 'Group Travel', location: 'Cape Town, South Africa', price: '₦620,000', rating: '5.0', initials: 'NT' },
-  { title: 'Dubai Business Class Concierge', agency: 'Atlas Corporate Travel', category: 'Airline Ticketing', location: 'Dubai, UAE', price: '₦1,250,000', rating: '4.9', initials: 'AT' },
-]
+const PAGE_SIZE = 12
 
-export default function MarketplacePage() {
-  return <main className="min-h-screen bg-background"><header className="border-b border-border bg-card"><div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 lg:px-8"><a href="/" className="flex items-center gap-2 font-mono text-sm font-bold tracking-widest text-primary"><ArrowLeft className="size-4" /> TTX MARKETPLACE</a><a href="/dashboard" className="rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground">Open workspace</a></div></header><div className="mx-auto max-w-7xl px-5 py-10 lg:px-8"><div className="max-w-2xl"><p className="font-mono text-xs font-bold uppercase tracking-widest text-primary">Verified marketplace</p><h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">Find the right partner for the journey.</h1><p className="mt-4 text-lg leading-8 text-muted-foreground">Compare vetted travel services, then move into a protected agreement with clear milestones.</p></div><div className="mt-8 flex flex-col gap-3 md:flex-row"><label className="flex flex-1 items-center gap-3 rounded-lg border border-border bg-card px-4 py-3"><Search className="size-4 text-muted-foreground" /><span className="sr-only">Search marketplace</span><input className="w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground" placeholder="Search visas, flights, hotels, destinations..." /></label><select className="rounded-lg border border-border bg-card px-4 py-3 text-sm"><option>All categories</option><option>Visa Assistance</option><option>Airport Transfer</option><option>Group Travel</option></select></div><div className="mt-10 flex items-center justify-between"><p className="text-sm text-muted-foreground">{services.length} services available</p><div className="flex items-center gap-2 text-sm text-muted-foreground"><ShieldCheck className="size-4 text-primary" /> All partners verified</div></div><div className="mt-5 grid gap-5 md:grid-cols-2 lg:grid-cols-3">{services.map((service) => <article key={service.title} className="flex flex-col rounded-2xl border border-border bg-card p-5 transition hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/5"><div className="flex items-start justify-between"><div className="grid size-12 place-items-center rounded-xl bg-muted font-mono font-bold text-primary">{service.initials}</div><span className="flex items-center gap-1 text-sm"><Star className="size-4 fill-accent text-accent-foreground" /> {service.rating}</span></div><div className="mt-6"><p className="text-xs font-medium text-primary">{service.category}</p><h2 className="mt-2 text-lg font-semibold leading-7">{service.title}</h2><p className="mt-1 text-sm text-muted-foreground">{service.agency}</p><p className="mt-4 flex items-center gap-2 text-sm text-muted-foreground"><MapPin className="size-4" /> {service.location}</p></div><div className="mt-6 flex items-end justify-between border-t border-border pt-4"><div><p className="text-xs text-muted-foreground">Starting from</p><p className="font-mono text-lg font-semibold">{service.price}</p></div><button className="rounded-lg bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground">View service</button></div></article>)}</div><div className="mt-12 flex flex-col gap-4 rounded-2xl border border-primary/20 bg-muted/40 p-6 md:flex-row md:items-center md:justify-between"><div className="flex gap-4"><WalletCards className="mt-1 size-5 shrink-0 text-primary" /><div><h2 className="font-semibold">Your money stays protected.</h2><p className="mt-1 text-sm leading-6 text-muted-foreground">Fund an agreement only after the scope is clear. Release each milestone when delivery is approved.</p></div></div><CheckCircle2 className="hidden size-6 text-primary md:block" /></div></div></main>
+type SearchParams = Promise<{ q?: string; category?: string; sort?: string; min?: string; max?: string; verified?: string; page?: string }>
+
+export default async function MarketplacePage({ searchParams }: { searchParams: SearchParams }) {
+  const params = await searchParams
+  const q = (params.q ?? '').trim().replace(/[%_]/g, '')
+  const category = (params.category ?? '').trim()
+  const sort = (params.sort ?? 'recommended').trim()
+  const min = Number(params.min)
+  const max = Number(params.max)
+  const verifiedOnly = params.verified === '1'
+  const page = Math.max(1, Number(params.page) || 1)
+  const from = (page - 1) * PAGE_SIZE
+  const to = from + PAGE_SIZE - 1
+
+  const supabase = await createClient()
+
+  // Verified-agent filter is applied as an IN-list on agency_id (type-safe).
+  let verifiedAgencyIds: string[] = []
+  let noResults = false
+  if (verifiedOnly) {
+    const { data: vAgencies } = await supabase
+      .from('agencies')
+      .select('id')
+      .eq('verification_status', 'verified')
+      .is('deleted_at', null)
+    verifiedAgencyIds = (vAgencies ?? []).map((a) => a.id)
+    if (verifiedAgencyIds.length === 0) noResults = true
+  }
+
+  let query = supabase
+    .from('services')
+    .select('*, agencies(id, name, slug, verification_status, rating, city)', { count: 'exact' })
+    .eq('status', 'published')
+    .is('deleted_at', null)
+    .range(from, to)
+
+  if (q) query = query.or(`title.ilike.%${q}%,description.ilike.%${q}%`)
+  if (category) query = query.eq('category', category)
+  if (Number.isFinite(min) && min > 0) query = query.gte('base_price', min)
+  if (Number.isFinite(max) && max > 0) query = query.lte('base_price', max)
+  if (verifiedOnly && !noResults) query = query.in('agency_id', verifiedAgencyIds)
+
+  switch (sort) {
+    case 'rating':
+      query = query.order('rating', { referencedTable: 'agencies', ascending: false })
+      break
+    case 'price_asc':
+      query = query.order('base_price', { ascending: true })
+      break
+    case 'price_desc':
+      query = query.order('base_price', { ascending: false })
+      break
+    case 'newest':
+      query = query.order('created_at', { ascending: false })
+      break
+    default:
+      query = query.order('created_at', { ascending: false })
+  }
+
+  const [{ data: services, count }, categoryRes] = noResults
+    ? [{ data: null, count: 0 }, null]
+    : await Promise.all([
+        query,
+        supabase.from('services').select('category').eq('status', 'published').is('deleted_at', null),
+      ])
+
+  const total = count ?? 0
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
+  const currentPage = Math.min(page, totalPages)
+  const sortLabel = SORT_OPTIONS.find((o) => o.value === sort)?.label ?? 'Recommended'
+  const categories = Array.from(new Set((categoryRes?.data ?? []).map((c) => c.category as string).filter(Boolean)))
+
+  // Real, computed response metrics for the agencies on this page (one query).
+  const agencyIds = Array.from(
+    new Set(
+      (services ?? []).map((s: ServiceRow) => {
+        const a = Array.isArray(s.agencies) ? s.agencies[0] : s.agencies
+        return a?.id
+      }).filter(Boolean) as string[],
+    ),
+  )
+  const statsMap = new Map<string, { avgResponseHours: number | null; responseRate: number | null }>()
+  if (agencyIds.length > 0) {
+    const { data: stats } = await supabase.rpc('agency_response_stats_batch', { p_agency_ids: agencyIds })
+    for (const row of (stats ?? []) as { agency_id: string; avg_response_hours: number | null; response_rate: number | null }[]) {
+      statsMap.set(row.agency_id, { avgResponseHours: row.avg_response_hours, responseRate: row.response_rate })
+    }
+  }
+
+  const controls = { q, category, sort, minPrice: Number.isFinite(min) && min > 0 ? String(min) : '', maxPrice: Number.isFinite(max) && max > 0 ? String(max) : '', verifiedOnly }
+
+  return (
+    <div className="min-h-screen bg-background">
+      <SiteHeader />
+
+      <main className="mx-auto max-w-7xl px-4 py-8 lg:px-8">
+        <div className="max-w-2xl">
+          <p className="font-mono text-xs font-bold uppercase tracking-widest text-primary">Marketplace</p>
+          <h1 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">Find the right partner for the journey</h1>
+          <p className="mt-2 text-muted-foreground">Compare verified travel services, then move into a protected agreement.</p>
+        </div>
+
+        <div className="mt-6 rounded-2xl border border-border bg-card p-4 shadow-card">
+          <MarketplaceControls initial={controls} categories={categories} />
+        </div>
+
+        <div className="mt-8 flex flex-wrap items-center justify-between gap-2">
+          <p className="text-sm text-muted-foreground">
+            <strong className="font-semibold text-foreground">{formatNumber(total)}</strong> travel services found
+            {sort !== 'recommended' && <span className="ml-1">· sorted by {sortLabel.toLowerCase()}</span>}
+          </p>
+        </div>
+
+        <div className="mt-4">
+          {!services || services.length === 0 ? (
+            <EmptyState
+              icon={total > 0 ? Search : Compass}
+              title={q || category || min > 0 || max > 0 || verifiedOnly ? 'No services match your search' : 'No services yet'}
+              description={
+                q || category || min > 0 || max > 0 || verifiedOnly
+                  ? 'Try adjusting your search or clearing some filters.'
+                  : 'We are onboarding our first verified travel agents. Check back soon.'
+              }
+              action={
+                q || category || min > 0 || max > 0 || verifiedOnly ? (
+                  <Link href="/marketplace">
+                    <Button variant="outline">Clear filters</Button>
+                  </Link>
+                ) : undefined
+              }
+            />
+          ) : (
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {(services as ServiceRow[]).map((s) => {
+                const agency = Array.isArray(s.agencies) ? s.agencies[0] : s.agencies
+                return (
+                  <ServiceCard
+                    key={s.id}
+                    service={{ ...s, agencies: agency as ServiceRow['agencies'] }}
+                    responseStats={agency?.id ? (statsMap.get(agency.id) ?? null) : null}
+                  />
+                )
+              })}
+            </div>
+          )}
+        </div>
+
+        {totalPages > 1 && (
+          <nav className="mt-10 flex items-center justify-center gap-3" aria-label="Pagination">
+            {currentPage > 1 ? (
+              <Link
+                href={`/marketplace?${paramsToQs(params, currentPage - 1)}`}
+                className="inline-flex h-10 items-center gap-1.5 rounded-xl border border-border bg-card px-4 text-sm font-medium shadow-card transition hover:bg-muted"
+              >
+                <ChevronLeft className="size-4" /> Previous
+              </Link>
+            ) : (
+              <span className="inline-flex h-10 cursor-not-allowed items-center gap-1.5 rounded-xl border border-border px-4 text-sm font-medium text-muted-foreground/50">
+                <ChevronLeft className="size-4" /> Previous
+              </span>
+            )}
+            <span className="text-sm text-muted-foreground">
+              Page <strong className="text-foreground">{currentPage}</strong> of {totalPages}
+            </span>
+            {currentPage < totalPages ? (
+              <Link
+                href={`/marketplace?${paramsToQs(params, currentPage + 1)}`}
+                className="inline-flex h-10 items-center gap-1.5 rounded-xl border border-border bg-card px-4 text-sm font-medium shadow-card transition hover:bg-muted"
+              >
+                Next <ChevronRight className="size-4" />
+              </Link>
+            ) : (
+              <span className="inline-flex h-10 cursor-not-allowed items-center gap-1.5 rounded-xl border border-border px-4 text-sm font-medium text-muted-foreground/50">
+                Next <ChevronRight className="size-4" />
+              </span>
+            )}
+          </nav>
+        )}
+      </main>
+
+      <footer className="mt-12 border-t border-border">
+        <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-8 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between lg:px-8">
+          <p>TravelTrade Exchange — a safer way to move travel work forward.</p>
+          <div className="flex gap-5">
+            <Link href="/" className="hover:text-foreground">
+              Home
+            </Link>
+            <Link href="/onboarding" className="hover:text-foreground">
+              Sell travel services
+            </Link>
+          </div>
+        </div>
+      </footer>
+    </div>
+  )
+}
+
+type ServiceRow = {
+  id: string
+  title: string
+  slug: string
+  category: string
+  description: string | null
+  location: string | null
+  base_price: number
+  currency: string
+  ordering_mode: string | null
+  agencies:
+    | { id: string; name: string; slug: string; verification_status: string; rating: number; city: string | null }
+    | { id: string; name: string; slug: string; verification_status: string; rating: number; city: string | null }[]
+    | null
+}
+
+function paramsToQs(params: { q?: string; category?: string; sort?: string; min?: string; max?: string; verified?: string; page?: string }, page: number): string {
+  const p = new URLSearchParams()
+  if (params.q) p.set('q', params.q)
+  if (params.category) p.set('category', params.category)
+  if (params.sort && params.sort !== 'recommended') p.set('sort', params.sort)
+  if (params.min) p.set('min', params.min)
+  if (params.max) p.set('max', params.max)
+  if (params.verified) p.set('verified', params.verified)
+  if (page > 1) p.set('page', String(page))
+  return p.toString()
 }

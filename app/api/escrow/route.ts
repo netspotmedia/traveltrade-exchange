@@ -1,15 +1,66 @@
 import { NextResponse } from 'next/server'
-import { requireUser, cleanText, jsonError } from '@/lib/server/workflows'
+import { requireUser, requireVerifiedAgent, requireVerifiedEmail, cleanText, jsonError } from '@/lib/server/workflows'
+import { mfaGate } from '@/lib/server/mfa'
+import {
+  fundEscrowFromWallet,
+  submitMilestone,
+  approveMilestone,
+  releaseMilestone,
+} from '@/lib/server/money'
 
-const transitions = { submit: { from: ['in_progress', 'funded'], to: 'delivered' }, approve: { from: ['delivered'], to: 'completed' }, dispute: { from: ['proposed', 'funded', 'in_progress', 'delivered'], to: 'disputed' } } as const
+const orderTransitions = {
+  submit: { from: ['in_progress', 'funded'], to: 'delivered' },
+  approve: { from: ['delivered'], to: 'completed' },
+  dispute: { from: ['proposed', 'funded', 'in_progress', 'delivered'], to: 'disputed' },
+} as const
 
 export async function POST(request: Request) {
+  const mfa = await mfaGate()
+  if (mfa) return mfa
   const { supabase, user } = await requireUser()
   if (!user) return jsonError('Authentication required', 401)
   const body = await request.json().catch(() => ({}))
-  const action = body.action as keyof typeof transitions
+  const action = cleanText(body.action, 40)
+
+  // ---- Milestone-level actions (money moves through these) ----
+  if (action === 'fundMilestone' || action === 'submitMilestone' || action === 'approveMilestone' || action === 'releaseMilestone') {
+    const emailGate = await requireVerifiedEmail()
+    if (emailGate) return emailGate
+    // Submitting delivery is a seller action: requires a verified agency.
+    if (action === 'submitMilestone') {
+      const gate = await requireVerifiedAgent()
+      if (gate.response) return gate.response
+    }
+    const milestoneId = cleanText(body.milestoneId, 80)
+    if (!milestoneId) return jsonError('Milestone id is required')
+    const fn =
+      action === 'submitMilestone'
+        ? submitMilestone
+        : action === 'approveMilestone'
+          ? approveMilestone
+          : action === 'releaseMilestone'
+            ? releaseMilestone
+            : null
+    if (!fn) return jsonError('Invalid action')
+    const result = await fn({ milestoneId, actorId: user.id })
+    if (!result.ok) return jsonError(result.error ?? 'Unable to complete milestone action', 400)
+    return NextResponse.json({ ok: true, result })
+  }
+
+  // ---- Order-level escrow funding (B2B wallet -> escrow) ----
+  if (action === 'fund') {
+    const emailGate = await requireVerifiedEmail()
+    if (emailGate) return emailGate
+    const orderId = cleanText(body.orderId, 80)
+    if (!orderId) return jsonError('Order id is required')
+    const result = await fundEscrowFromWallet({ orderId, buyerId: user.id })
+    if (!result.ok) return jsonError(result.error ?? 'Unable to fund escrow', 400)
+    return NextResponse.json({ ok: true, status: 'funded' })
+  }
+
+  // ---- Legacy order-level status transitions (backward compatible) ----
   const orderId = cleanText(body.orderId, 80)
-  if (!orderId || !transitions[action]) return jsonError('Invalid escrow action')
+  if (!orderId || !(action in orderTransitions)) return jsonError('Invalid escrow action')
   const { data: order, error: readError } = await supabase.from('orders').select('id,status,buyer_id,agency_id,agencies(owner_id)').eq('id', orderId).maybeSingle()
   if (readError || !order) return jsonError('Order not found', 404)
   const agency = Array.isArray(order.agencies) ? order.agencies[0] : order.agencies
@@ -18,8 +69,7 @@ export async function POST(request: Request) {
   if (!isBuyer && !isSeller) return jsonError('Not authorized for this order', 403)
   if (action === 'submit' && !isSeller) return jsonError('Only the seller can submit delivery', 403)
   if (action === 'approve' && !isBuyer) return jsonError('Only the buyer can approve delivery', 403)
-  if (action === 'dispute' && !isBuyer && !isSeller) return jsonError('Not authorized', 403)
-  const transition = transitions[action]
+  const transition = orderTransitions[action as keyof typeof orderTransitions]
   if (!(transition.from as readonly string[]).includes(order.status)) return jsonError(`Order cannot transition from ${order.status}`)
   const { error } = await supabase.from('orders').update({ status: transition.to, updated_at: new Date().toISOString() }).eq('id', orderId).eq('status', order.status)
   if (error) return jsonError('Unable to update escrow state', 409)

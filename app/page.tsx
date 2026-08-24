@@ -1,45 +1,239 @@
-'use client'
+import Link from 'next/link'
+import { cookies } from 'next/headers'
+import {
+  ArrowRight,
+  BadgeCheck,
+  Compass,
+  FileText,
+  Handshake,
+  Lock,
+  MapPin,
+  Search,
+  WalletCards,
+} from 'lucide-react'
+import { createClient } from '@/lib/supabase/server'
+import { SiteHeader } from '@/components/layout/site-header'
+import { ServiceCard } from '@/components/service-card'
+import { EmptyState } from '@/components/ui/empty-state'
+import { Button } from '@/components/ui/button'
+import { HomeHero } from '@/components/home/home-hero'
+import { categoryIcon, FALLBACK_CATEGORIES } from '@/lib/categories'
 
-import { useMemo, useState } from 'react'
-import { ArrowRight, Bell, BriefcaseBusiness, CheckCircle2, ChevronDown, Compass, FileText, LayoutDashboard, Menu, Search, ShieldCheck, SlidersHorizontal, WalletCards, X } from 'lucide-react'
+type ServiceRow = {
+  id: string
+  title: string
+  slug: string
+  category: string
+  description: string | null
+  location: string | null
+  base_price: number
+  currency: string
+  ordering_mode: string | null
+  agencies: { name: string; slug: string; verification_status: string; rating: number; city: string | null } | null
+}
 
-const services = [
-  { title: 'Lagos Executive Airport Transfer', agency: 'Skyline Concierge', category: 'Airport Transfer', location: 'Lagos, Nigeria', price: 'From ₦45,000', rating: '4.9', initials: 'SC', tint: 'bg-sky-100 text-sky-700' },
-  { title: 'Abuja Visa & Travel Concierge', agency: 'Saffron Routes', category: 'Visa Assistance', location: 'Abuja, Nigeria', price: 'From ₦80,000', rating: '4.8', initials: 'SR', tint: 'bg-amber-100 text-amber-700' },
-  { title: 'Cape Town Corporate Retreat', agency: 'Northstar Travel Co.', category: 'Group Travel', location: 'Cape Town, South Africa', price: 'From ₦620,000', rating: '5.0', initials: 'NT', tint: 'bg-emerald-100 text-emerald-700' },
-]
+export default async function HomePage() {
+  const supabase = await createClient()
 
-export default function Page() {
-  const [menuOpen, setMenuOpen] = useState(false)
-  const [query, setQuery] = useState('')
-  const [category, setCategory] = useState('All services')
-  const [saved, setSaved] = useState<string[]>([])
-  const [toast, setToast] = useState('')
-  const filtered = useMemo(() => services.filter((service) => `${service.title} ${service.agency} ${service.location}`.toLowerCase().includes(query.toLowerCase()) && (category === 'All services' || service.category === category)), [query, category])
-  const notify = (message: string) => { setToast(message); window.setTimeout(() => setToast(''), 2500) }
+  // Homepage A/B: variant is assigned sticky by middleware (ttx_hero cookie).
+  const cookieStore = await cookies()
+  const heroVariant = cookieStore.get('ttx_hero')?.value === 'b' ? 'b' : 'a'
+
+  const [servicesRes, verifiedAgenciesRes, serviceCountRes, categoryRes, completedRes] = await Promise.all([
+    supabase
+      .from('services')
+      .select('*, agencies(name, slug, verification_status, rating, city)')
+      .eq('status', 'published')
+      .is('deleted_at', null)
+      .order('created_at', { ascending: false })
+      .limit(6),
+    supabase.from('agencies').select('id', { count: 'exact', head: true }).eq('verification_status', 'verified').is('deleted_at', null),
+    supabase.from('services').select('id', { count: 'exact', head: true }).eq('status', 'published').is('deleted_at', null),
+    supabase.from('services').select('category').eq('status', 'published').is('deleted_at', null),
+    supabase.from('agencies').select('completed_orders').eq('verification_status', 'verified').is('deleted_at', null),
+  ])
+
+  const services = (servicesRes.data ?? []) as ServiceRow[]
+  const serviceCount = serviceCountRes.count ?? 0
+  const verifiedAgents = verifiedAgenciesRes.count ?? 0
+  const completedOrders = (completedRes.data ?? []).reduce((sum, a) => sum + Number(a.completed_orders ?? 0), 0)
+
+  const realCategories = Array.from(new Set((categoryRes.data ?? []).map((c) => c.category as string).filter(Boolean)))
+  const categories = realCategories.length > 0 ? realCategories.slice(0, 9) : FALLBACK_CATEGORIES
 
   return (
-    <main className="min-h-screen bg-background text-foreground">
-      <header className="border-b border-border bg-card">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 lg:px-8">
-          <a className="flex items-center gap-3" href="#top" aria-label="TravelTrade Exchange home"><span className="grid size-10 place-items-center rounded-xl bg-primary text-primary-foreground"><Compass className="size-5" /></span><span><span className="block font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-primary">TRAVELTRADE</span><span className="block text-sm font-semibold tracking-tight">Exchange</span></span></a>
-          <nav className="hidden items-center gap-7 text-sm text-muted-foreground md:flex"><a className="font-medium text-foreground" href="#marketplace">Marketplace</a><a href="#how-it-works">How it works</a><a href="#trust">Trust & safety</a></nav>
-          <div className="hidden items-center gap-3 md:flex"><button className="rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-muted" onClick={() => notify('Sign in is ready for the Supabase auth route.')}>Sign in</button><button className="rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-90" onClick={() => notify('Seller onboarding will open after authentication.')}>List your service <ArrowRight className="ml-1 inline size-4" /></button></div>
-          <button className="rounded-lg p-2 md:hidden" aria-label="Open menu" onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? <X className="size-5" /> : <Menu className="size-5" />}</button>
+    <div className="min-h-screen bg-background">
+      <SiteHeader />
+
+      {/* Hero — A/B variant chosen by the ttx_hero cookie */}
+      <HomeHero variant={heroVariant} serviceCount={serviceCount} verifiedAgents={verifiedAgents} completedOrders={completedOrders} />
+
+      {/* Popular services */}
+      <section id="popular" className="mx-auto max-w-7xl px-4 py-14 lg:px-8">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p className="font-mono text-xs font-bold uppercase tracking-widest text-primary">Marketplace</p>
+            <h2 className="mt-2 text-3xl font-semibold tracking-tight">Popular travel services</h2>
+            <p className="mt-2 text-muted-foreground">Start with a verified travel professional.</p>
+          </div>
+          <Link href="/marketplace" className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline">
+            Browse all services <ArrowRight className="size-4" />
+          </Link>
         </div>
-        {menuOpen && <div className="flex flex-col gap-3 border-t border-border px-5 py-4 text-sm md:hidden"><a href="#marketplace">Marketplace</a><a href="#how-it-works">How it works</a><button className="w-fit rounded-lg bg-primary px-4 py-2 text-primary-foreground">List your service</button></div>}
-      </header>
 
-      <section id="top" className="border-b border-border bg-muted/45"><div className="mx-auto grid max-w-7xl gap-12 px-5 py-16 lg:grid-cols-[1.1fr_0.9fr] lg:px-8 lg:py-24"><div className="max-w-2xl"><div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-widest text-muted-foreground"><ShieldCheck className="size-3.5 text-primary" /> Built for trusted travel trade</div><h1 className="text-balance text-4xl font-semibold tracking-[-0.04em] sm:text-6xl">Travel services, <span className="text-primary">without the guesswork.</span></h1><p className="mt-6 max-w-xl text-pretty text-lg leading-8 text-muted-foreground">Find verified travel partners, agree on clear milestones, and keep every naira protected until the work is delivered.</p><div className="mt-9 flex flex-wrap gap-3"><button onClick={() => document.getElementById('marketplace')?.scrollIntoView({ behavior: 'smooth' })} className="rounded-lg bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-sm">Explore the marketplace <ArrowRight className="ml-2 inline size-4" /></button><button onClick={() => notify('Your seller application can start after sign in.')} className="rounded-lg border border-border bg-card px-5 py-3 text-sm font-semibold">I provide travel services</button></div><div className="mt-12 flex flex-wrap gap-x-8 gap-y-3 text-sm text-muted-foreground"><span><strong className="text-foreground">2,400+</strong> verified partners</span><span><strong className="text-foreground">₦180m+</strong> protected</span><span><strong className="text-foreground">98%</strong> completion rate</span></div></div><div className="relative hidden lg:block"><div className="absolute right-4 top-3 h-72 w-72 rounded-[2rem] bg-primary/5" /><div className="relative ml-auto max-w-sm rounded-2xl border border-border bg-card p-5 shadow-xl shadow-primary/5"><div className="flex items-center justify-between border-b border-border pb-4"><div><p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Protected order</p><p className="mt-1 font-semibold">Lagos → Accra itinerary</p></div><span className="rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-700">In escrow</span></div><div className="flex items-center gap-3 py-5"><div className="grid size-11 place-items-center rounded-xl bg-sky-100 text-sm font-bold text-sky-700">SC</div><div className="flex-1"><p className="text-sm font-semibold">Skyline Concierge</p><p className="text-xs text-muted-foreground">Verified agency · 4.9 rating</p></div><CheckCircle2 className="size-5 text-emerald-600" /></div><div className="grid gap-3"><div className="flex items-center gap-3"><span className="grid size-7 place-items-center rounded-full bg-primary text-xs font-bold text-primary-foreground">1</span><div className="h-px flex-1 bg-border" /><span className="text-xs text-muted-foreground">Brief approved</span></div><div className="flex items-center gap-3"><span className="grid size-7 place-items-center rounded-full bg-primary text-xs font-bold text-primary-foreground">2</span><div className="h-px flex-1 bg-border" /><span className="text-xs text-muted-foreground">Deposit protected</span></div><div className="flex items-center gap-3"><span className="grid size-7 place-items-center rounded-full border border-border bg-card text-xs font-bold">3</span><div className="h-px flex-1 bg-border" /><span className="text-xs text-muted-foreground">Release on delivery</span></div></div><div className="mt-5 flex items-end justify-between rounded-xl bg-muted p-3"><span className="text-xs text-muted-foreground">Current balance</span><span className="font-mono text-lg font-semibold">₦450,000</span></div></div></div></div></section>
+        <div className="mt-8">
+          {services.length === 0 ? (
+            <EmptyState
+              icon={Compass}
+              title="No services yet"
+              description="We're onboarding our first verified travel agents. Check back soon or sign up to sell your travel services."
+              action={
+                <Link href="/onboarding">
+                  <Button>Sell travel services</Button>
+                </Link>
+              }
+            />
+          ) : (
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {services.map((s) => {
+                const agency = Array.isArray(s.agencies) ? s.agencies[0] : s.agencies
+                return <ServiceCard key={s.id} service={{ ...s, agencies: agency as ServiceRow['agencies'] }} />
+              })}
+            </div>
+          )}
+        </div>
+      </section>
 
-      <section id="marketplace" className="mx-auto max-w-7xl px-5 py-16 lg:px-8"><div className="flex flex-wrap items-end justify-between gap-5"><div><p className="font-mono text-[11px] font-bold uppercase tracking-widest text-primary">Marketplace</p><h2 className="mt-2 text-3xl font-semibold tracking-tight">Start with a verified partner</h2><p className="mt-2 text-muted-foreground">Services built for agencies, teams, and travelers who value clarity.</p></div><button className="rounded-lg border border-border px-3 py-2 text-sm font-medium" onClick={() => notify('Advanced filters are available in the full marketplace view.')}><SlidersHorizontal className="mr-2 inline size-4" /> Filters</button></div><div className="mt-8 flex flex-col gap-3 md:flex-row"><label className="flex flex-1 items-center gap-3 rounded-lg border border-border bg-card px-4 py-3"><Search className="size-4 text-muted-foreground" /><span className="sr-only">Search services</span><input className="w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground" placeholder="Search destinations, services, or agencies" value={query} onChange={(event) => setQuery(event.target.value)} /></label><label className="flex items-center gap-2 rounded-lg border border-border bg-card px-4 py-3 text-sm"><span className="sr-only">Filter category</span><select className="bg-transparent outline-none" value={category} onChange={(event) => setCategory(event.target.value)}><option>All services</option><option>Airport Transfer</option><option>Visa Assistance</option><option>Group Travel</option></select><ChevronDown className="size-4 text-muted-foreground" /></label></div><div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">{filtered.map((service) => <article key={service.title} className="group rounded-2xl border border-border bg-card p-5 transition hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/5"><div className="flex items-start justify-between"><div className={`grid size-12 place-items-center rounded-xl text-sm font-bold ${service.tint}`}>{service.initials}</div><button aria-label={`Save ${service.title}`} onClick={() => setSaved((items) => items.includes(service.title) ? items.filter((item) => item !== service.title) : [...items, service.title])} className={`rounded-lg p-2 text-sm ${saved.includes(service.title) ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}>{saved.includes(service.title) ? 'Saved' : 'Save'}</button></div><p className="mt-6 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">{service.category}</p><h3 className="mt-2 text-lg font-semibold leading-7">{service.title}</h3><p className="mt-2 text-sm text-muted-foreground">{service.agency} · {service.location}</p><div className="mt-6 flex items-center justify-between border-t border-border pt-4"><div><p className="font-mono text-sm font-semibold">{service.price}</p><p className="mt-1 text-xs text-muted-foreground">★ {service.rating} · Verified partner</p></div><button onClick={() => notify(`Request started for ${service.title}.`)} className="rounded-lg bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground">View service</button></div></article>)}</div>{filtered.length === 0 && <div className="mt-8 rounded-xl border border-dashed border-border p-10 text-center text-muted-foreground">No services match your search.</div>}</section>
+      {/* Categories */}
+      <section className="border-y border-border bg-muted/35">
+        <div className="mx-auto max-w-7xl px-4 py-14 lg:px-8">
+          <h2 className="text-3xl font-semibold tracking-tight">Browse by category</h2>
+          <p className="mt-2 text-muted-foreground">Whatever the trip, there's a specialist for it.</p>
+          <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+            {categories.map((cat) => {
+              const Icon = categoryIcon(cat)
+              return (
+                <Link
+                  key={cat}
+                  href={`/marketplace?category=${encodeURIComponent(cat)}`}
+                  className="group flex flex-col gap-3 rounded-2xl border border-border bg-card p-5 shadow-card transition hover:-translate-y-0.5 hover:shadow-lift"
+                >
+                  <span className="grid size-11 place-items-center rounded-xl bg-brand-soft text-brand transition group-hover:bg-brand group-hover:text-primary-foreground">
+                    <Icon className="size-5" />
+                  </span>
+                  <span className="text-sm font-semibold">{cat}</span>
+                </Link>
+              )
+            })}
+          </div>
+        </div>
+      </section>
 
-      <section id="trust" className="border-y border-border bg-muted/35"><div className="mx-auto grid max-w-7xl gap-6 px-5 py-14 md:grid-cols-3 lg:px-8"><div className="flex gap-4"><div className="grid size-10 shrink-0 place-items-center rounded-lg bg-card text-primary"><ShieldCheck className="size-5" /></div><div><h3 className="font-semibold">Verified partners</h3><p className="mt-1 text-sm leading-6 text-muted-foreground">Business documents and service quality reviewed before agencies go live.</p></div></div><div className="flex gap-4"><div className="grid size-10 shrink-0 place-items-center rounded-lg bg-card text-primary"><WalletCards className="size-5" /></div><div><h3 className="font-semibold">Milestone escrow</h3><p className="mt-1 text-sm leading-6 text-muted-foreground">Funds stay protected and release only when agreed work is approved.</p></div></div><div className="flex gap-4"><div className="grid size-10 shrink-0 place-items-center rounded-lg bg-card text-primary"><FileText className="size-5" /></div><div><h3 className="font-semibold">Clear records</h3><p className="mt-1 text-sm leading-6 text-muted-foreground">One shared trail for briefs, proposals, delivery, and dispute resolution.</p></div></div></div></section>
+      {/* How it works */}
+      <section id="how-it-works" className="mx-auto max-w-7xl px-4 py-16 lg:px-8">
+        <div className="mx-auto max-w-2xl text-center">
+          <p className="font-mono text-xs font-bold uppercase tracking-widest text-primary">One clear workflow</p>
+          <h2 className="mt-3 text-3xl font-semibold tracking-tight">From brief to boarding pass</h2>
+          <p className="mt-3 text-muted-foreground">No complicated contracts. Just a clear, protected agreement with a trusted professional.</p>
+        </div>
+        <div className="mt-12 grid gap-8 md:grid-cols-3">
+          {[
+            { n: '01', icon: Search, title: 'Find your specialist', body: 'Search verified travel professionals and compare services, ratings and prices in one place.' },
+            { n: '02', icon: Handshake, title: 'Agree on the plan', body: 'Request a quote or book instantly. You and the agent agree on clear milestones before anything starts.' },
+            { n: '03', icon: WalletCards, title: 'Pay securely, delivered with confidence', body: 'Your payment is protected in escrow and only released when you approve the delivered work.' },
+          ].map((s) => (
+            <div key={s.n} className="rounded-2xl border border-border bg-card p-6 shadow-card">
+              <span className="font-mono text-sm text-primary">{s.n}</span>
+              <s.icon className="mt-4 size-6 text-primary" />
+              <h3 className="mt-3 text-lg font-semibold">{s.title}</h3>
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">{s.body}</p>
+            </div>
+          ))}
+        </div>
+      </section>
 
-      <section id="how-it-works" className="mx-auto max-w-7xl px-5 py-16 lg:px-8"><div className="max-w-xl"><p className="font-mono text-[11px] font-bold uppercase tracking-widest text-primary">One clear workflow</p><h2 className="mt-2 text-3xl font-semibold tracking-tight">From brief to boarding pass</h2></div><div className="mt-10 grid gap-8 md:grid-cols-3"><div><span className="font-mono text-sm text-primary">01</span><h3 className="mt-3 font-semibold">Post or find a brief</h3><p className="mt-2 text-sm leading-6 text-muted-foreground">Tell a partner what you need, or choose a ready-to-book service from the marketplace.</p></div><div><span className="font-mono text-sm text-primary">02</span><h3 className="mt-3 font-semibold">Agree on milestones</h3><p className="mt-2 text-sm leading-6 text-muted-foreground">Align on scope, timing, and a transparent payment plan before anyone starts.</p></div><div><span className="font-mono text-sm text-primary">03</span><h3 className="mt-3 font-semibold">Deliver with confidence</h3><p className="mt-2 text-sm leading-6 text-muted-foreground">Track progress in one place. Approve delivery and release funds when it is right.</p></div></div></section>
+      {/* Trust & safety */}
+      <section className="border-y border-border bg-muted/35">
+        <div className="mx-auto max-w-7xl px-4 py-16 lg:px-8">
+          <div className="mx-auto max-w-2xl text-center">
+            <h2 className="text-3xl font-semibold tracking-tight">Why travel with TTX</h2>
+            <p className="mt-3 text-muted-foreground">We built the trust layer into every step of the journey.</p>
+          </div>
+          <div className="mt-12 grid gap-5 md:grid-cols-3">
+            <div className="rounded-2xl border border-border bg-card p-6 shadow-card">
+              <span className="grid size-11 place-items-center rounded-xl bg-brand-soft text-brand">
+                <BadgeCheck className="size-5" />
+              </span>
+              <h3 className="mt-4 text-lg font-semibold">Verified agents</h3>
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                Every agent completes business verification before their services go live on the marketplace.
+              </p>
+            </div>
+            <div className="rounded-2xl border border-border bg-card p-6 shadow-card">
+              <span className="grid size-11 place-items-center rounded-xl bg-brand-soft text-brand">
+                <Lock className="size-5" />
+              </span>
+              <h3 className="mt-4 text-lg font-semibold">Payment protected</h3>
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                Your payment is held securely and only released when you approve the delivered work. Disputes are handled fairly.
+              </p>
+            </div>
+            <div className="rounded-2xl border border-border bg-card p-6 shadow-card">
+              <span className="grid size-11 place-items-center rounded-xl bg-brand-soft text-brand">
+                <FileText className="size-5" />
+              </span>
+              <h3 className="mt-4 text-lg font-semibold">One clear record</h3>
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                Briefs, proposals, milestones, delivery and messages — all tracked in one shared timeline.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
 
-      <footer className="border-t border-border bg-primary text-primary-foreground"><div className="mx-auto flex max-w-7xl flex-col gap-5 px-5 py-8 md:flex-row md:items-center md:justify-between lg:px-8"><div><p className="font-mono text-[11px] font-bold uppercase tracking-widest">TravelTrade Exchange</p><p className="mt-2 text-sm text-primary-foreground/70">A safer way to move travel work forward.</p></div><div className="flex gap-5 text-sm text-primary-foreground/70"><a href="#trust">Trust & safety</a><a href="#how-it-works">How it works</a><a href="#marketplace">Marketplace</a></div></div></footer>
-      {toast && <div role="status" className="fixed bottom-5 right-5 flex items-center gap-3 rounded-xl border border-border bg-card px-4 py-3 text-sm font-medium shadow-xl"><Bell className="size-4 text-primary" />{toast}</div>}
-    </main>
+      {/* Final CTA */}
+      <section className="mx-auto max-w-7xl px-4 py-16 lg:px-8">
+        <div className="flex flex-col items-center justify-between gap-8 rounded-3xl bg-primary px-8 py-12 text-primary-foreground lg:flex-row lg:px-14">
+          <div className="max-w-xl text-center lg:text-left">
+            <h2 className="text-3xl font-semibold tracking-tight">Ready to move your travel work forward?</h2>
+            <p className="mt-3 text-primary-foreground/80">
+              Find a verified professional or sell your own travel services — all with protected payments.
+            </p>
+          </div>
+          <div className="flex flex-wrap justify-center gap-3">
+            <Link href="/marketplace" className="rounded-xl bg-white px-5 py-3 text-sm font-semibold text-primary shadow-card transition hover:opacity-90">
+              Explore services
+            </Link>
+            <Link href="/onboarding" className="rounded-xl border border-primary-foreground/30 px-5 py-3 text-sm font-semibold text-primary-foreground transition hover:bg-primary-foreground/10">
+              Sell your services
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <footer className="border-t border-border">
+        <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-10 md:flex-row md:items-center md:justify-between lg:px-8">
+          <div className="flex items-center gap-2.5">
+            <span className="grid size-9 place-items-center rounded-xl bg-primary text-primary-foreground">
+              <Compass className="size-5" />
+            </span>
+            <div className="leading-tight">
+              <p className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-primary">TravelTrade</p>
+              <p className="text-sm font-semibold">Exchange</p>
+            </div>
+          </div>
+          <nav className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground" aria-label="Footer">
+            <Link href="/marketplace" className="hover:text-foreground">Find services</Link>
+            <Link href="/#how-it-works" className="hover:text-foreground">How it works</Link>
+            <Link href="/onboarding" className="hover:text-foreground">Sell travel services</Link>
+            <Link href="/auth/login" className="hover:text-foreground">Sign in</Link>
+          </nav>
+          <p className="text-xs text-muted-foreground">
+            <MapPin className="mr-1 inline size-3.5" />
+            Serving travellers across Nigeria and beyond.
+          </p>
+        </div>
+      </footer>
+    </div>
   )
 }

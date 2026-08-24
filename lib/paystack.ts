@@ -4,12 +4,24 @@ export function paystackConfigured() {
   return Boolean(process.env.PAYSTACK_SECRET_KEY)
 }
 
-export async function initializePaystack(input: { email: string; amountNaira: number; reference: string; callbackUrl: string }) {
+export async function initializePaystack(input: {
+  email: string
+  amountNaira: number
+  reference: string
+  callbackUrl: string
+  metadata?: Record<string, unknown>
+}) {
   if (!paystackConfigured()) return { configured: false as const }
   const response = await fetch(`${PAYSTACK_URL}/transaction/initialize`, {
     method: 'POST',
     headers: { Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: input.email, amount: Math.round(input.amountNaira * 100), reference: input.reference, callback_url: input.callbackUrl }),
+    body: JSON.stringify({
+      email: input.email,
+      amount: Math.round(input.amountNaira * 100),
+      reference: input.reference,
+      callback_url: input.callbackUrl,
+      ...(input.metadata ? { metadata: input.metadata } : {}),
+    }),
     cache: 'no-store',
   })
   const payload = await response.json()
@@ -30,4 +42,17 @@ export function verifyPaystackSignature(rawBody: string, signature: string | nul
   const crypto = require('node:crypto') as typeof import('node:crypto')
   const expected = crypto.createHmac('sha512', process.env.PAYSTACK_SECRET_KEY).update(rawBody).digest('hex')
   return crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(signature))
+}
+
+export async function paystackInitiateRefund(input: { reference: string; amountKobo: number }) {
+  if (!paystackConfigured()) return { configured: false as const }
+  const response = await fetch(`${PAYSTACK_URL}/refund`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ transaction: input.reference, amount: input.amountKobo }),
+    cache: 'no-store',
+  })
+  const payload = await response.json()
+  if (!response.ok || !payload.status) throw new Error('Paystack refund failed')
+  return { configured: true as const, data: payload.data }
 }
