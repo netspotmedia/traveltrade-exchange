@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { requireUser, cleanText, jsonError } from '@/lib/server/workflows'
+import { requireUser, requireVerifiedAgent, cleanText, jsonError } from '@/lib/server/workflows'
 import {
   fundEscrowFromWallet,
   submitMilestone,
@@ -21,6 +21,11 @@ export async function POST(request: Request) {
 
   // ---- Milestone-level actions (money moves through these) ----
   if (action === 'fundMilestone' || action === 'submitMilestone' || action === 'approveMilestone' || action === 'releaseMilestone') {
+    // Submitting delivery is a seller action: requires a verified agency.
+    if (action === 'submitMilestone') {
+      const gate = await requireVerifiedAgent()
+      if (gate.response) return gate.response
+    }
     const milestoneId = cleanText(body.milestoneId, 80)
     if (!milestoneId) return jsonError('Milestone id is required')
     const fn =
