@@ -1,9 +1,10 @@
 import { createClient } from '@/lib/supabase/server'
-import { ArrowUpRight, BriefcaseBusiness, CheckCircle2, CircleDollarSign, FileText, ShieldCheck, Store, WalletCards } from 'lucide-react'
+import { ArrowUpRight, BriefcaseBusiness, CheckCircle2, CircleDollarSign, FileText, Inbox, ShieldCheck, Store, WalletCards } from 'lucide-react'
 
 const workspaces = [
   { href: '/marketplace', label: 'Marketplace', detail: 'Browse verified services', icon: BriefcaseBusiness },
   { href: '/agent/services', label: 'Sell services', detail: 'Create and manage your services', icon: Store },
+  { href: '/agent/requests', label: 'Quote requests', detail: 'Respond to incoming RFQs', icon: Inbox },
   { href: '/orders', label: 'Orders & proposals', detail: 'Track active work', icon: FileText },
   { href: '/wallet', label: 'Wallet & escrow', detail: 'Manage protected funds', icon: WalletCards },
 ]

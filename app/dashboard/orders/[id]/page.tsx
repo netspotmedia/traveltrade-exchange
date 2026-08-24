@@ -2,8 +2,10 @@ import { createClient } from '@/lib/supabase/server'
 import { notFound, redirect } from 'next/navigation'
 import { EscrowActions } from './escrow-actions'
 import { MessageThread } from './message-thread'
+import { ProposalPanel } from './proposal-panel'
 
 type MilestoneRow = { id: string; title: string; amount: number; status: string }
+type ProposalRow = { id: string; fee_amount: number; timeline_days: number | null; note: string | null; status: string; created_at: string }
 
 export default async function OrderPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -17,7 +19,14 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
     .maybeSingle()
   if (!order) notFound()
 
+  const { data: proposals } = await s
+    .from('proposals')
+    .select('id, fee_amount, timeline_days, note, status, created_at')
+    .eq('order_id', id)
+    .order('created_at', { ascending: false })
+
   const milestones = (order.milestones ?? []) as MilestoneRow[]
+  const proposalList = (proposals ?? []) as ProposalRow[]
   const agency = Array.isArray(order.agencies) ? order.agencies[0] : order.agencies
   const isBuyer = user.id === order.buyer_id
   const isSeller = user.id === agency?.owner_id
@@ -48,6 +57,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
           </div>
           <EscrowActions orderId={id} orderStatus={order.status} milestones={milestones} isBuyer={isBuyer} isSeller={isSeller} />
         </div>
+        <ProposalPanel orderId={id} isBuyer={isBuyer} isSeller={isSeller} proposals={proposalList} />
         <MessageThread orderId={id} currentUserId={user.id} />
       </div>
     </main>
