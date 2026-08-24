@@ -7,6 +7,7 @@ import { EmptyState } from '@/components/ui/empty-state'
 import { Button } from '@/components/ui/button'
 import { MarketplaceControls, SORT_OPTIONS } from '@/components/marketplace/marketplace-controls'
 import { formatNumber } from '@/lib/format'
+import { publicImageUrl } from '@/lib/images'
 
 const PAGE_SIZE = 12
 
@@ -110,6 +111,17 @@ export default async function MarketplacePage({ searchParams }: { searchParams: 
 
   const categoryRes = noResults ? null : await supabase.from('services').select('category').eq('status', 'published').is('deleted_at', null)
 
+  // Review counts for the services on this page (one batched query).
+  const reviewCounts = new Map<string, number>()
+  const pageIds = (services ?? []).map((s: ServiceRow) => s.id)
+  if (pageIds.length > 0) {
+    const { data: reviewRows } = await supabase.from('reviews').select('service_id').in('service_id', pageIds).is('deleted_at', null)
+    for (const r of (reviewRows ?? []) as { service_id: string }[]) {
+      if (!r.service_id) continue
+      reviewCounts.set(r.service_id, (reviewCounts.get(r.service_id) ?? 0) + 1)
+    }
+  }
+
   const total = noResults ? 0 : (count ?? 0)
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
   const currentPage = Math.min(page, totalPages)
@@ -167,6 +179,8 @@ export default async function MarketplacePage({ searchParams }: { searchParams: 
                     key={s.id}
                     service={{ ...s, agencies: agency as ServiceRow['agencies'] }}
                     responseStats={agency?.id ? (statsMap.get(agency.id) ?? null) : null}
+                    imageUrl={s.images?.[0] ? publicImageUrl(s.images[0]) : null}
+                    reviewCount={reviewCounts.get(s.id) ?? null}
                   />
                 )
               })}
@@ -234,6 +248,7 @@ type ServiceRow = {
   base_price: number
   currency: string
   ordering_mode: string | null
+  images?: string[] | null
   agencies:
     | { id: string; name: string; slug: string; verification_status: string; rating: number; city: string | null }
     | { id: string; name: string; slug: string; verification_status: string; rating: number; city: string | null }[]

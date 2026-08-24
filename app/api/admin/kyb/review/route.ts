@@ -21,6 +21,9 @@ export async function POST(request: Request) {
   const agencyId = typeof body.agencyId === 'string' ? body.agencyId : ''
   const decision = body.decision
   const note = typeof body.note === 'string' ? body.note.slice(0, 2000) : null
+  const credentials = Array.isArray(body.credentials)
+    ? (body.credentials as unknown[]).filter((c): c is string => typeof c === 'string').map((c) => c.trim().toLowerCase()).filter(Boolean).slice(0, 10)
+    : []
 
   if (!agencyId || !['approved', 'rejected'].includes(decision)) {
     return NextResponse.json({ error: 'Agency id and a valid decision are required' }, { status: 400 })
@@ -34,6 +37,15 @@ export async function POST(request: Request) {
   })
   if (error || !data?.ok) {
     return NextResponse.json({ error: data?.error ?? 'Unable to process review' }, { status: 400 })
+  }
+
+  // Record which credentials were confirmed on approval (CAC / NANTA / IATA).
+  if (decision === 'approved' && credentials.length > 0) {
+    await supabase.rpc('admin_set_agency_credentials', {
+      p_agency_id: agencyId,
+      p_credentials: credentials,
+      p_actor_id: user.id,
+    })
   }
 
   // Notify the agency owner.

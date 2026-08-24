@@ -61,9 +61,14 @@ export default async function AgentServicesPage() {
                     {svc.category} · ₦{Number(svc.base_price).toLocaleString()} {svc.currency}
                   </p>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-3">
                   <StatusBadge domain="service" status={svc.status} />
                   {svc.status === 'draft' && <SubmitServiceAction serviceId={svc.id} />}
+                  {(svc.status === 'draft' || svc.status === 'rejected') && (
+                    <Link href={`/agent/services/${svc.id}/edit`} className="inline-flex h-8 items-center rounded-lg border border-border bg-background px-3 text-sm font-medium transition hover:bg-muted">
+                      Edit
+                    </Link>
+                  )}
                 </div>
               </div>
             ))

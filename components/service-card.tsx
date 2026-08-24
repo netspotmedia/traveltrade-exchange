@@ -25,14 +25,17 @@ export interface ServiceCardProps {
     base_price: number | string
     currency?: string | null
     ordering_mode?: string | null
+    images?: string[] | null
     agencies?: AgencyLike
   }
   // Real computed response metrics (from agency_response_stats_batch).
   responseStats?: { avgResponseHours: number | null; responseRate: number | null } | null
+  imageUrl?: string | null
+  reviewCount?: number | null
   className?: string
 }
 
-export function ServiceCard({ service, responseStats, className }: ServiceCardProps) {
+export function ServiceCard({ service, responseStats, imageUrl, reviewCount, className }: ServiceCardProps) {
   const agency = Array.isArray(service.agencies) ? service.agencies[0] : service.agencies
   const Icon = categoryIcon(service.category)
   const rating = Number(agency?.rating ?? 0)
@@ -49,11 +52,16 @@ export function ServiceCard({ service, responseStats, className }: ServiceCardPr
         className,
       )}
     >
-      {/* Visual header — honest gradient + category icon (services have no photos yet) */}
-      <div className="relative flex h-36 items-center justify-center overflow-hidden bg-gradient-to-br from-brand/12 via-brand-soft to-secondary" aria-hidden="true">
-        <span className="grid size-14 place-items-center rounded-2xl bg-card text-brand shadow-card transition-transform duration-200 group-hover:scale-105">
-          <Icon className="size-7" />
-        </span>
+      {/* Visual header — service image when available, else honest category tile */}
+      <div className="relative flex h-36 items-center justify-center overflow-hidden bg-gradient-to-br from-brand/12 via-brand-soft to-secondary">
+        {imageUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={imageUrl} alt={service.title} className="absolute inset-0 h-full w-full object-cover" />
+        ) : (
+          <span className="grid size-14 place-items-center rounded-2xl bg-card text-brand shadow-card transition-transform duration-200 group-hover:scale-105" aria-hidden="true">
+            <Icon className="size-7" />
+          </span>
+        )}
         <span className="absolute left-3 top-3">
           <Badge variant="outline" className="bg-background/80 backdrop-blur-sm">
             {service.category}
@@ -90,6 +98,7 @@ export function ServiceCard({ service, responseStats, className }: ServiceCardPr
             <span className="flex items-center gap-1 font-medium text-foreground">
               <Star className="size-4 fill-amber-400 text-amber-400" />
               {rating.toFixed(1)}
+              {reviewCount ? <span className="font-normal text-muted-foreground">({reviewCount})</span> : null}
             </span>
           )}
           {location && (

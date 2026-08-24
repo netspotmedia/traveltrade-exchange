@@ -18,6 +18,7 @@ import { EmptyState } from '@/components/ui/empty-state'
 import { Button } from '@/components/ui/button'
 import { HomeHero } from '@/components/home/home-hero'
 import { categoryIcon, FALLBACK_CATEGORIES } from '@/lib/categories'
+import { publicImageUrl } from '@/lib/images'
 
 type ServiceRow = {
   id: string
@@ -29,6 +30,7 @@ type ServiceRow = {
   base_price: number
   currency: string
   ordering_mode: string | null
+  images?: string[] | null
   agencies: { name: string; slug: string; verification_status: string; rating: number; city: string | null } | null
 }
 
@@ -57,6 +59,20 @@ export default async function HomePage() {
   const serviceCount = serviceCountRes.count ?? 0
   const verifiedAgents = verifiedAgenciesRes.count ?? 0
   const completedOrders = (completedRes.data ?? []).reduce((sum, a) => sum + Number(a.completed_orders ?? 0), 0)
+
+  // Review counts for the popular services (one batched query).
+  const reviewCounts = new Map<string, number>()
+  if (services.length > 0) {
+    const { data: reviewRows } = await supabase
+      .from('reviews')
+      .select('service_id')
+      .in('service_id', services.map((s) => s.id))
+      .is('deleted_at', null)
+    for (const r of (reviewRows ?? []) as { service_id: string }[]) {
+      if (!r.service_id) continue
+      reviewCounts.set(r.service_id, (reviewCounts.get(r.service_id) ?? 0) + 1)
+    }
+  }
 
   const realCategories = Array.from(new Set((categoryRes.data ?? []).map((c) => c.category as string).filter(Boolean)))
   const categories = realCategories.length > 0 ? realCategories.slice(0, 9) : FALLBACK_CATEGORIES
@@ -98,7 +114,14 @@ export default async function HomePage() {
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {services.map((s) => {
                 const agency = Array.isArray(s.agencies) ? s.agencies[0] : s.agencies
-                return <ServiceCard key={s.id} service={{ ...s, agencies: agency as ServiceRow['agencies'] }} />
+                return (
+                  <ServiceCard
+                    key={s.id}
+                    service={{ ...s, agencies: agency as ServiceRow['agencies'] }}
+                    imageUrl={s.images?.[0] ? publicImageUrl(s.images[0]) : null}
+                    reviewCount={reviewCounts.get(s.id) ?? null}
+                  />
+                )
               })}
             </div>
           )}

@@ -1,11 +1,19 @@
 "use client"
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { BadgeCheck } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 
+const CREDENTIALS = [
+  { key: 'cac', label: 'CAC Verified' },
+  { key: 'nanta', label: 'NANTA Verified' },
+  { key: 'iata', label: 'IATA Verified' },
+]
+
 export function KybReviewActions({ agencyId }: { agencyId: string }) {
   const [note, setNote] = useState('')
+  const [credentials, setCredentials] = useState<string[]>([])
   const [busy, setBusy] = useState<string | null>(null)
   const [message, setMessage] = useState('')
   const router = useRouter()
@@ -17,7 +25,7 @@ export function KybReviewActions({ agencyId }: { agencyId: string }) {
       const r = await fetch('/api/admin/kyb/review', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ agencyId, decision, note }),
+        body: JSON.stringify({ agencyId, decision, note, credentials }),
       })
       const j = await r.json()
       setMessage(r.ok ? 'Review recorded.' : (j.error || 'Action failed'))
@@ -36,6 +44,30 @@ export function KybReviewActions({ agencyId }: { agencyId: string }) {
         rows={2}
         className="min-h-16"
       />
+
+      <fieldset>
+        <legend className="mb-1.5 text-xs font-medium text-muted-foreground">Credentials confirmed (shown on approve)</legend>
+        <div className="flex flex-wrap gap-2">
+          {CREDENTIALS.map((c) => {
+            const active = credentials.includes(c.key)
+            return (
+              <button
+                key={c.key}
+                type="button"
+                aria-pressed={active}
+                onClick={() => setCredentials((prev) => (active ? prev.filter((k) => k !== c.key) : [...prev, c.key]))}
+                className={`inline-flex h-8 items-center gap-1.5 rounded-full border px-3 text-xs font-medium transition ${
+                  active ? 'border-primary/40 bg-brand-soft text-primary' : 'border-border bg-background text-muted-foreground hover:bg-muted'
+                }`}
+              >
+                <BadgeCheck className="size-3.5" aria-hidden="true" />
+                {c.label}
+              </button>
+            )
+          })}
+        </div>
+      </fieldset>
+
       <div className="flex flex-wrap gap-3">
         <Button size="sm" disabled={busy !== null} onClick={() => decide('approved')}>
           Approve

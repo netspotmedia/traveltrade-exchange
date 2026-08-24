@@ -2,18 +2,7 @@ import { NextResponse } from 'next/server'
 import { requireVerifiedAgent, cleanText, jsonError } from '@/lib/server/workflows'
 import { createClient } from '@/lib/supabase/server'
 import { rateLimit, rateLimitError } from '@/lib/server/rate-limit'
-
-async function uniqueSlug(supabase: Awaited<ReturnType<typeof createClient>>, base: string) {
-  const root = base.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'service'
-  let slug = root
-  let attempt = 0
-  for (;;) {
-    const { data } = await supabase.from('services').select('id').eq('slug', slug).maybeSingle()
-    if (!data) return slug
-    attempt += 1
-    slug = `${root}-${attempt}`
-  }
-}
+import { uniqueSlug, sanitizeFaqs, sanitizeDetails } from '@/lib/services'
 
 export async function POST(request: Request) {
   const { user, agency, response } = await requireVerifiedAgent()
@@ -35,21 +24,24 @@ export async function POST(request: Request) {
   }
 
   const slug = await uniqueSlug(supabase, title)
-  const { data: service, error } = await supabase
-    .from('services')
-    .insert({
-      agency_id: agency!.id,
-      title,
-      slug,
-      category,
-      description,
-      location: location || null,
-      base_price: Math.round(basePrice * 100) / 100,
-      currency: 'NGN',
-      status: 'draft',
-    })
-    .select('*')
-    .single()
+  const details = sanitizeDetails(body.details)
+  const faqs = Array.isArray(body.faqs) ? sanitizeFaqs(body.faqs) : undefined
+
+  const insertData: Record<string, unknown> = {
+    agency_id: agency!.id,
+    title,
+    slug,
+    category,
+    description,
+    location: location || null,
+    base_price: Math.round(basePrice * 100) / 100,
+    currency: 'NGN',
+    status: 'draft',
+  }
+  if (details) insertData.details = details
+  if (faqs !== undefined) insertData.faqs = faqs
+
+  const { data: service, error } = await supabase.from('services').insert(insertData).select('*').single()
 
   if (error) return jsonError('Unable to create service', 400)
   return NextResponse.json({ service }, { status: 201 })

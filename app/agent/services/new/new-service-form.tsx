@@ -11,9 +11,16 @@ export function NewServiceForm() {
   const [description, setDescription] = useState('')
   const [location, setLocation] = useState('')
   const [basePrice, setBasePrice] = useState('')
+  const [included, setIncluded] = useState('')
+  const [requirements, setRequirements] = useState('')
+  const [delivery, setDelivery] = useState('')
   const [message, setMessage] = useState('')
   const [busy, setBusy] = useState(false)
   const router = useRouter()
+
+  function toList(value: string): string[] {
+    return value.split('\n').map((v) => v.trim()).filter(Boolean)
+  }
 
   async function submit(e: React.FormEvent) {
     e.preventDefault()
@@ -23,7 +30,14 @@ export function NewServiceForm() {
       const r = await fetch('/api/services', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ title, category, description, location, basePrice }),
+        body: JSON.stringify({
+          title,
+          category,
+          description,
+          location,
+          basePrice,
+          details: { included: toList(included), requirements: toList(requirements), delivery: delivery.trim() || null },
+        }),
       })
       const j = await r.json()
       if (!r.ok) return setMessage(j.error || 'Unable to create service')
@@ -72,6 +86,22 @@ export function NewServiceForm() {
       <label className="flex flex-col gap-1.5 text-sm font-medium">
         Starting price (NGN)
         <Input required min="0" type="number" inputMode="numeric" value={basePrice} onChange={(e) => setBasePrice(e.target.value)} placeholder="45000" />
+      </label>
+
+      <div className="grid gap-5 sm:grid-cols-2">
+        <label className="flex flex-col gap-1.5 text-sm font-medium">
+          What's included (optional)
+          <Textarea value={included} onChange={(e) => setIncluded(e.target.value)} rows={4} placeholder="One item per line" />
+        </label>
+        <label className="flex flex-col gap-1.5 text-sm font-medium">
+          What the customer needs to provide (optional)
+          <Textarea value={requirements} onChange={(e) => setRequirements(e.target.value)} rows={4} placeholder="One item per line" />
+        </label>
+      </div>
+
+      <label className="flex flex-col gap-1.5 text-sm font-medium">
+        Delivery expectations (optional)
+        <Textarea value={delivery} onChange={(e) => setDelivery(e.target.value)} rows={2} placeholder="e.g. Quote within 24 hours; delivery within 5 working days" />
       </label>
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">

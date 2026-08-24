@@ -7,6 +7,7 @@ import { StatusBadge } from '@/components/ui/status-badge'
 import { EscrowActions } from './escrow-actions'
 import { MessageThread } from './message-thread'
 import { ProposalPanel } from './proposal-panel'
+import { ReviewForm } from './review-form'
 import { formatMoney, formatDate } from '@/lib/format'
 import { cn } from '@/lib/utils'
 
@@ -85,6 +86,10 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
   const isSeller = user.id === agency?.owner_id
   const progress = timelineProgress(order.status)
   const terminal = ['completed', 'cancelled'].includes(order.status)
+
+  // Existing review (visible to the buyer of a completed order).
+  const { data: existingReview } = await s.from('reviews').select('id').eq('order_id', id).maybeSingle()
+  const hasReview = Boolean(existingReview)
 
   return (
     <div className="min-h-screen bg-background">
@@ -182,6 +187,12 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
         <div className="mt-5">
           <MessageThread orderId={id} currentUserId={user.id} />
         </div>
+
+        {isBuyer && order.status === 'completed' && (
+          <div className="mt-5">
+            <ReviewForm orderId={id} hasReview={hasReview} />
+          </div>
+        )}
       </main>
       <BottomNav />
     </div>

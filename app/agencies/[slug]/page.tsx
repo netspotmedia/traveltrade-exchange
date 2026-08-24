@@ -16,6 +16,7 @@ import { ServiceCard } from '@/components/service-card'
 import { Avatar } from '@/components/ui/avatar'
 import { StatusBadge } from '@/components/ui/status-badge'
 import { Button } from '@/components/ui/button'
+import { VerificationBadges } from '@/components/ui/verification-badges'
 import { formatNumber, formatResponseTime } from '@/lib/format'
 
 type ServiceRow = {
@@ -38,7 +39,7 @@ export default async function AgentProfilePage({ params }: { params: Promise<{ s
   // Public RLS policy allows reading verified agencies (and the owner their own).
   const { data: agency } = await supabase
     .from('agencies')
-    .select('id, name, slug, city, country, verification_status, rating, completed_orders')
+    .select('id, name, slug, city, country, verification_status, rating, completed_orders, verifications')
     .eq('slug', slug)
     .is('deleted_at', null)
     .maybeSingle()
@@ -88,6 +89,9 @@ export default async function AgentProfilePage({ params }: { params: Promise<{ s
                   <MapPin className="mr-1 inline size-3.5" />
                   {agency.city || agency.country || 'Nigeria'}
                 </p>
+                <div className="mt-3">
+                  <VerificationBadges verifications={agency.verifications as string[] | null} />
+                </div>
               </div>
             </div>
             <div className="flex flex-wrap gap-x-8 gap-y-3">
