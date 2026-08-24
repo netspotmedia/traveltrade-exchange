@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { requireUser, requireVerifiedAgent, requireVerifiedEmail, cleanText, jsonError } from '@/lib/server/workflows'
+import { mfaGate } from '@/lib/server/mfa'
 import {
   fundEscrowFromWallet,
   submitMilestone,
@@ -14,6 +15,8 @@ const orderTransitions = {
 } as const
 
 export async function POST(request: Request) {
+  const mfa = await mfaGate()
+  if (mfa) return mfa
   const { supabase, user } = await requireUser()
   if (!user) return jsonError('Authentication required', 401)
   const body = await request.json().catch(() => ({}))

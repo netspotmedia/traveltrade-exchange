@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { initializePaystack } from '@/lib/paystack'
 import { rateLimit, rateLimitError } from '@/lib/server/rate-limit'
 import { requireVerifiedEmail } from '@/lib/server/workflows'
+import { mfaGate } from '@/lib/server/mfa'
 
 export async function GET() {
   const supabase = await createClient()
@@ -19,6 +20,8 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  const mfa = await mfaGate()
+  if (mfa) return mfa
   const emailGate = await requireVerifiedEmail()
   if (emailGate) return emailGate
 

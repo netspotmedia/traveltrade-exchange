@@ -3,8 +3,11 @@ import { createClient } from '@/lib/supabase/server'
 import { rateLimit, rateLimitError } from '@/lib/server/rate-limit'
 import { resolveDispute, escalateDispute } from '@/lib/server/money'
 import { paystackInitiateRefund } from '@/lib/paystack'
+import { mfaGate } from '@/lib/server/mfa'
 
 export async function POST(request: Request) {
+  const mfa = await mfaGate()
+  if (mfa) return mfa
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Authentication required' }, { status: 401 })

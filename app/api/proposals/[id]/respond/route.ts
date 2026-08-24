@@ -2,8 +2,11 @@ import { NextResponse } from 'next/server'
 import { requireUser, requireVerifiedEmail, cleanText, jsonError } from '@/lib/server/workflows'
 import { createClient } from '@/lib/supabase/server'
 import { rateLimit, rateLimitError } from '@/lib/server/rate-limit'
+import { mfaGate } from '@/lib/server/mfa'
 
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const mfa = await mfaGate()
+  if (mfa) return mfa
   const emailGate = await requireVerifiedEmail()
   if (emailGate) return emailGate
 

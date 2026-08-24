@@ -2,8 +2,11 @@ import { NextResponse } from 'next/server'
 import { requireVerifiedAgent, cleanText, jsonError } from '@/lib/server/workflows'
 import { rateLimit, rateLimitError } from '@/lib/server/rate-limit'
 import { requestWithdrawal } from '@/lib/server/money'
+import { mfaGate } from '@/lib/server/mfa'
 
 export async function POST(request: Request) {
+  const mfa = await mfaGate()
+  if (mfa) return mfa
   const { user, response } = await requireVerifiedAgent()
   if (response) return response
 
