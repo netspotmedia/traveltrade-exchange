@@ -59,10 +59,10 @@ create index if not exists customer_escrow_payments_reference_idx on public.cust
 --    across serverless instances).
 -- ---------------------------------------------------------------------
 create table if not exists public.rate_limits (
-  bucket    text not null,
-  window    timestamptz not null,
-  count     integer not null default 0,
-  primary key (bucket, window)
+  bucket       text not null,
+  window_start timestamptz not null,
+  count        integer not null default 0,
+  primary key (bucket, window_start)
 );
 
 create or replace function public.rate_limit_check(
@@ -80,18 +80,18 @@ declare
 begin
   -- Prune old windows opportunistically.
   delete from public.rate_limits
-   where window < v_window
-     and window < now() - interval '1 day';
+   where window_start < v_window
+     and window_start < now() - interval '1 day';
 
-  insert into public.rate_limits (bucket, window, count)
+  insert into public.rate_limits (bucket, window_start, count)
   values (p_bucket, v_window, 1)
-  on conflict (bucket, window)
+  on conflict (bucket, window_start)
   do update set count = public.rate_limits.count + 1
   returning count into v_count;
 
   -- If the insert returned NULL (conflict path returning nothing), read it back.
   if v_count is null then
-    select count into v_count from public.rate_limits where bucket = p_bucket and window = v_window;
+    select count into v_count from public.rate_limits where bucket = p_bucket and window_start = v_window;
   end if;
 
   return v_count <= p_limit;
