@@ -2,17 +2,26 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { initializePaystack } from '@/lib/paystack'
 import { rateLimit, rateLimitError } from '@/lib/server/rate-limit'
+import { requireVerifiedEmail } from '@/lib/server/workflows'
 
 export async function GET() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Authentication required' }, { status: 401 })
-  const { data, error } = await supabase.from('wallets').select('*, wallet_ledger(*)').eq('user_id', user.id).maybeSingle()
+  const { data, error } = await supabase
+    .from('wallets')
+    .select('*, wallet_ledger(*)')
+    .eq('user_id', user.id)
+    .is('deleted_at', null)
+    .maybeSingle()
   if (error) return NextResponse.json({ error: 'Unable to load wallet' }, { status: 500 })
   return NextResponse.json({ wallet: data })
 }
 
 export async function POST(request: Request) {
+  const emailGate = await requireVerifiedEmail()
+  if (emailGate) return emailGate
+
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Authentication required' }, { status: 401 })

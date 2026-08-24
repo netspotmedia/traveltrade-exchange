@@ -18,6 +18,7 @@ export default async function AgentServicesPage() {
     .from('services')
     .select('id, title, category, status, base_price, currency')
     .eq('agency_id', agency!.id)
+    .is('deleted_at', null)
     .order('created_at', { ascending: false })
 
   return (

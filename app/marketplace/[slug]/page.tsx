@@ -10,6 +10,7 @@ export default async function ServiceDetail({ params }: { params: Promise<{ slug
     .from('services')
     .select('*, agencies(name, slug, verification_status, rating, city)')
     .eq('slug', slug)
+    .is('deleted_at', null)
     .maybeSingle()
   if (!service) notFound()
 

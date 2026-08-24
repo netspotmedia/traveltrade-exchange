@@ -59,10 +59,11 @@ export default async function AdminPage() {
     s.from('agencies')
       .select('*, owner:profiles(email), kyc_documents(*)')
       .eq('verification_status', 'pending')
+      .is('deleted_at', null)
       .order('created_at', { ascending: true }),
-    s.from('services').select('*, agencies(name)').eq('status', 'pending').order('created_at', { ascending: true }),
-    s.from('withdrawals').select('*, seller:profiles(email)').eq('status', 'pending').order('created_at', { ascending: true }),
-    s.from('disputes').select('*, order:orders(title)').in('status', ['open', 'under_review']).order('created_at', { ascending: true }),
+    s.from('services').select('*, agencies(name)').eq('status', 'pending').is('deleted_at', null).order('created_at', { ascending: true }),
+    s.from('withdrawals').select('*, seller:profiles(email)').eq('status', 'pending').is('deleted_at', null).order('created_at', { ascending: true }),
+    s.from('disputes').select('*, order:orders(title)').in('status', ['open', 'under_review']).is('deleted_at', null).order('created_at', { ascending: true }),
   ])
 
   return (

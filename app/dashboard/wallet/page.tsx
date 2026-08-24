@@ -9,9 +9,9 @@ export default async function WalletPage() {
   if (!user) redirect('/auth/login')
 
   const [{ data: wallet }, { data: profile }, { data: withdrawals }] = await Promise.all([
-    s.from('wallets').select('*, wallet_ledger(*)').eq('user_id', user.id).maybeSingle(),
+    s.from('wallets').select('*, wallet_ledger(*)').eq('user_id', user.id).is('deleted_at', null).maybeSingle(),
     s.from('profiles').select('role').eq('id', user.id).maybeSingle(),
-    s.from('withdrawals').select('*').eq('seller_id', user.id).order('created_at', { ascending: false }),
+    s.from('withdrawals').select('*').eq('seller_id', user.id).is('deleted_at', null).order('created_at', { ascending: false }),
   ])
 
   const isSeller = profile?.role === 'seller'

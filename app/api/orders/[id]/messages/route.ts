@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { requireUser, cleanText, jsonError } from '@/lib/server/workflows'
+import { requireUser, requireVerifiedEmail, cleanText, jsonError } from '@/lib/server/workflows'
 import { rateLimit, rateLimitError } from '@/lib/server/rate-limit'
 
 type RouteCtx = { params: Promise<{ id: string }> }
@@ -48,6 +48,9 @@ export async function GET(request: Request, { params }: RouteCtx) {
 }
 
 export async function POST(request: Request, { params }: RouteCtx) {
+  const emailGate = await requireVerifiedEmail()
+  if (emailGate) return emailGate
+
   const { supabase, user } = await requireUser()
   if (!user) return jsonError('Authentication required', 401)
   const { id } = await params

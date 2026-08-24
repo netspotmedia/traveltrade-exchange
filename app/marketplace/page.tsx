@@ -28,6 +28,7 @@ export default async function MarketplacePage({
     .from('services')
     .select('*, agencies(name, verification_status, rating)')
     .eq('status', 'published')
+    .is('deleted_at', null)
     .order('created_at', { ascending: false })
 
   if (category) query = query.eq('category', category)
@@ -36,7 +37,7 @@ export default async function MarketplacePage({
   const { data: services } = await query
   const list = (services ?? []) as ServiceRow[]
 
-  const { data: categories } = await supabase.from('services').select('category').eq('status', 'published')
+  const { data: categories } = await supabase.from('services').select('category').eq('status', 'published').is('deleted_at', null)
 
   return (
     <main className="min-h-screen bg-background">

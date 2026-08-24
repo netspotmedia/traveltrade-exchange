@@ -16,6 +16,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
     .from('orders')
     .select('*, services(title), agencies(name, owner_id), milestones(*)')
     .eq('id', id)
+    .is('deleted_at', null)
     .maybeSingle()
   if (!order) notFound()
 
@@ -23,6 +24,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
     .from('proposals')
     .select('id, fee_amount, timeline_days, note, status, created_at')
     .eq('order_id', id)
+    .is('deleted_at', null)
     .order('created_at', { ascending: false })
 
   const milestones = (order.milestones ?? []) as MilestoneRow[]

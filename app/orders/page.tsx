@@ -22,11 +22,12 @@ export default async function OrdersPage() {
     .from('orders')
     .select('*, agencies(name)')
     .eq('buyer_id', user.id)
+    .is('deleted_at', null)
     .order('created_at', { ascending: false })
 
-  const { data: agency } = await s.from('agencies').select('id').eq('owner_id', user.id).maybeSingle()
+  const { data: agency } = await s.from('agencies').select('id').eq('owner_id', user.id).is('deleted_at', null).maybeSingle()
   const { data: sold } = agency
-    ? await s.from('orders').select('*, agencies(name)').eq('agency_id', agency.id).order('created_at', { ascending: false })
+    ? await s.from('orders').select('*, agencies(name)').eq('agency_id', agency.id).is('deleted_at', null).order('created_at', { ascending: false })
     : { data: null }
 
   const seen = new Set<string>()

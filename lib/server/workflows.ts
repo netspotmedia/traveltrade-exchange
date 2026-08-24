@@ -31,6 +31,27 @@ export async function requireVerifiedAgent() {
   return { ...result, agency, response: null }
 }
 
+// Returns true if the user's email is confirmed/verified.
+// Email confirmation may be disabled in Supabase, in which case users are
+// considered verified (email_confirmed_at is set automatically on signup).
+export function isEmailVerified(user: { email_confirmed_at?: string | null; confirmed_at?: string | null } | null): boolean {
+  if (!user) return false
+  // If confirmation is disabled, Supabase marks the email as confirmed.
+  return Boolean(user.email_confirmed_at || user.confirmed_at)
+}
+
+// Gate financial/messaging actions on a verified email.
+// Returns a JSON error response when the email is not verified, else null.
+export async function requireVerifiedEmail() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return jsonError('Authentication required', 401)
+  if (!isEmailVerified(user)) {
+    return jsonError('Please verify your email to continue', 403)
+  }
+  return null
+}
+
 export function jsonError(message: string, status = 400) {
   return NextResponse.json({ error: message }, { status })
 }

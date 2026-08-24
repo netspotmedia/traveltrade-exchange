@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { requireUser, requireVerifiedAgent, cleanText, jsonError } from '@/lib/server/workflows'
+import { requireUser, requireVerifiedAgent, requireVerifiedEmail, cleanText, jsonError } from '@/lib/server/workflows'
 import {
   fundEscrowFromWallet,
   submitMilestone,
@@ -21,6 +21,8 @@ export async function POST(request: Request) {
 
   // ---- Milestone-level actions (money moves through these) ----
   if (action === 'fundMilestone' || action === 'submitMilestone' || action === 'approveMilestone' || action === 'releaseMilestone') {
+    const emailGate = await requireVerifiedEmail()
+    if (emailGate) return emailGate
     // Submitting delivery is a seller action: requires a verified agency.
     if (action === 'submitMilestone') {
       const gate = await requireVerifiedAgent()
@@ -44,6 +46,8 @@ export async function POST(request: Request) {
 
   // ---- Order-level escrow funding (B2B wallet -> escrow) ----
   if (action === 'fund') {
+    const emailGate = await requireVerifiedEmail()
+    if (emailGate) return emailGate
     const orderId = cleanText(body.orderId, 80)
     if (!orderId) return jsonError('Order id is required')
     const result = await fundEscrowFromWallet({ orderId, buyerId: user.id })

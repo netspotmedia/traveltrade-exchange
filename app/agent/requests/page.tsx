@@ -24,6 +24,7 @@ export default async function AgentRequestsPage() {
     .select('*, buyer:profiles(email)')
     .eq('agency_id', agency!.id)
     .eq('status', 'proposed')
+    .is('deleted_at', null)
     .order('created_at', { ascending: false })
 
   return (
