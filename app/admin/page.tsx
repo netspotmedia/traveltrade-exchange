@@ -55,7 +55,15 @@ export default async function AdminPage() {
   const { data: profile } = await s.from('profiles').select('role').eq('id', user.id).maybeSingle()
   if (profile?.role !== 'admin') redirect('/dashboard')
 
-  const [{ data: pendingAgencies }, { data: pendingServices }, { data: pendingWithdrawals }, { data: openDisputes }] = await Promise.all([
+  const [
+    { data: pendingAgencies },
+    { data: pendingServices },
+    { data: pendingWithdrawals },
+    { data: openDisputes },
+    { data: kpis },
+    { data: summary },
+    { data: emailLogs },
+  ] = await Promise.all([
     s.from('agencies')
       .select('*, owner:profiles(email), kyc_documents(*)')
       .eq('verification_status', 'pending')
@@ -64,14 +72,37 @@ export default async function AdminPage() {
     s.from('services').select('*, agencies(name)').eq('status', 'pending').is('deleted_at', null).order('created_at', { ascending: true }),
     s.from('withdrawals').select('*, seller:profiles(email)').eq('status', 'pending').is('deleted_at', null).order('created_at', { ascending: true }),
     s.from('disputes').select('*, order:orders(title)').in('status', ['open', 'under_review']).is('deleted_at', null).order('created_at', { ascending: true }),
+    s.rpc('admin_get_kpis'),
+    s.rpc('admin_get_summary'),
+    s.rpc('admin_get_email_logs', { p_limit: 50 }),
   ])
+
+  const kpi = kpis as { escrow_held?: number; fees_collected?: number; active_orders?: number; verified_agencies?: number; published_services?: number; total_users?: number } | null
+  const summ = summary as { pending_withdrawals?: number; open_disputes?: number; failed_emails?: number } | null
+  const logs = (emailLogs ?? []) as { id: string; recipient: string; subject: string; provider: string; status: string; attempts: number; error: string | null; created_at: string }[]
 
   return (
     <main className="min-h-screen bg-background px-6 py-10">
       <div className="mx-auto flex max-w-6xl flex-col gap-8">
         <div>
           <p className="text-sm font-semibold text-primary">Operations console</p>
-          <h1 className="mt-2 text-4xl font-semibold">Review queue</h1>
+          <h1 className="mt-2 text-4xl font-semibold">Overview</h1>
+        </div>
+
+        <div className="grid gap-5 md:grid-cols-3 lg:grid-cols-6">
+          {[
+            ['Escrow held', kpi?.escrow_held ?? 0, '₦'],
+            ['Fees collected', kpi?.fees_collected ?? 0, '₦'],
+            ['Active orders', kpi?.active_orders ?? 0, ''],
+            ['Verified agencies', kpi?.verified_agencies ?? 0, ''],
+            ['Published services', kpi?.published_services ?? 0, ''],
+            ['Total users', kpi?.total_users ?? 0, ''],
+          ].map(([title, value, prefix]) => (
+            <section key={title as string} className="rounded-2xl border bg-card p-5">
+              <h2 className="text-sm font-medium text-muted-foreground">{title as string}</h2>
+              <p className="mt-3 text-2xl font-semibold">{prefix}{Number(value).toLocaleString()}</p>
+            </section>
+          ))}
         </div>
 
         <div className="grid gap-5 md:grid-cols-3">
@@ -86,6 +117,21 @@ export default async function AdminPage() {
               <p className="text-sm text-muted-foreground">Awaiting review</p>
             </section>
           ))}
+        </div>
+
+        <div className="grid gap-5 md:grid-cols-3">
+          <section className="rounded-2xl border bg-card p-5">
+            <h2 className="font-semibold">Pending withdrawals</h2>
+            <p className="mt-4 text-3xl font-semibold">{summ?.pending_withdrawals ?? 0}</p>
+          </section>
+          <section className="rounded-2xl border bg-card p-5">
+            <h2 className="font-semibold">Open disputes</h2>
+            <p className="mt-4 text-3xl font-semibold">{summ?.open_disputes ?? 0}</p>
+          </section>
+          <section className="rounded-2xl border bg-card p-5">
+            <h2 className="font-semibold">Failed emails</h2>
+            <p className="mt-4 text-3xl font-semibold">{summ?.failed_emails ?? 0}</p>
+          </section>
         </div>
 
         <section className="rounded-2xl border bg-card p-6">
@@ -185,6 +231,29 @@ export default async function AdminPage() {
                     <span className="rounded-full bg-secondary px-3 py-1 text-xs font-medium">{d.status}</span>
                   </div>
                   <DisputeReviewActions disputeId={d.id} />
+                </div>
+              ))
+            )}
+          </div>
+        </section>
+        <section className="rounded-2xl border bg-card p-6">
+          <h2 className="text-lg font-semibold">Recent email activity</h2>
+          <div className="mt-4 flex flex-col gap-2">
+            {!logs || logs.length === 0 ? (
+              <p className="text-sm text-muted-foreground">No email activity yet.</p>
+            ) : (
+              logs.map((e) => (
+                <div key={e.id} className="flex flex-wrap items-center justify-between gap-3 border-b py-2 text-sm">
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate font-medium">{e.subject}</p>
+                    <p className="truncate text-xs text-muted-foreground">{e.recipient} · {e.provider} · attempts {e.attempts}</p>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className={`rounded-full px-3 py-1 text-xs font-medium ${e.status === 'sent' ? 'bg-emerald-100 text-emerald-700' : e.status === 'failed' ? 'bg-red-100 text-red-700' : 'bg-secondary text-secondary-foreground'}`}>
+                      {e.status}
+                    </span>
+                    <span className="text-xs text-muted-foreground">{new Date(e.created_at).toLocaleString()}</span>
+                  </div>
                 </div>
               ))
             )}
