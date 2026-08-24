@@ -13,7 +13,7 @@ export default async function SecuritySettingsPage() {
   return (
     <div className="min-h-screen bg-background">
       <SiteHeader />
-      <main className="mx-auto max-w-3xl px-4 py-8 pb-24 lg:px-8">
+      <main id="main" className="mx-auto max-w-3xl px-4 py-8 pb-24 lg:px-8">
         <div>
           <p className="text-sm font-semibold text-primary">Settings</p>
           <h1 className="mt-1 text-3xl font-semibold tracking-tight">Account security</h1>

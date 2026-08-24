@@ -44,7 +44,6 @@ export default async function MarketplacePage({ searchParams }: { searchParams: 
     .select('*, agencies(id, name, slug, verification_status, rating, city)', { count: 'exact' })
     .eq('status', 'published')
     .is('deleted_at', null)
-    .range(from, to)
 
   if (q) query = query.or(`title.ilike.%${q}%,description.ilike.%${q}%`)
   if (category) query = query.eq('category', category)
@@ -52,52 +51,70 @@ export default async function MarketplacePage({ searchParams }: { searchParams: 
   if (Number.isFinite(max) && max > 0) query = query.lte('base_price', max)
   if (verifiedOnly && !noResults) query = query.in('agency_id', verifiedAgencyIds)
 
-  switch (sort) {
-    case 'rating':
-      query = query.order('rating', { referencedTable: 'agencies', ascending: false })
-      break
-    case 'price_asc':
-      query = query.order('base_price', { ascending: true })
-      break
-    case 'price_desc':
-      query = query.order('base_price', { ascending: false })
-      break
-    case 'newest':
-      query = query.order('created_at', { ascending: false })
-      break
-    default:
-      query = query.order('created_at', { ascending: false })
+  const agencyIdOf = (s: ServiceRow) => {
+    const a = Array.isArray(s.agencies) ? s.agencies[0] : s.agencies
+    return a?.id ?? null
+  }
+  const statsMap = new Map<string, { avgResponseHours: number | null; responseRate: number | null }>()
+
+  let services: ServiceRow[] | null = null
+  let count: number | null = null
+
+  if (!noResults && sort === 'response_time') {
+    // Fastest Response: fetch all matches, sort by real avg response time,
+    // then paginate — keeps the sort correct across pages.
+    const { data: all } = await query.order('created_at', { ascending: false })
+    const rows = (all ?? []) as ServiceRow[]
+    const ids = Array.from(new Set(rows.map(agencyIdOf).filter(Boolean) as string[]))
+    if (ids.length > 0) {
+      const { data: stats } = await supabase.rpc('agency_response_stats_batch', { p_agency_ids: ids })
+      for (const row of (stats ?? []) as { agency_id: string; avg_response_hours: number | null; response_rate: number | null }[]) {
+        statsMap.set(row.agency_id, { avgResponseHours: row.avg_response_hours, responseRate: row.response_rate })
+      }
+    }
+    const sorted = rows.slice().sort((a, b) => {
+      const ah = agencyIdOf(a) ? (statsMap.get(agencyIdOf(a)!)?.avgResponseHours ?? null) : null
+      const bh = agencyIdOf(b) ? (statsMap.get(agencyIdOf(b)!)?.avgResponseHours ?? null) : null
+      if (ah === null && bh === null) return 0
+      if (ah === null) return 1
+      if (bh === null) return -1
+      return ah - bh
+    })
+    count = sorted.length
+    services = sorted.slice(from, to)
+  } else if (!noResults) {
+    switch (sort) {
+      case 'rating':
+        query = query.order('rating', { referencedTable: 'agencies', ascending: false })
+        break
+      case 'price_asc':
+        query = query.order('base_price', { ascending: true })
+        break
+      case 'completed':
+        query = query.order('completed_orders', { referencedTable: 'agencies', ascending: false })
+        break
+      default:
+        query = query.order('created_at', { ascending: false })
+    }
+    const { data, count: c } = await query.range(from, to)
+    services = (data ?? []) as ServiceRow[]
+    count = c
+    const ids = Array.from(new Set(services.map(agencyIdOf).filter(Boolean) as string[]))
+    if (ids.length > 0) {
+      const { data: stats } = await supabase.rpc('agency_response_stats_batch', { p_agency_ids: ids })
+      for (const row of (stats ?? []) as { agency_id: string; avg_response_hours: number | null; response_rate: number | null }[]) {
+        statsMap.set(row.agency_id, { avgResponseHours: row.avg_response_hours, responseRate: row.response_rate })
+      }
+    }
   }
 
-  const [{ data: services, count }, categoryRes] = noResults
-    ? [{ data: null, count: 0 }, null]
-    : await Promise.all([
-        query,
-        supabase.from('services').select('category').eq('status', 'published').is('deleted_at', null),
-      ])
+  const categoryRes = noResults ? null : await supabase.from('services').select('category').eq('status', 'published').is('deleted_at', null)
 
-  const total = count ?? 0
+  const total = noResults ? 0 : (count ?? 0)
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
   const currentPage = Math.min(page, totalPages)
   const sortLabel = SORT_OPTIONS.find((o) => o.value === sort)?.label ?? 'Recommended'
   const categories = Array.from(new Set((categoryRes?.data ?? []).map((c) => c.category as string).filter(Boolean)))
-
-  // Real, computed response metrics for the agencies on this page (one query).
-  const agencyIds = Array.from(
-    new Set(
-      (services ?? []).map((s: ServiceRow) => {
-        const a = Array.isArray(s.agencies) ? s.agencies[0] : s.agencies
-        return a?.id
-      }).filter(Boolean) as string[],
-    ),
-  )
-  const statsMap = new Map<string, { avgResponseHours: number | null; responseRate: number | null }>()
-  if (agencyIds.length > 0) {
-    const { data: stats } = await supabase.rpc('agency_response_stats_batch', { p_agency_ids: agencyIds })
-    for (const row of (stats ?? []) as { agency_id: string; avg_response_hours: number | null; response_rate: number | null }[]) {
-      statsMap.set(row.agency_id, { avgResponseHours: row.avg_response_hours, responseRate: row.response_rate })
-    }
-  }
 
   const controls = { q, category, sort, minPrice: Number.isFinite(min) && min > 0 ? String(min) : '', maxPrice: Number.isFinite(max) && max > 0 ? String(max) : '', verifiedOnly }
 
@@ -105,7 +122,7 @@ export default async function MarketplacePage({ searchParams }: { searchParams: 
     <div className="min-h-screen bg-background">
       <SiteHeader />
 
-      <main className="mx-auto max-w-7xl px-4 py-8 lg:px-8">
+      <main id="main" className="mx-auto max-w-7xl px-4 py-8 lg:px-8">
         <div className="max-w-2xl">
           <p className="font-mono text-xs font-bold uppercase tracking-widest text-primary">Marketplace</p>
           <h1 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">Find the right partner for the journey</h1>

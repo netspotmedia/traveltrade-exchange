@@ -65,8 +65,9 @@ export default async function HomePage() {
     <div className="min-h-screen bg-background">
       <SiteHeader />
 
-      {/* Hero — A/B variant chosen by the ttx_hero cookie */}
-      <HomeHero variant={heroVariant} serviceCount={serviceCount} verifiedAgents={verifiedAgents} completedOrders={completedOrders} />
+      <main id="main">
+        {/* Hero — A/B variant chosen by the ttx_hero cookie */}
+        <HomeHero variant={heroVariant} serviceCount={serviceCount} verifiedAgents={verifiedAgents} completedOrders={completedOrders} />
 
       {/* Popular services */}
       <section id="popular" className="mx-auto max-w-7xl px-4 py-14 lg:px-8">
@@ -210,6 +211,8 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      </main>
 
       <footer className="border-t border-border">
         <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-10 md:flex-row md:items-center md:justify-between lg:px-8">

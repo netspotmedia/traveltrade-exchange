@@ -8,10 +8,10 @@ import { cn } from '@/lib/utils'
 
 export const SORT_OPTIONS = [
   { value: 'recommended', label: 'Recommended' },
-  { value: 'rating', label: 'Highest rated' },
-  { value: 'price_asc', label: 'Lowest price' },
-  { value: 'price_desc', label: 'Highest price' },
-  { value: 'newest', label: 'Newest' },
+  { value: 'rating', label: 'Top Rated' },
+  { value: 'price_asc', label: 'Lowest Price' },
+  { value: 'response_time', label: 'Fastest Response' },
+  { value: 'completed', label: 'Most Completed' },
 ]
 
 export interface ControlsState {

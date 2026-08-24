@@ -69,7 +69,7 @@ export default async function AgentProfilePage({ params }: { params: Promise<{ s
     <div className="min-h-screen bg-background">
       <SiteHeader />
 
-      <main className="mx-auto max-w-6xl px-4 py-8 lg:px-8">
+      <main id="main" className="mx-auto max-w-6xl px-4 py-8 lg:px-8">
         <Link href="/marketplace" className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition hover:text-foreground">
           <ArrowLeft className="size-4" /> Back to marketplace
         </Link>

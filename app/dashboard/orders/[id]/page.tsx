@@ -89,7 +89,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
   return (
     <div className="min-h-screen bg-background">
       <SiteHeader />
-      <main className="mx-auto max-w-4xl px-4 py-8 pb-24 lg:px-8">
+      <main id="main" className="mx-auto max-w-4xl px-4 py-8 pb-24 lg:px-8">
         {/* Header */}
         <div className="flex flex-col gap-3 rounded-3xl border border-border bg-card p-6 shadow-card sm:flex-row sm:items-start sm:justify-between sm:p-8">
           <div>

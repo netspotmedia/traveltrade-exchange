@@ -52,7 +52,7 @@ export default async function DashboardPage() {
   return (
     <div className="min-h-screen bg-background">
       <SiteHeader />
-      <main className="mx-auto max-w-5xl px-4 py-8 pb-24 lg:px-8">
+      <main id="main" className="mx-auto max-w-5xl px-4 py-8 pb-24 lg:px-8">
         <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end">
           <div>
             <p className="text-sm font-semibold text-primary">Dashboard</p>
