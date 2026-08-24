@@ -130,8 +130,8 @@ $$;
 create or replace function public.credit_wallet_from_topup(
   p_user_id uuid,
   p_amount numeric,
-  p_currency text default 'NGN',
-  p_provider_reference text
+  p_provider_reference text,
+  p_currency text default 'NGN'
 ) returns jsonb
 language plpgsql
 security definer
