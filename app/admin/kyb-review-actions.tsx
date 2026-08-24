@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
+import { Textarea } from '@/components/ui/textarea'
 
 export function KybReviewActions({ agencyId }: { agencyId: string }) {
   const [note, setNote] = useState('')
@@ -28,12 +29,12 @@ export function KybReviewActions({ agencyId }: { agencyId: string }) {
 
   return (
     <div className="mt-4 flex flex-col gap-3">
-      <textarea
+      <Textarea
         value={note}
         onChange={(e) => setNote(e.target.value)}
         placeholder="Reviewer note (optional)"
         rows={2}
-        className="rounded-lg border bg-background px-3 py-2 text-sm"
+        className="min-h-16"
       />
       <div className="flex flex-wrap gap-3">
         <Button size="sm" disabled={busy !== null} onClick={() => decide('approved')}>
