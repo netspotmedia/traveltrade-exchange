@@ -118,3 +118,15 @@ export function escalateDispute(params: { disputeId: string; actorId: string }) 
     p_actor_id: params.actorId,
   })
 }
+
+export function getFailedCallbacks(limit = 100) {
+  return callRpc('admin_get_failed_callbacks', { p_limit: limit })
+}
+
+export function resolveFailedCallback(params: { callbackId: string; status: 'resolved' | 'ignored'; actorId: string }) {
+  return callRpc('admin_resolve_failed_callback', {
+    p_callback_id: params.callbackId,
+    p_status: params.status,
+    p_actor_id: params.actorId,
+  })
+}

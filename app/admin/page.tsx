@@ -4,6 +4,7 @@ import { KybReviewActions } from './kyb-review-actions'
 import { ServiceReviewActions } from './service-review-actions'
 import { WithdrawalReviewActions } from './withdrawal-review-actions'
 import { DisputeReviewActions } from './dispute-review-actions'
+import { FailedCallbackActions } from './failed-callback-actions'
 
 type AgencyRow = {
   id: string
@@ -63,6 +64,7 @@ export default async function AdminPage() {
     { data: kpis },
     { data: summary },
     { data: emailLogs },
+    { data: failedCallbacks },
   ] = await Promise.all([
     s.from('agencies')
       .select('*, owner:profiles(email), kyc_documents(*)')
@@ -75,11 +77,13 @@ export default async function AdminPage() {
     s.rpc('admin_get_kpis'),
     s.rpc('admin_get_summary'),
     s.rpc('admin_get_email_logs', { p_limit: 50 }),
+    s.rpc('admin_get_failed_callbacks', { p_limit: 50 }),
   ])
 
   const kpi = kpis as { escrow_held?: number; fees_collected?: number; active_orders?: number; verified_agencies?: number; published_services?: number; total_users?: number } | null
   const summ = summary as { pending_withdrawals?: number; open_disputes?: number; failed_emails?: number } | null
   const logs = (emailLogs ?? []) as { id: string; recipient: string; subject: string; provider: string; status: string; attempts: number; error: string | null; created_at: string }[]
+  const callbacks = (failedCallbacks ?? []) as { id: string; reference: string; reason: string | null; amount: number | null; currency: string | null; status: string; retry_count: number; created_at: string }[]
 
   return (
     <main className="min-h-screen bg-background px-6 py-10">
@@ -253,6 +257,32 @@ export default async function AdminPage() {
                       {e.status}
                     </span>
                     <span className="text-xs text-muted-foreground">{new Date(e.created_at).toLocaleString()}</span>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </section>
+        <section className="rounded-2xl border bg-card p-6">
+          <h2 className="text-lg font-semibold">Failed payment callbacks</h2>
+          <div className="mt-4 flex flex-col gap-2">
+            {!callbacks || callbacks.length === 0 ? (
+              <p className="text-sm text-muted-foreground">No unresolved payment callbacks.</p>
+            ) : (
+              callbacks.map((c) => (
+                <div key={c.id} className="flex flex-wrap items-center justify-between gap-3 border-b py-2 text-sm">
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate font-medium">{c.reference}</p>
+                    <p className="truncate text-xs text-muted-foreground">
+                      {c.reason || 'No reason'} {c.amount ? ` · ₦${Number(c.amount).toLocaleString()} ${c.currency ?? ''}` : ''} · retries {c.retry_count}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className={`rounded-full px-3 py-1 text-xs font-medium ${c.status === 'pending' ? 'bg-amber-100 text-amber-700' : 'bg-secondary text-secondary-foreground'}`}>
+                      {c.status}
+                    </span>
+                    <span className="text-xs text-muted-foreground">{new Date(c.created_at).toLocaleString()}</span>
+                    <FailedCallbackActions callbackId={c.id} />
                   </div>
                 </div>
               ))

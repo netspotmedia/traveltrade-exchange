@@ -2,6 +2,22 @@ import { NextResponse } from 'next/server'
 import { verifyPaystackSignature } from '@/lib/paystack'
 import { creditWalletFromTopup, completeCustomerEscrow } from '@/lib/server/money'
 import { rateLimit } from '@/lib/server/rate-limit'
+import { createClient } from '@/lib/supabase/server'
+
+async function recordFailure(reference: string, reason: string, payload: unknown, amountNaira?: number, currency?: string) {
+  try {
+    const supabase = await createClient()
+    await supabase.rpc('record_failed_callback', {
+      p_reference: reference,
+      p_payload: payload,
+      p_reason: reason,
+      p_amount: amountNaira ?? null,
+      p_currency: currency ?? null,
+    })
+  } catch {
+    // Best-effort; the callback is preserved as best we can.
+  }
+}
 
 export async function POST(request: Request) {
   const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
@@ -40,34 +56,24 @@ export async function POST(request: Request) {
   const type = metadata?.type ?? 'wallet_topup'
 
   if (type === 'customer_escrow') {
-    const result = await completeCustomerEscrow({
-      reference,
-      amount: amountNaira,
-      currency,
-    })
+    const result = await completeCustomerEscrow({ reference, amount: amountNaira, currency })
     if (!result.ok && !result.already_processed) {
-      // Do not 5xx: Paystack will retry, but we must not double-credit.
-      // A non-2xx tells Paystack to retry later; we return 200 to avoid loops
-      // only when already processed or truly settled.
+      // Persist so the charge is never silently lost; admin can reconcile/retry.
+      await recordFailure(reference, result.error ?? 'Settlement failed', event, amountNaira, currency)
       return NextResponse.json({ received: true, error: result.error })
     }
     return NextResponse.json({ received: true, reference })
   }
 
-  // Default: wallet top-up. The user id must come from the metadata we set at
-  // initialize time. If absent, we cannot safely credit — return 200 so
-  // Paystack stops retrying (avoids unbounded retries on uncredit-able events).
+  // Default: wallet top-up.
   const userId = metadata?.user_id
   if (!userId) {
+    await recordFailure(reference, 'Missing user_id metadata', event, amountNaira, currency)
     return NextResponse.json({ received: true, error: 'Missing user_id metadata' })
   }
-  const result = await creditWalletFromTopup({
-    userId,
-    amount: amountNaira,
-    currency,
-    providerReference: reference,
-  })
+  const result = await creditWalletFromTopup({ userId, amount: amountNaira, currency, providerReference: reference })
   if (!result.ok && !result.already_processed) {
+    await recordFailure(reference, result.error ?? 'Settlement failed', event, amountNaira, currency)
     return NextResponse.json({ received: true, error: result.error })
   }
   return NextResponse.json({ received: true, reference })
