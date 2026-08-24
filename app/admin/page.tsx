@@ -5,6 +5,7 @@ import { ServiceReviewActions } from './service-review-actions'
 import { WithdrawalReviewActions } from './withdrawal-review-actions'
 import { DisputeReviewActions } from './dispute-review-actions'
 import { FailedCallbackActions } from './failed-callback-actions'
+import { StatusBadge } from '@/components/ui/status-badge'
 
 type AgencyRow = {
   id: string
@@ -153,7 +154,7 @@ export default async function AdminPage() {
                         {a.city || '—'}, {a.country} · {a.owner?.email || 'no email'}
                       </p>
                     </div>
-                    <span className="rounded-full bg-secondary px-3 py-1 text-xs font-medium">{a.verification_status}</span>
+                    <StatusBadge domain="agency" status={a.verification_status} />
                   </div>
                   <div className="mt-3 flex flex-col gap-1 text-sm text-muted-foreground">
                     {(a.kyc_documents ?? []).length === 0 && <p>No documents submitted.</p>}
@@ -186,7 +187,7 @@ export default async function AdminPage() {
                           {agency?.name || 'Unknown agency'} · {svc.category} · ₦{Number(svc.base_price).toLocaleString()} {svc.currency}
                         </p>
                       </div>
-                      <span className="rounded-full bg-secondary px-3 py-1 text-xs font-medium">{svc.status}</span>
+                      <StatusBadge domain="service" status={svc.status} />
                     </div>
                     <p className="mt-2 text-sm text-muted-foreground">{svc.description}</p>
                     <ServiceReviewActions serviceId={svc.id} />
@@ -211,7 +212,7 @@ export default async function AdminPage() {
                         {w.bank_name || 'Unknown bank'} · {w.account_name || 'Unknown name'} · {w.seller?.email || 'no email'}
                       </p>
                     </div>
-                    <span className="rounded-full bg-secondary px-3 py-1 text-xs font-medium">{w.status}</span>
+                    <StatusBadge domain="withdrawal" status={w.status} />
                   </div>
                   <WithdrawalReviewActions withdrawalId={w.id} />
                 </div>
@@ -232,7 +233,7 @@ export default async function AdminPage() {
                       <p className="font-semibold">{d.order?.title || 'Order dispute'}</p>
                       <p className="text-sm text-muted-foreground">{d.reason}</p>
                     </div>
-                    <span className="rounded-full bg-secondary px-3 py-1 text-xs font-medium">{d.status}</span>
+                    <StatusBadge domain="dispute" status={d.status} />
                   </div>
                   <DisputeReviewActions disputeId={d.id} />
                 </div>

@@ -2,15 +2,15 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Bell, LayoutGrid, Search, ShoppingBag, WalletCards } from 'lucide-react'
+import { LayoutGrid, MessageSquareText, Search, ShoppingBag, WalletCards } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const ITEMS = [
   { href: '/dashboard', label: 'Home', icon: LayoutGrid },
   { href: '/marketplace', label: 'Find', icon: Search },
   { href: '/orders', label: 'Orders', icon: ShoppingBag },
+  { href: '/messages', label: 'Messages', icon: MessageSquareText },
   { href: '/dashboard/wallet', label: 'Wallet', icon: WalletCards },
-  { href: '/dashboard/notifications', label: 'Alerts', icon: Bell },
 ]
 
 export function BottomNav() {

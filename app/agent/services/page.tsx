@@ -4,6 +4,11 @@ import { redirect } from 'next/navigation'
 import { requireVerifiedAgent } from '@/lib/server/workflows'
 import { SubmitServiceAction } from './submit-action'
 import { StatusBadge } from '@/components/ui/status-badge'
+import { SiteHeader } from '@/components/layout/site-header'
+import { BottomNav } from '@/components/layout/bottom-nav'
+import { EmptyState } from '@/components/ui/empty-state'
+import { Button } from '@/components/ui/button'
+import { Store } from 'lucide-react'
 
 type ServiceRow = { id: string; title: string; category: string; status: string; base_price: number; currency: string }
 
@@ -23,23 +28,33 @@ export default async function AgentServicesPage() {
     .order('created_at', { ascending: false })
 
   return (
-    <main className="min-h-screen bg-background px-6 py-10">
-      <div className="mx-auto flex max-w-4xl flex-col gap-6">
+    <div className="min-h-screen bg-background">
+      <SiteHeader />
+      <main className="mx-auto max-w-4xl px-4 py-8 pb-24 lg:px-8">
         <div className="flex items-end justify-between">
           <div>
             <p className="text-sm font-semibold text-primary">Your services</p>
-            <h1 className="mt-2 text-3xl font-semibold">Manage your services</h1>
+            <h1 className="mt-1 text-3xl font-semibold tracking-tight">Manage your services</h1>
           </div>
-          <Link href="/agent/services/new" className="rounded-lg bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground">
+          <Link href="/agent/services/new" className="rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground shadow-card transition hover:opacity-90">
             New service
           </Link>
         </div>
-        <div className="flex flex-col gap-4">
+        <div className="mt-6 flex flex-col gap-4">
           {!services || services.length === 0 ? (
-            <p className="text-sm text-muted-foreground">You have no services yet. Create your first one.</p>
+            <EmptyState
+              icon={Store}
+              title="No services yet"
+              description="Create your first service to start selling to verified travellers."
+              action={
+                <Link href="/agent/services/new">
+                  <Button>Create a service</Button>
+                </Link>
+              }
+            />
           ) : (
             (services as ServiceRow[]).map((svc) => (
-              <div key={svc.id} className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border bg-card p-5">
+              <div key={svc.id} className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-card p-5 shadow-card">
                 <div>
                   <p className="font-semibold">{svc.title}</p>
                   <p className="text-sm text-muted-foreground">
@@ -54,7 +69,8 @@ export default async function AgentServicesPage() {
             ))
           )}
         </div>
-      </div>
-    </main>
+      </main>
+      <BottomNav />
+    </div>
   )
 }

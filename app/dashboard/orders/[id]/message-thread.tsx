@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 
 type Message = {
   id: string
@@ -74,18 +75,29 @@ export function MessageThread({ orderId, currentUserId }: { orderId: string; cur
   }
 
   return (
-    <section className="rounded-3xl border bg-card p-6">
-      <h2 className="font-semibold">Messages</h2>
-      <div className="mt-4 flex max-h-80 flex-col gap-3 overflow-y-auto">
-        {messages.length === 0 && <p className="text-sm text-muted-foreground">No messages yet. Start the conversation.</p>}
+    <section className="rounded-3xl border border-border bg-card shadow-card">
+      <div className="border-b border-border px-5 py-4">
+        <h2 className="font-semibold">Messages</h2>
+        <p className="mt-0.5 text-xs text-muted-foreground">Chat with your travel partner about this order.</p>
+      </div>
+
+      <div className="flex max-h-96 flex-col gap-2.5 overflow-y-auto px-5 py-4">
+        {messages.length === 0 && (
+          <p className="py-8 text-center text-sm text-muted-foreground">No messages yet. Start the conversation.</p>
+        )}
         {messages.map((m) => {
           const mine = m.sender_id === currentUserId
           return (
-            <div key={m.id} className={`flex ${mine ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-[75%] rounded-2xl px-4 py-2 text-sm ${mine ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
-                <p>{m.body}</p>
-                <p className={`mt-1 text-[11px] ${mine ? 'text-primary-foreground/70' : 'text-muted-foreground'}`}>
-                  {m.sender?.email || 'you'} · {new Date(m.created_at).toLocaleTimeString()}
+            <div key={m.id} className={cn('flex', mine ? 'justify-end' : 'justify-start')}>
+              <div
+                className={cn(
+                  'flex max-w-[78%] flex-col gap-1 rounded-2xl px-4 py-2 text-sm shadow-card',
+                  mine ? 'rounded-br-md bg-primary text-primary-foreground' : 'rounded-bl-md bg-muted text-foreground',
+                )}
+              >
+                <p className="break-words whitespace-pre-wrap">{m.body}</p>
+                <p className={cn('text-[11px]', mine ? 'text-primary-foreground/70' : 'text-muted-foreground')}>
+                  {m.sender?.email || (mine ? 'You' : 'Partner')} · {new Date(m.created_at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
                 </p>
               </div>
             </div>
@@ -93,14 +105,21 @@ export function MessageThread({ orderId, currentUserId }: { orderId: string; cur
         })}
         <div ref={bottomRef} />
       </div>
-      <form onSubmit={send} className="mt-4 flex gap-3">
+
+      <form onSubmit={send} className="flex gap-2.5 border-t border-border p-4">
+        <label htmlFor={`msg-${orderId}`} className="sr-only">
+          Write a message
+        </label>
         <input
+          id={`msg-${orderId}`}
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
           placeholder="Write a message…"
-          className="flex-1 rounded-lg border bg-background px-3 py-2.5 text-sm"
+          className="h-11 flex-1 rounded-xl border border-input bg-background px-4 text-sm outline-none transition focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/20"
         />
-        <Button type="submit" disabled={busy}>Send</Button>
+        <Button type="submit" disabled={busy} className="h-11 px-5">
+          Send
+        </Button>
       </form>
     </section>
   )

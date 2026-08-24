@@ -1,5 +1,8 @@
-import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import { Bell } from 'lucide-react'
+import { createClient } from '@/lib/supabase/server'
+import { SiteHeader } from '@/components/layout/site-header'
+import { BottomNav } from '@/components/layout/bottom-nav'
 import { NotificationList } from './notification-list'
 
 export default async function NotificationsPage() {
@@ -14,15 +17,32 @@ export default async function NotificationsPage() {
     .order('created_at', { ascending: false })
     .limit(50)
 
+  const unread = (notifications ?? []).filter((n) => !n.read_at).length
+
   return (
-    <main className="min-h-screen bg-background px-6 py-10">
-      <div className="mx-auto flex max-w-3xl flex-col gap-6">
-        <div>
-          <p className="text-sm font-semibold text-primary">Notifications</p>
-          <h1 className="mt-2 text-3xl font-semibold">Your notifications</h1>
+    <div className="min-h-screen bg-background">
+      <SiteHeader />
+      <main className="mx-auto max-w-3xl px-4 py-8 pb-24 lg:px-8">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p className="text-sm font-semibold text-primary">Notifications</p>
+            <h1 className="mt-1 text-3xl font-semibold tracking-tight">Your alerts</h1>
+            <p className="mt-1 text-muted-foreground">
+              {unread > 0 ? `${unread} unread.` : "You're all caught up."}
+            </p>
+          </div>
+          <span className="hidden items-center gap-1.5 text-sm text-muted-foreground sm:inline-flex">
+            <Bell className="size-4" /> Updates about your orders and account
+          </span>
         </div>
-        <NotificationList notifications={(notifications ?? []) as { id: string; title: string; body: string; read_at: string | null; created_at: string }[]} />
-      </div>
-    </main>
+
+        <div className="mt-6">
+          <NotificationList notifications={(notifications ?? []) as NotificationRow[]} />
+        </div>
+      </main>
+      <BottomNav />
+    </div>
   )
 }
+
+type NotificationRow = { id: string; title: string; body: string; read_at: string | null; created_at: string }
