@@ -1,0 +1,5 @@
+"use client"
+import {useState} from 'react'
+import {useRouter} from 'next/navigation'
+import {Button} from '@/components/ui/button'
+export function EscrowActions({orderId,status}:{orderId:string;status:string}){const [message,setMessage]=useState('');const router=useRouter();async function act(action:string){setMessage('Updating protected order…');const r=await fetch('/api/escrow',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({orderId,action})});const j=await r.json();setMessage(r.ok?`Order marked ${j.status}.`:j.error||'Action failed');if(r.ok)router.refresh()}return <div className="mt-8 flex flex-wrap gap-3">{status==='in_progress'&&<Button onClick={()=>act('submit')}>Submit delivery</Button>}{status==='delivered'&&<Button onClick={()=>act('approve')}>Approve and release</Button>}{!['completed','cancelled','disputed'].includes(status)&&<Button variant="outline" onClick={()=>act('dispute')}>Open dispute</Button>}{message&&<p className="basis-full text-sm text-muted-foreground">{message}</p>}</div>}
