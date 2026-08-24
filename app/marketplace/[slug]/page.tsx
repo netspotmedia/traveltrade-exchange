@@ -181,7 +181,9 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                 <div className="mt-3 flex items-center gap-3">
                   <Avatar name={agency.name} size="lg" />
                   <div className="min-w-0">
-                    <p className="truncate font-semibold">{agency.name}</p>
+                    <Link href={`/agencies/${agency.slug}`} className="truncate font-semibold hover:text-primary hover:underline">
+                      {agency.name}
+                    </Link>
                     <p className="text-sm text-muted-foreground">{agency.city || 'Nigeria'}</p>
                   </div>
                 </div>
@@ -195,6 +197,12 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                   )}
                   <span className="flex items-center gap-2"><Timer className="size-4 text-primary" /> Replies within the order conversation</span>
                 </div>
+                <Link
+                  href={`/agencies/${agency.slug}`}
+                  className="mt-4 inline-flex w-full items-center justify-center gap-1.5 rounded-xl border border-border px-4 py-2.5 text-sm font-medium transition hover:bg-muted"
+                >
+                  View profile
+                </Link>
               </section>
             )}
           </aside>
