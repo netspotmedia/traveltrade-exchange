@@ -31,7 +31,7 @@ type ReviewRow = {
   rating: number
   comment: string | null
   created_at: string
-  author: { full_name?: string | null; email?: string | null } | null
+  author: { full_name?: string | null } | null
 }
 
 export default async function ServiceDetailPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -74,9 +74,10 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
   const responseLabel = formatResponseTime(responseStats?.avgResponseHours ?? null)
 
   // Reviews for this service (public read for published services).
+  // Only the reviewer's display name is selected — never email or contact info.
   const { data: reviews } = await supabase
     .from('reviews')
-    .select('id, rating, comment, created_at, author:profiles(full_name, email)')
+    .select('id, rating, comment, created_at, author:profiles(full_name)')
     .eq('service_id', service.id)
     .is('deleted_at', null)
     .order('created_at', { ascending: false })
@@ -274,7 +275,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                   reviewList.map((r) => (
                     <div key={r.id} className="py-4">
                       <div className="flex items-center justify-between gap-3">
-                        <p className="text-sm font-semibold">{r.author?.full_name || r.author?.email || 'Verified buyer'}</p>
+                        <p className="text-sm font-semibold">{r.author?.full_name || 'Verified buyer'}</p>
                         <span className="flex items-center gap-1 text-sm text-amber-500">
                           {Array.from({ length: 5 }).map((_, i) => (
                             <Star key={i} className={`size-3.5 ${i < Number(r.rating) ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground/30'}`} aria-hidden="true" />
