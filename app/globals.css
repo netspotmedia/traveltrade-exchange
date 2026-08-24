@@ -250,3 +250,13 @@
     display: none;
   }
 }
+
+/* Mobile bottom-sheet entrance (respects prefers-reduced-motion) */
+@keyframes sheet-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
