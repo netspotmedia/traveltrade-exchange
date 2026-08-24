@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { requireVerifiedAgent } from '@/lib/server/workflows'
+import { StatusBadge } from '@/components/ui/status-badge'
 
 type OrderRow = {
   id: string
@@ -46,7 +47,7 @@ export default async function AgentRequestsPage() {
                     <p className="font-semibold">{o.title}</p>
                     <p className="text-sm text-muted-foreground">{o.buyer?.email || 'Buyer'} · {new Date(o.created_at).toLocaleDateString()}</p>
                   </div>
-                  <span className="rounded-full bg-secondary px-3 py-1 text-xs font-medium">{o.status}</span>
+                  <StatusBadge domain="order" status={o.status} />
                 </div>
               </Link>
             ))

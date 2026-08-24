@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { requireVerifiedAgent } from '@/lib/server/workflows'
 import { SubmitServiceAction } from './submit-action'
+import { StatusBadge } from '@/components/ui/status-badge'
 
 type ServiceRow = { id: string; title: string; category: string; status: string; base_price: number; currency: string }
 
@@ -46,7 +47,7 @@ export default async function AgentServicesPage() {
                   </p>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="rounded-full bg-secondary px-3 py-1 text-xs font-medium">{svc.status}</span>
+                  <StatusBadge domain="service" status={svc.status} />
                   {svc.status === 'draft' && <SubmitServiceAction serviceId={svc.id} />}
                 </div>
               </div>
