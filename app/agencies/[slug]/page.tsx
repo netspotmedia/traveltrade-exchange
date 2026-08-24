@@ -16,7 +16,7 @@ import { ServiceCard } from '@/components/service-card'
 import { Avatar } from '@/components/ui/avatar'
 import { StatusBadge } from '@/components/ui/status-badge'
 import { Button } from '@/components/ui/button'
-import { formatNumber } from '@/lib/format'
+import { formatNumber, formatResponseTime } from '@/lib/format'
 
 type ServiceRow = {
   id: string
@@ -47,6 +47,13 @@ export default async function AgentProfilePage({ params }: { params: Promise<{ s
 
   const verified = agency.verification_status === 'verified'
   const rating = Number(agency.rating ?? 0)
+
+  // Real computed response metrics.
+  let responseStats: { avgResponseHours: number | null; responseRate: number | null } | null = null
+  const { data: stats } = await supabase.rpc('agency_response_stats', { p_agency_id: agency.id })
+  const s = stats as { avg_response_hours?: number | null; response_rate?: number | null } | null
+  responseStats = { avgResponseHours: s?.avg_response_hours ?? null, responseRate: s?.response_rate ?? null }
+  const responseLabel = formatResponseTime(responseStats.avgResponseHours ?? null)
 
   const { data: services } = await supabase
     .from('services')
@@ -101,6 +108,12 @@ export default async function AgentProfilePage({ params }: { params: Promise<{ s
                 <p className="font-mono text-2xl font-semibold">{list.length}</p>
                 <p className="text-xs text-muted-foreground">Services</p>
               </div>
+              {responseStats.responseRate != null && (
+                <div>
+                  <p className="font-mono text-2xl font-semibold">{responseStats.responseRate}%</p>
+                  <p className="text-xs text-muted-foreground">Response rate</p>
+                </div>
+              )}
             </div>
           </div>
 
@@ -129,8 +142,10 @@ export default async function AgentProfilePage({ params }: { params: Promise<{ s
                 <Timer className="size-4" />
               </span>
               <div>
-                <p className="text-sm font-semibold">Clear communication</p>
-                <p className="text-xs leading-5 text-muted-foreground">Message the agent inside your order, with one shared record.</p>
+                <p className="text-sm font-semibold">Quick responses</p>
+                <p className="text-xs leading-5 text-muted-foreground">
+                  {responseLabel ?? 'Message the agent inside your order, with one shared record.'}
+                </p>
               </div>
             </div>
           </div>

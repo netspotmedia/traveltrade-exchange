@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { cookies } from 'next/headers'
 import {
   ArrowRight,
   BadgeCheck,
@@ -8,7 +9,6 @@ import {
   Lock,
   MapPin,
   Search,
-  ShieldCheck,
   WalletCards,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
@@ -16,10 +16,8 @@ import { SiteHeader } from '@/components/layout/site-header'
 import { ServiceCard } from '@/components/service-card'
 import { EmptyState } from '@/components/ui/empty-state'
 import { Button } from '@/components/ui/button'
+import { HomeHero } from '@/components/home/home-hero'
 import { categoryIcon, FALLBACK_CATEGORIES } from '@/lib/categories'
-import { formatNumber } from '@/lib/format'
-
-const SEARCH_EXAMPLES = ['UK visa assistance', 'Flight ticket to London', 'Airport transfer', 'Dubai hotel booking']
 
 type ServiceRow = {
   id: string
@@ -36,6 +34,10 @@ type ServiceRow = {
 
 export default async function HomePage() {
   const supabase = await createClient()
+
+  // Homepage A/B: variant is assigned sticky by middleware (ttx_hero cookie).
+  const cookieStore = await cookies()
+  const heroVariant = cookieStore.get('ttx_hero')?.value === 'b' ? 'b' : 'a'
 
   const [servicesRes, verifiedAgenciesRes, serviceCountRes, categoryRes, completedRes] = await Promise.all([
     supabase
@@ -63,70 +65,8 @@ export default async function HomePage() {
     <div className="min-h-screen bg-background">
       <SiteHeader />
 
-      {/* Hero */}
-      <section className="relative overflow-hidden">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_50%_at_50%_-10%,var(--brand-soft),transparent)]" />
-        <div className="relative mx-auto max-w-7xl px-4 pb-16 pt-16 text-center lg:px-8 lg:pb-24 lg:pt-24">
-          <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-semibold text-primary shadow-card">
-            <ShieldCheck className="size-3.5" />
-            Trusted travel professionals, verified
-          </span>
-          <h1 className="mx-auto mt-6 max-w-3xl text-balance text-4xl font-semibold tracking-[-0.03em] text-foreground sm:text-6xl">
-            Find trusted travel professionals for your next trip
-          </h1>
-          <p className="mx-auto mt-5 max-w-xl text-pretty text-lg leading-8 text-muted-foreground">
-            Compare verified travel agents, agree on clear milestones, and keep every naira protected until the work is delivered.
-          </p>
-
-          {/* Primary search */}
-          <form action="/marketplace" method="get" className="mx-auto mt-9 flex max-w-2xl items-center gap-2 rounded-2xl border border-border bg-card p-2 shadow-lift">
-            <Search className="ml-3 size-5 shrink-0 text-muted-foreground" />
-            <label htmlFor="hero-search" className="sr-only">
-              What travel service do you need?
-            </label>
-            <input
-              id="hero-search"
-              name="q"
-              type="search"
-              autoComplete="off"
-              placeholder="What travel service do you need?"
-              className="h-11 w-full bg-transparent text-base outline-none placeholder:text-muted-foreground/70"
-            />
-            <Button type="submit" size="lg" className="h-11 shrink-0 rounded-xl px-5">
-              Search
-            </Button>
-          </form>
-
-          <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-sm text-muted-foreground">
-            <span>Popular:</span>
-            {SEARCH_EXAMPLES.map((ex) => (
-              <Link
-                key={ex}
-                href={`/marketplace?q=${encodeURIComponent(ex)}`}
-                className="rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground transition hover:border-primary/40 hover:text-primary"
-              >
-                {ex}
-              </Link>
-            ))}
-          </div>
-
-          {/* Real stats — only data that actually exists */}
-          <div className="mx-auto mt-12 flex max-w-xl flex-wrap items-center justify-center gap-x-10 gap-y-4 text-sm text-muted-foreground">
-            <span>
-              <strong className="block text-2xl font-semibold text-foreground">{formatNumber(serviceCount)}</strong>
-              Travel services live
-            </span>
-            <span>
-              <strong className="block text-2xl font-semibold text-foreground">{formatNumber(verifiedAgents)}</strong>
-              Verified agents
-            </span>
-            <span>
-              <strong className="block text-2xl font-semibold text-foreground">{formatNumber(completedOrders)}</strong>
-              Orders completed
-            </span>
-          </div>
-        </div>
-      </section>
+      {/* Hero — A/B variant chosen by the ttx_hero cookie */}
+      <HomeHero variant={heroVariant} serviceCount={serviceCount} verifiedAgents={verifiedAgents} completedOrders={completedOrders} />
 
       {/* Popular services */}
       <section id="popular" className="mx-auto max-w-7xl px-4 py-14 lg:px-8">

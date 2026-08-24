@@ -60,3 +60,12 @@ export function avatarHue(name: string | null | undefined): number {
   for (let i = 0; i < clean.length; i++) hash = (hash * 31 + clean.charCodeAt(i)) >>> 0
   return hash % 360
 }
+
+// Human label for a real, computed average response time (hours).
+export function formatResponseTime(hours: number | null | undefined): string | null {
+  if (hours === null || hours === undefined || !Number.isFinite(hours) || hours <= 0) return null
+  if (hours < 2) return 'Usually responds within an hour'
+  if (hours < 24) return `Usually responds within ${Math.round(hours)}h`
+  if (hours < 48) return 'Usually responds within a day'
+  return `Usually responds within ${Math.round(hours / 24)} days`
+}

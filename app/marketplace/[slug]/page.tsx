@@ -20,9 +20,9 @@ import { Avatar } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { categoryIcon } from '@/lib/categories'
-import { formatMoney, formatNumber } from '@/lib/format'
+import { formatMoney, formatNumber, formatResponseTime } from '@/lib/format'
 
-type Agency = { name: string; slug: string; verification_status: string; rating: number; city: string | null; completed_orders: number }
+type Agency = { id: string; name: string; slug: string; verification_status: string; rating: number; city: string | null; completed_orders: number }
 
 export default async function ServiceDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
@@ -30,7 +30,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
 
   const { data: service } = await supabase
     .from('services')
-    .select('*, agencies(name, slug, verification_status, rating, city, completed_orders)')
+    .select('*, agencies(id, name, slug, verification_status, rating, city, completed_orders)')
     .eq('slug', slug)
     .is('deleted_at', null)
     .maybeSingle()
@@ -53,6 +53,15 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
     .is('deleted_at', null)
     .order('created_at', { ascending: false })
     .limit(3)
+
+  // Real computed response metrics for this agency.
+  let responseStats: { avgResponseHours: number | null; responseRate: number | null } | null = null
+  if (agency) {
+    const { data: stats } = await supabase.rpc('agency_response_stats', { p_agency_id: agency.id })
+    const s = stats as { avg_response_hours?: number | null; response_rate?: number | null } | null
+    responseStats = { avgResponseHours: s?.avg_response_hours ?? null, responseRate: s?.response_rate ?? null }
+  }
+  const responseLabel = formatResponseTime(responseStats?.avgResponseHours ?? null)
 
   const ctaHref = isInstant ? `/orders/new?service=${service.id}` : `/requests/new?service=${service.id}`
   const ctaLabel = isInstant ? 'Order now' : 'Request a quote'
@@ -195,7 +204,14 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                   {Number(agency.completed_orders) > 0 && (
                     <span className="flex items-center gap-2"><FileText className="size-4 text-primary" /> {formatNumber(agency.completed_orders)} orders completed</span>
                   )}
-                  <span className="flex items-center gap-2"><Timer className="size-4 text-primary" /> Replies within the order conversation</span>
+                  {responseLabel ? (
+                    <span className="flex items-center gap-2"><Timer className="size-4 text-primary" /> {responseLabel}</span>
+                  ) : (
+                    <span className="flex items-center gap-2"><Timer className="size-4 text-primary" /> Replies within the order conversation</span>
+                  )}
+                  {responseStats?.responseRate != null && (
+                    <span className="flex items-center gap-2"><BadgeCheck className="size-4 text-primary" /> Responds to {responseStats.responseRate}% of requests</span>
+                  )}
                 </div>
                 <Link
                   href={`/agencies/${agency.slug}`}

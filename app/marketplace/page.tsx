@@ -41,7 +41,7 @@ export default async function MarketplacePage({ searchParams }: { searchParams: 
 
   let query = supabase
     .from('services')
-    .select('*, agencies(name, slug, verification_status, rating, city)', { count: 'exact' })
+    .select('*, agencies(id, name, slug, verification_status, rating, city)', { count: 'exact' })
     .eq('status', 'published')
     .is('deleted_at', null)
     .range(from, to)
@@ -81,6 +81,23 @@ export default async function MarketplacePage({ searchParams }: { searchParams: 
   const currentPage = Math.min(page, totalPages)
   const sortLabel = SORT_OPTIONS.find((o) => o.value === sort)?.label ?? 'Recommended'
   const categories = Array.from(new Set((categoryRes?.data ?? []).map((c) => c.category as string).filter(Boolean)))
+
+  // Real, computed response metrics for the agencies on this page (one query).
+  const agencyIds = Array.from(
+    new Set(
+      (services ?? []).map((s: ServiceRow) => {
+        const a = Array.isArray(s.agencies) ? s.agencies[0] : s.agencies
+        return a?.id
+      }).filter(Boolean) as string[],
+    ),
+  )
+  const statsMap = new Map<string, { avgResponseHours: number | null; responseRate: number | null }>()
+  if (agencyIds.length > 0) {
+    const { data: stats } = await supabase.rpc('agency_response_stats_batch', { p_agency_ids: agencyIds })
+    for (const row of (stats ?? []) as { agency_id: string; avg_response_hours: number | null; response_rate: number | null }[]) {
+      statsMap.set(row.agency_id, { avgResponseHours: row.avg_response_hours, responseRate: row.response_rate })
+    }
+  }
 
   const controls = { q, category, sort, minPrice: Number.isFinite(min) && min > 0 ? String(min) : '', maxPrice: Number.isFinite(max) && max > 0 ? String(max) : '', verifiedOnly }
 
@@ -128,7 +145,13 @@ export default async function MarketplacePage({ searchParams }: { searchParams: 
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {(services as ServiceRow[]).map((s) => {
                 const agency = Array.isArray(s.agencies) ? s.agencies[0] : s.agencies
-                return <ServiceCard key={s.id} service={{ ...s, agencies: agency as ServiceRow['agencies'] }} />
+                return (
+                  <ServiceCard
+                    key={s.id}
+                    service={{ ...s, agencies: agency as ServiceRow['agencies'] }}
+                    responseStats={agency?.id ? (statsMap.get(agency.id) ?? null) : null}
+                  />
+                )
               })}
             </div>
           )}
@@ -194,7 +217,10 @@ type ServiceRow = {
   base_price: number
   currency: string
   ordering_mode: string | null
-  agencies: { name: string; slug: string; verification_status: string; rating: number; city: string | null } | { name: string; slug: string; verification_status: string; rating: number; city: string | null }[] | null
+  agencies:
+    | { id: string; name: string; slug: string; verification_status: string; rating: number; city: string | null }
+    | { id: string; name: string; slug: string; verification_status: string; rating: number; city: string | null }[]
+    | null
 }
 
 function paramsToQs(params: { q?: string; category?: string; sort?: string; min?: string; max?: string; verified?: string; page?: string }, page: number): string {

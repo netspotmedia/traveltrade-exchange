@@ -5,7 +5,7 @@ import {
   Star,
 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
-import { formatMoney } from '@/lib/format'
+import { formatMoney, formatResponseTime } from '@/lib/format'
 import { categoryIcon } from '@/lib/categories'
 import { cn } from '@/lib/utils'
 
@@ -27,16 +27,19 @@ export interface ServiceCardProps {
     ordering_mode?: string | null
     agencies?: AgencyLike
   }
+  // Real computed response metrics (from agency_response_stats_batch).
+  responseStats?: { avgResponseHours: number | null; responseRate: number | null } | null
   className?: string
 }
 
-export function ServiceCard({ service, className }: ServiceCardProps) {
+export function ServiceCard({ service, responseStats, className }: ServiceCardProps) {
   const agency = Array.isArray(service.agencies) ? service.agencies[0] : service.agencies
   const Icon = categoryIcon(service.category)
   const rating = Number(agency?.rating ?? 0)
   const verified = agency?.verification_status === 'verified'
   const instant = service.ordering_mode === 'instant_order'
   const location = service.location || agency?.city || null
+  const responseLabel = formatResponseTime(responseStats?.avgResponseHours ?? null)
 
   return (
     <Link
@@ -96,6 +99,8 @@ export function ServiceCard({ service, className }: ServiceCardProps) {
             </span>
           )}
         </div>
+
+        {responseLabel && <p className="text-xs text-muted-foreground">{responseLabel}</p>}
 
         <div className="flex items-end justify-between border-t border-border pt-3">
           <div>

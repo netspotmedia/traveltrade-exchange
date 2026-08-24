@@ -47,6 +47,17 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
+  // Homepage A/B: assign a sticky hero variant (a | b) on first visit so the
+  // variant stays consistent for a visitor while we measure conversion.
+  if (pathname === '/' && !request.cookies.get('ttx_hero')) {
+    response.cookies.set('ttx_hero', Math.random() < 0.5 ? 'a' : 'b', {
+      httpOnly: true,
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 24 * 30,
+      path: '/',
+    })
+  }
+
   return response
 }
 
