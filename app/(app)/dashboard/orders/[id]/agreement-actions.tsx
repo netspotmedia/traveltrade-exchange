@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { PenLine } from 'lucide-react'
+import { Alert } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 
 export function AgreementActions({
@@ -21,7 +22,7 @@ export function AgreementActions({
   status: string
 }) {
   const [busy, setBusy] = useState(false)
-  const [message, setMessage] = useState('')
+  const [message, setMessage] = useState<{ kind: 'ok' | 'err'; text: string } | null>(null)
   const router = useRouter()
 
   const mine = isBuyer ? !signedByBuyer : isSeller ? !signedBySeller : false
@@ -29,15 +30,15 @@ export function AgreementActions({
 
   async function sign() {
     setBusy(true)
-    setMessage('')
+    setMessage(null)
     try {
       const r = await fetch(`/api/agreements/${agreementId}/sign`, { method: 'POST' })
       const j = await r.json()
       if (r.ok) {
-        setMessage(fullySigned ? 'Agreement complete.' : 'You signed the agreement.')
+        setMessage({ kind: 'ok', text: fullySigned ? 'Agreement complete.' : 'You signed the agreement.' })
         router.refresh()
       } else {
-        setMessage(j.error || 'Unable to sign')
+        setMessage({ kind: 'err', text: j.error || 'Unable to sign' })
       }
     } finally {
       setBusy(false)
@@ -66,7 +67,7 @@ export function AgreementActions({
         <p className="text-sm text-success-foreground">Agreement signed by both parties. {status === 'active' ? 'Escrow funding is enabled.' : ''}</p>
       )}
 
-      {message && <p className="text-sm text-muted-foreground">{message}</p>}
+      {message && <Alert variant={message.kind === 'ok' ? 'success' : 'error'}>{message.text}</Alert>}
     </div>
   )
 }

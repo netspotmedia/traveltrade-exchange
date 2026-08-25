@@ -1,6 +1,7 @@
 "use client"
 import { useState } from 'react'
 import { AlertTriangle } from 'lucide-react'
+import { Alert } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
@@ -10,13 +11,13 @@ export function WithdrawalForm() {
   const [accountName, setAccountName] = useState('')
   const [accountNumber, setAccountNumber] = useState('')
   const [confirm, setConfirm] = useState(false)
-  const [message, setMessage] = useState('')
+  const [message, setMessage] = useState<{ kind: 'ok' | 'err'; text: string } | null>(null)
   const [busy, setBusy] = useState(false)
 
   async function submit(e: React.FormEvent) {
     e.preventDefault()
     setBusy(true)
-    setMessage('')
+    setMessage(null)
     try {
       const r = await fetch('/api/withdrawals', {
         method: 'POST',
@@ -24,7 +25,7 @@ export function WithdrawalForm() {
         body: JSON.stringify({ amount, bankName, accountName, accountNumber }),
       })
       const j = await r.json()
-      setMessage(r.ok ? 'Withdrawal requested. Funds are held pending admin processing.' : (j.error || 'Unable to request withdrawal'))
+      setMessage(r.ok ? { kind: 'ok', text: 'Withdrawal requested. Funds are held pending admin processing.' } : { kind: 'err', text: j.error || 'Unable to request withdrawal' })
       if (r.ok) {
         setAmount('')
         setBankName('')
@@ -76,7 +77,7 @@ export function WithdrawalForm() {
       <Button type="submit" disabled={busy || !confirm} className="w-full">
         {busy ? 'Requesting…' : 'Request withdrawal'}
       </Button>
-      {message && <p className="text-sm text-muted-foreground">{message}</p>}
+      {message && <Alert variant={message.kind === 'ok' ? 'success' : 'error'}>{message.text}</Alert>}
     </form>
   )
 }

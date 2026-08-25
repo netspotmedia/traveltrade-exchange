@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { Alert } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -91,7 +92,7 @@ export function CmsEditor({
           {busy ? 'Saving…' : 'Save'}
         </Button>
         {message && (
-          <p className={message.kind === 'ok' ? 'text-sm text-success-foreground' : 'text-sm text-destructive'}>{message.text}</p>
+          <Alert variant={message.kind === 'ok' ? 'success' : 'error'}>{message.text}</Alert>
         )}
       </div>
     </form>

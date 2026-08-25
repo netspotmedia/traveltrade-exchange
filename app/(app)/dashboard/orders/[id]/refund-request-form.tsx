@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { Alert } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 
@@ -47,7 +48,7 @@ export function RefundRequestForm({ orderId }: { orderId: string }) {
         <Button disabled={busy} onClick={submit}>
           {busy ? 'Submitting…' : 'Request refund'}
         </Button>
-        {message && <p className={message.kind === 'ok' ? 'text-sm text-success-foreground' : 'text-sm text-destructive'}>{message.text}</p>}
+        {message && <Alert variant={message.kind === 'ok' ? 'success' : 'error'}>{message.text}</Alert>}
       </div>
     </div>
   )

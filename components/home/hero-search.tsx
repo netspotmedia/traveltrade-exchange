@@ -39,7 +39,7 @@ export function HeroSearch({ variant }: { variant: 'a' | 'b' }) {
           onChange={(e) => setQuery(e.target.value)}
           className="h-11 w-full bg-transparent text-base outline-none placeholder:text-muted-foreground/70"
         />
-        <Button type="submit" size="lg" className="h-11 shrink-0 rounded-xl px-5">
+        <Button type="submit" size="lg" className="shrink-0 rounded-xl px-5">
           {variant === 'b' ? 'Find my specialist' : 'Search'}
         </Button>
       </form>

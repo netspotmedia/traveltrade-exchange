@@ -1,6 +1,7 @@
 'use client'
 import { FormEvent, useState } from 'react'
 import { AuthShell } from '@/components/auth/auth-shell'
+import { Alert } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
@@ -40,7 +41,7 @@ export default function ResetPasswordPage() {
     return (
       <AuthShell title="Password updated" subtitle="You can now sign in with your new password.">
         <a href="/auth/login" className="block w-full">
-          <Button size="lg" className="h-12 w-full text-base">
+          <Button size="lg" className="w-full">
             Sign in
           </Button>
         </a>
@@ -68,11 +69,9 @@ export default function ResetPasswordPage() {
           <Input required minLength={8} type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)} placeholder="Re-enter your password" autoComplete="new-password" />
         </label>
         {message && (
-          <p role="alert" className="rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive">
-            {message}
-          </p>
+          <Alert variant="error">{message}</Alert>
         )}
-        <Button type="submit" disabled={busy} size="lg" className="h-12 text-base">
+        <Button type="submit" disabled={busy} size="lg">
           {busy ? 'Updating…' : 'Update password'}
         </Button>
       </form>

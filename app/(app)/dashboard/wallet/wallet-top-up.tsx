@@ -1,6 +1,7 @@
 "use client"
 import { useState } from 'react'
 import { ShieldCheck } from 'lucide-react'
+import { Alert } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
@@ -53,7 +54,7 @@ export function WalletTopUp() {
         <ShieldCheck className="mt-0.5 size-3.5 shrink-0" aria-hidden="true" />
         You'll be redirected to a secure checkout to complete your payment. Funds appear in your balance automatically.
       </p>
-      {message && <p className="text-sm text-muted-foreground">{message}</p>}
+      {message && <Alert variant={message.startsWith('Unable') || message.includes('not available') ? 'error' : 'info'}>{message}</Alert>}
     </div>
   )
 }

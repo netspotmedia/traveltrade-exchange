@@ -1,16 +1,17 @@
 "use client"
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { Alert } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 
 export function SubmitServiceAction({ serviceId }: { serviceId: string }) {
   const [busy, setBusy] = useState(false)
-  const [message, setMessage] = useState('')
+  const [message, setMessage] = useState<{ kind: 'ok' | 'err'; text: string } | null>(null)
   const router = useRouter()
 
   async function submit() {
     setBusy(true)
-    setMessage('Submitting…')
+    setMessage(null)
     try {
       const r = await fetch('/api/services/submit', {
         method: 'POST',
@@ -18,7 +19,7 @@ export function SubmitServiceAction({ serviceId }: { serviceId: string }) {
         body: JSON.stringify({ serviceId }),
       })
       const j = await r.json()
-      setMessage(r.ok ? 'Submitted for approval.' : (j.error || 'Action failed'))
+      setMessage(r.ok ? { kind: 'ok', text: 'Submitted for approval.' } : { kind: 'err', text: j.error || 'Action failed' })
       if (r.ok) router.refresh()
     } finally {
       setBusy(false)
@@ -30,7 +31,7 @@ export function SubmitServiceAction({ serviceId }: { serviceId: string }) {
       <Button size="sm" disabled={busy} onClick={submit}>
         Submit for approval
       </Button>
-      {message && <p className="text-xs text-muted-foreground">{message}</p>}
+      {message && <Alert variant={message.kind === 'ok' ? 'success' : 'error'}>{message.text}</Alert>}
     </div>
   )
 }

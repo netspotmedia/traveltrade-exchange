@@ -1,18 +1,19 @@
 "use client"
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { Alert } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 
 export function ServiceReviewActions({ serviceId }: { serviceId: string }) {
   const [note, setNote] = useState('')
   const [busy, setBusy] = useState<string | null>(null)
-  const [message, setMessage] = useState('')
+  const [message, setMessage] = useState<{ kind: 'ok' | 'err'; text: string } | null>(null)
   const router = useRouter()
 
   async function decide(decision: 'approved' | 'rejected') {
     setBusy(decision)
-    setMessage('Processing…')
+    setMessage(null)
     try {
       const r = await fetch('/api/admin/services/review', {
         method: 'POST',
@@ -20,7 +21,7 @@ export function ServiceReviewActions({ serviceId }: { serviceId: string }) {
         body: JSON.stringify({ serviceId, decision, note }),
       })
       const j = await r.json()
-      setMessage(r.ok ? 'Review recorded.' : (j.error || 'Action failed'))
+      setMessage(r.ok ? { kind: 'ok', text: 'Review recorded.' } : { kind: 'err', text: j.error || 'Action failed' })
       if (r.ok) router.refresh()
     } finally {
       setBusy(null)
@@ -44,7 +45,7 @@ export function ServiceReviewActions({ serviceId }: { serviceId: string }) {
           Reject
         </Button>
       </div>
-      {message && <p className="text-sm text-muted-foreground">{message}</p>}
+      {message && <Alert variant={message.kind === 'ok' ? 'success' : 'error'}>{message.text}</Alert>}
     </div>
   )
 }

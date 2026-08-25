@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { EmptyState } from '@/components/ui/empty-state'
 import { Badge } from '@/components/ui/badge'
 
 const PER_PAGE = 50
@@ -54,7 +55,7 @@ export default async function AdminUsersPage({ searchParams }: { searchParams: P
         </div>
 
         {list.length === 0 ? (
-          <p className="rounded-2xl border border-dashed border-border bg-background/60 px-4 py-12 text-center text-sm text-muted-foreground">No users yet.</p>
+          <EmptyState title="No users yet" description="Registered users will appear here as accounts are created." />
         ) : (
           <>
             <div className="overflow-x-auto rounded-2xl border border-border bg-card shadow-card">

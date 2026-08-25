@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 
-const PROTECTED = ['/dashboard', '/wallet', '/orders', '/messages', '/admin', '/agent', '/onboarding']
+const PROTECTED = ['/dashboard', '/orders', '/messages', '/admin', '/agent', '/onboarding', '/requests', '/settings']
 const AUTH_ONLY = ['/auth/login', '/auth/sign-up', '/auth/forgot-password']
 
 function pathStartsWith(pathname: string, prefixes: string[]) {
@@ -64,8 +64,10 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     '/dashboard/:path*',
-    '/wallet/:path*',
+    '/dashboard/wallet/:path*',
     '/orders/:path*',
+    '/requests/:path*',
+    '/settings/:path*',
     '/messages/:path*',
     '/admin/:path*',
     '/agent/:path*',

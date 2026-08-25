@@ -1,8 +1,9 @@
 import Link from 'next/link'
 import type { Metadata } from 'next'
-import { BadgeCheck, MapPin, Star } from 'lucide-react'
+import { BadgeCheck, MapPin, Star, UserRound } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { Avatar } from '@/components/ui/avatar'
+import { EmptyState } from '@/components/ui/empty-state'
 import { cn } from '@/lib/utils'
 
 export const metadata: Metadata = {
@@ -86,9 +87,18 @@ export default async function AgentsPage({ searchParams }: { searchParams: Promi
 
         <div className="mt-10">
           {list.length === 0 ? (
-            <p className="rounded-2xl border border-dashed border-border bg-background/60 px-4 py-12 text-center text-sm text-muted-foreground">
-              {country ? `No verified agents in ${country} yet.` : 'We are onboarding our first verified agents. Check back soon.'}
-            </p>
+            <EmptyState
+              icon={UserRound}
+              title={country ? `No verified agents in ${country} yet` : 'Agents are joining soon'}
+              description={country ? 'Try a different country or browse all agents.' : 'We are onboarding our first verified agents. Check back soon.'}
+              action={
+                country ? (
+                  <Link href="/agents" className="inline-flex rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-medium shadow-card transition hover:bg-muted">
+                    View all agents
+                  </Link>
+                ) : undefined
+              }
+            />
           ) : (
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {list.map((a) => {

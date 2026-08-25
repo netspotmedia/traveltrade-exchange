@@ -297,7 +297,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                 {isInstant ? 'Order now and secure your booking.' : 'Request a quote — the final plan is agreed before you pay.'}
               </p>
               <Link href={ctaHref} className="mt-5 block">
-                <Button size="lg" className="w-full h-12 text-base">
+                <Button size="lg" className="w-full">
                   {ctaLabel}
                 </Button>
               </Link>

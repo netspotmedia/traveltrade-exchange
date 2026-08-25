@@ -307,6 +307,7 @@ export default async function DashboardPage() {
               { href: '/marketplace', label: 'Find services', detail: 'Browse verified travel professionals', icon: BriefcaseBusiness },
               { href: '/orders', label: 'Orders', detail: 'Track your agreements', icon: FileText },
               { href: '/messages', label: 'Messages', detail: 'Chat with your travel partners', icon: MessageSquareText },
+              { href: '/dashboard/wallet', label: 'Wallet', detail: 'Add funds for secure payment', icon: WalletCards },
               ...(isSeller
                 ? [
                     { href: '/agent/services', label: 'Sell services', detail: 'Manage your services', icon: Store },

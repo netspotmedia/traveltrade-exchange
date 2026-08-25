@@ -1,5 +1,7 @@
 import { redirect } from 'next/navigation'
+import { ShieldCheck } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
+import { EmptyState } from '@/components/ui/empty-state'
 import { StatusBadge } from '@/components/ui/status-badge'
 import { VerificationReviewActions } from './verification-review-actions'
 
@@ -45,9 +47,11 @@ export default async function AdminVerificationPage() {
         </div>
 
         {list.length === 0 ? (
-          <p className="rounded-2xl border border-dashed border-border bg-background/60 px-4 py-12 text-center text-sm text-muted-foreground">
-            No pending verification submissions.
-          </p>
+          <EmptyState
+            icon={ShieldCheck}
+            title="No pending submissions"
+            description="Agent verification submissions will appear here for review."
+          />
         ) : (
           <div className="flex flex-col gap-4">
             {list.map((sub) => {

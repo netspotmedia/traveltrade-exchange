@@ -30,6 +30,7 @@ export const appNav: NavItem[] = [
   { label: 'Messages', href: '/messages', icon: MessageSquareText },
   { label: 'Notifications', href: '/dashboard/notifications', icon: Bell },
   { label: 'Orders', href: '/orders', icon: ShoppingBag },
+  { label: 'Wallet', href: '/dashboard/wallet', icon: WalletCards, roles: ['buyer'] },
   { label: 'My Services', href: '/agent/services', icon: Store, roles: ['seller'] },
   { label: 'Quote Requests', href: '/agent/requests', icon: Inbox, roles: ['seller'] },
   { label: 'Proposals', href: '/agent/proposals', icon: FileText, roles: ['seller'] },

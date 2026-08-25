@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { FileUp } from 'lucide-react'
+import { Alert } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
@@ -88,7 +89,7 @@ export function VerificationSubmitForm({ pendingTypes }: { pendingTypes: Set<str
         <Button type="submit" disabled={busy || locked || !file}>
           {busy ? 'Submitting…' : 'Submit for review'}
         </Button>
-        {message && <p className={message.kind === 'ok' ? 'text-sm text-success-foreground' : 'text-sm text-destructive'}>{message.text}</p>}
+        {message && <Alert variant={message.kind === 'ok' ? 'success' : 'error'}>{message.text}</Alert>}
       </div>
     </form>
   )

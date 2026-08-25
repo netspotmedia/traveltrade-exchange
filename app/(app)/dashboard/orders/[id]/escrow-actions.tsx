@@ -1,9 +1,15 @@
 "use client"
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { Lock } from 'lucide-react'
+import { Alert } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 
 type MilestoneRow = { id: string; title: string; amount: number; status: string }
+
+export type SignatureState =
+  | { signed: boolean; hint: string | null }
+  | null
 
 export function EscrowActions({
   orderId,
@@ -11,12 +17,15 @@ export function EscrowActions({
   milestones,
   isBuyer,
   isSeller,
+  signatureState,
 }: {
   orderId: string
   orderStatus: string
   milestones: MilestoneRow[]
   isBuyer: boolean
   isSeller: boolean
+  /** Agreement signature state; null when no agreement exists (legacy flow). */
+  signatureState?: SignatureState
 }) {
   const [message, setMessage] = useState('')
   const [busy, setBusy] = useState<string | null>(null)
@@ -53,19 +62,31 @@ export function EscrowActions({
   }
 
   const terminal = ['completed', 'cancelled', 'disputed'].includes(orderStatus)
-  const canFund = isBuyer && orderStatus === 'proposed'
+  // If an agreement exists but both parties haven't signed, funding is not
+  // available yet — we explain why instead of letting the button fail.
+  const agreementLocked = Boolean(signatureState && !signatureState.signed)
+  const canFund = isBuyer && orderStatus === 'proposed' && !agreementLocked
   const cardTotal = milestones.reduce((sum, m) => sum + Number(m.amount), 0)
 
   return (
     <div className="mt-8 flex flex-col gap-5">
-      {canFund && (
-        <div className="flex flex-wrap gap-3">
-          <Button disabled={busy !== null} onClick={() => act('fund')}>
-            Fund escrow from wallet
-          </Button>
-          <Button disabled={busy !== null} variant="outline" onClick={() => payByCard()}>
-            Pay by card (₦{cardTotal.toLocaleString()})
-          </Button>
+      {isBuyer && orderStatus === 'proposed' && (
+        <div className="flex flex-col gap-3">
+          {agreementLocked ? (
+            <div className="flex items-start gap-2 rounded-2xl bg-brand-soft px-4 py-3 text-sm text-brand">
+              <Lock className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
+              <span>{signatureState?.hint ?? 'Payment becomes available after both parties sign the agreement.'}</span>
+            </div>
+          ) : (
+            <div className="flex flex-wrap gap-3">
+              <Button disabled={busy !== null} onClick={() => act('fund')}>
+                Secure payment
+              </Button>
+              <Button disabled={busy !== null} variant="outline" onClick={() => payByCard()}>
+                Pay by card (₦{cardTotal.toLocaleString()})
+              </Button>
+            </div>
+          )}
         </div>
       )}
 
@@ -106,7 +127,7 @@ export function EscrowActions({
         </Button>
       )}
 
-      {message && <p className="text-sm text-muted-foreground">{message}</p>}
+      {message && <Alert variant={message.startsWith('Done') || message.startsWith('Net') ? 'success' : 'error'}>{message}</Alert>}
     </div>
   )
 }

@@ -1,6 +1,8 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
+import { Mail } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
+import { EmptyState } from '@/components/ui/empty-state'
 import { cn } from '@/lib/utils'
 
 const STATUSES = ['sent', 'failed', 'retrying', 'queued', 'sending']
@@ -79,9 +81,11 @@ export default async function AdminEmailLogsPage({ searchParams }: { searchParam
         </div>
 
         {logs.length === 0 ? (
-          <p className="rounded-2xl border border-dashed border-border bg-background/60 px-4 py-12 text-center text-sm text-muted-foreground">
-            {filter ? `No ${filter} emails.` : 'No email activity yet.'}
-          </p>
+          <EmptyState
+            icon={Mail}
+            title={filter ? `No ${filter} emails` : 'No email activity yet'}
+            description={filter ? 'Try a different status.' : 'Transactional emails will appear here once they are sent.'}
+          />
         ) : (
           <div className="overflow-x-auto rounded-2xl border border-border bg-card shadow-card">
             <table className="w-full text-sm">

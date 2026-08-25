@@ -101,6 +101,24 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
     .limit(1)
     .maybeSingle()
 
+  // Escrow funding is only available once both parties have signed the
+  // agreement. We surface this in human language instead of letting the
+  // funding action fail after the click.
+  const buyerSigned = Boolean(agreement?.signed_by_buyer_at)
+  const sellerSigned = Boolean(agreement?.signed_by_seller_at)
+  const signatureState = agreement
+    ? buyerSigned && sellerSigned
+      ? { signed: true, hint: null }
+      : {
+          signed: false,
+          hint: buyerSigned
+            ? 'Waiting for the other party to sign the agreement. Payment becomes available after both parties sign.'
+            : sellerSigned
+              ? 'Sign the agreement to continue. Payment becomes available after both parties sign.'
+              : 'Payment becomes available after both parties sign the agreement.',
+        }
+    : null
+
   return (
     <div className="min-h-screen bg-background">
       <main id="main" className="mx-auto max-w-4xl px-4 py-8 pb-24 lg:px-8">
@@ -222,7 +240,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
           )}
           {!terminal && order.status !== 'disputed' && (
             <div className="mt-5">
-              <EscrowActions orderId={id} orderStatus={order.status} milestones={milestones} isBuyer={isBuyer} isSeller={isSeller} />
+              <EscrowActions orderId={id} orderStatus={order.status} milestones={milestones} isBuyer={isBuyer} isSeller={isSeller} signatureState={signatureState} />
             </div>
           )}
         </section>

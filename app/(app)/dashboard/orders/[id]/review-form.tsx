@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Star } from 'lucide-react'
+import { Alert } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { cn } from '@/lib/utils'
@@ -10,15 +11,15 @@ export function ReviewForm({ orderId, hasReview }: { orderId: string; hasReview:
   const [rating, setRating] = useState(0)
   const [hover, setHover] = useState(0)
   const [comment, setComment] = useState('')
-  const [message, setMessage] = useState('')
+  const [message, setMessage] = useState<{ kind: 'ok' | 'err'; text: string } | null>(null)
   const [busy, setBusy] = useState(false)
   const router = useRouter()
 
   async function submit(e: React.FormEvent) {
     e.preventDefault()
-    if (rating < 1) return setMessage('Please pick a star rating.')
+    if (rating < 1) return setMessage({ kind: 'err', text: 'Please pick a star rating.' })
     setBusy(true)
-    setMessage('')
+    setMessage(null)
     try {
       const r = await fetch('/api/reviews', {
         method: 'POST',
@@ -26,8 +27,8 @@ export function ReviewForm({ orderId, hasReview }: { orderId: string; hasReview:
         body: JSON.stringify({ orderId, rating, comment }),
       })
       const j = await r.json()
-      if (!r.ok) return setMessage(j.error || 'Unable to submit review')
-      setMessage('Thanks! Your review has been posted.')
+      if (!r.ok) return setMessage({ kind: 'err', text: j.error || 'Unable to submit review' })
+      setMessage({ kind: 'ok', text: 'Thanks! Your review has been posted.' })
       router.refresh()
     } finally {
       setBusy(false)
@@ -78,9 +79,7 @@ export function ReviewForm({ orderId, hasReview }: { orderId: string; hasReview:
         </label>
 
         {message && (
-          <p role="status" className={message.startsWith('Thanks') ? 'rounded-xl bg-success/30 px-4 py-3 text-sm text-success-foreground' : 'rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive'}>
-            {message}
-          </p>
+          <Alert variant={message.kind === 'ok' ? 'success' : 'error'}>{message.text}</Alert>
         )}
 
         <Button type="submit" disabled={busy || rating < 1} className="w-fit">

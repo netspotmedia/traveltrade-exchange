@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { BadgeCheck } from 'lucide-react'
+import { Alert } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 
@@ -15,12 +16,12 @@ export function KybReviewActions({ agencyId }: { agencyId: string }) {
   const [note, setNote] = useState('')
   const [credentials, setCredentials] = useState<string[]>([])
   const [busy, setBusy] = useState<string | null>(null)
-  const [message, setMessage] = useState('')
+  const [message, setMessage] = useState<{ kind: 'ok' | 'err'; text: string } | null>(null)
   const router = useRouter()
 
   async function decide(decision: 'approved' | 'rejected') {
     setBusy(decision)
-    setMessage('Processing…')
+    setMessage(null)
     try {
       const r = await fetch('/api/admin/kyb/review', {
         method: 'POST',
@@ -28,7 +29,7 @@ export function KybReviewActions({ agencyId }: { agencyId: string }) {
         body: JSON.stringify({ agencyId, decision, note, credentials }),
       })
       const j = await r.json()
-      setMessage(r.ok ? 'Review recorded.' : (j.error || 'Action failed'))
+      setMessage(r.ok ? { kind: 'ok', text: 'Review recorded.' } : { kind: 'err', text: j.error || 'Action failed' })
       if (r.ok) router.refresh()
     } finally {
       setBusy(null)
@@ -76,7 +77,7 @@ export function KybReviewActions({ agencyId }: { agencyId: string }) {
           Reject
         </Button>
       </div>
-      {message && <p className="text-sm text-muted-foreground">{message}</p>}
+      {message && <Alert variant={message.kind === 'ok' ? 'success' : 'error'}>{message.text}</Alert>}
     </div>
   )
 }

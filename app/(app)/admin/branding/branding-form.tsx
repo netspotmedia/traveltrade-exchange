@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { Alert } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
@@ -55,7 +56,7 @@ export function BrandingForm({ assetKey, current }: { assetKey: string; current:
         <Button type="submit" disabled={busy}>
           {busy ? 'Saving…' : 'Save'}
         </Button>
-        {message && <p className={message.kind === 'ok' ? 'text-sm text-success-foreground' : 'text-sm text-destructive'}>{message.text}</p>}
+        {message && <Alert variant={message.kind === 'ok' ? 'success' : 'error'}>{message.text}</Alert>}
       </div>
     </form>
   )

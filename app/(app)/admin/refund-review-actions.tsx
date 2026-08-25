@@ -2,18 +2,19 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { Alert } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 
 export function RefundReviewActions({ refundId }: { refundId: string }) {
   const [rejectionReason, setRejectionReason] = useState('')
   const [busy, setBusy] = useState<string | null>(null)
-  const [message, setMessage] = useState('')
+  const [message, setMessage] = useState<{ kind: 'ok' | 'err'; text: string } | null>(null)
   const router = useRouter()
 
   async function decide(decision: 'approve' | 'reject') {
     setBusy(decision)
-    setMessage('Processing…')
+    setMessage(null)
     try {
       const r = await fetch('/api/admin/refunds/review', {
         method: 'POST',
@@ -21,7 +22,7 @@ export function RefundReviewActions({ refundId }: { refundId: string }) {
         body: JSON.stringify({ refundId, decision, rejectionReason }),
       })
       const j = await r.json()
-      setMessage(r.ok ? 'Refund processed.' : (j.error || 'Action failed'))
+      setMessage(r.ok ? { kind: 'ok', text: 'Refund processed.' } : { kind: 'err', text: j.error || 'Action failed' })
       if (r.ok) router.refresh()
     } finally {
       setBusy(null)
@@ -45,7 +46,7 @@ export function RefundReviewActions({ refundId }: { refundId: string }) {
           Decline
         </Button>
       </div>
-      {message && <p className="text-sm text-muted-foreground">{message}</p>}
+      {message && <Alert variant={message.kind === 'ok' ? 'success' : 'error'}>{message.text}</Alert>}
     </div>
   )
 }

@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Lock } from 'lucide-react'
+import { Alert } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
@@ -54,12 +55,10 @@ export default function OrderForm({ serviceId, agencyId }: { serviceId: string |
       </div>
 
       {message && (
-        <p role="alert" className="rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive">
-          {message}
-        </p>
+        <Alert variant="error">{message}</Alert>
       )}
 
-      <Button type="submit" disabled={busy} size="lg" className="h-12 text-base">
+      <Button type="submit" disabled={busy} size="lg">
         {busy ? 'Creating order…' : 'Create protected order'}
       </Button>
     </form>

@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { ImagePlus } from 'lucide-react'
+import { Alert } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -149,9 +150,7 @@ export function EditServiceForm({ service }: EditServiceFormProps) {
       </label>
 
       {message && (
-        <p role="status" className={message === 'Service updated.' || message === 'Image uploaded.' ? 'rounded-xl bg-success/30 px-4 py-3 text-sm text-success-foreground' : 'rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive'}>
-          {message}
-        </p>
+        <Alert variant={message === 'Service updated.' || message === 'Image uploaded.' ? 'success' : 'error'}>{message}</Alert>
       )}
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">

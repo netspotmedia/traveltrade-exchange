@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Plus, X } from 'lucide-react'
+import { Alert } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -22,7 +23,7 @@ export function ProposalPanel({ orderId, isBuyer, isSeller, proposals }: { order
   const [timeline, setTimeline] = useState('')
   const [note, setNote] = useState('')
   const [milestones, setMilestones] = useState([{ title: '', amount: '' }])
-  const [message, setMessage] = useState('')
+  const [message, setMessage] = useState<{ kind: 'ok' | 'err'; text: string } | null>(null)
   const [busy, setBusy] = useState<string | null>(null)
   const router = useRouter()
 
@@ -31,14 +32,14 @@ export function ProposalPanel({ orderId, isBuyer, isSeller, proposals }: { order
   async function post(path: string, body: Record<string, unknown>) {
     const r = await fetch(path, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) })
     const j = await r.json()
-    setMessage(r.ok ? (j.status ? `Proposal ${j.status}.` : 'Saved.') : (j.error || 'Action failed'))
+    setMessage(r.ok ? { kind: 'ok', text: j.status ? `Proposal ${j.status}.` : 'Saved.' } : { kind: 'err', text: j.error || 'Action failed' })
     if (r.ok) router.refresh()
     return r.ok
   }
 
   async function submitProposal(parentId?: string) {
     setBusy('submit')
-    setMessage('Submitting…')
+    setMessage(null)
     const parsed = milestones.map((m) => ({ title: m.title.trim(), amount: Number(m.amount) }))
     await post('/api/proposals', { orderId, feeAmount: Number(fee), timelineDays: Number(timeline), note, milestones: parsed, parentProposalId: parentId ?? null })
     setBusy(null)
@@ -152,7 +153,7 @@ export function ProposalPanel({ orderId, isBuyer, isSeller, proposals }: { order
           </div>
         )}
 
-        {message && <p className="mt-3 text-sm text-muted-foreground">{message}</p>}
+        {message && <Alert variant={message.kind === 'ok' ? 'success' : 'error'}>{message.text}</Alert>}
       </div>
     </section>
   )

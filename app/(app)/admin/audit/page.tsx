@@ -1,5 +1,7 @@
 import { redirect } from 'next/navigation'
+import { ScrollText } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
+import { EmptyState } from '@/components/ui/empty-state'
 
 type AuditRow = {
   id: string
@@ -55,9 +57,11 @@ export default async function AdminAuditPage() {
         </div>
 
         {error || logs.length === 0 ? (
-          <p className="rounded-2xl border border-dashed border-border bg-background/60 px-4 py-12 text-center text-sm text-muted-foreground">
-            {error ? 'Audit log unavailable.' : 'No audit activity recorded yet.'}
-          </p>
+          <EmptyState
+            icon={ScrollText}
+            title={error ? 'Audit log unavailable' : 'No audit activity yet'}
+            description={error ? 'Could not load the audit trail.' : 'Admin actions and platform changes will appear here.'}
+          />
         ) : (
           <div className="rounded-2xl border border-border bg-card shadow-card">
             <ul className="divide-y divide-border">

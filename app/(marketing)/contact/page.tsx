@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Mail, MapPin, Clock } from 'lucide-react'
 import { getCmsPage } from '@/lib/cms'
+import { ContactForm } from './contact-form'
 
 export const metadata: Metadata = {
   title: 'Contact',
@@ -54,29 +55,7 @@ export default async function ContactPage() {
 
           <div>
             <h2 className="text-lg font-semibold">Send a message</h2>
-            <form
-              className="mt-4 flex flex-col gap-4 rounded-2xl border border-border bg-card p-6 shadow-card"
-              action="mailto:support@traveltradeexchange.com"
-              method="post"
-              encType="text/plain"
-            >
-              <label className="flex flex-col gap-1.5 text-sm font-medium">
-                Name
-                <input required name="name" placeholder="Your name" className="h-11 rounded-xl border border-input bg-background px-4 text-sm outline-none transition focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/20" />
-              </label>
-              <label className="flex flex-col gap-1.5 text-sm font-medium">
-                Email
-                <input required type="email" name="email" placeholder="you@example.com" className="h-11 rounded-xl border border-input bg-background px-4 text-sm outline-none transition focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/20" />
-              </label>
-              <label className="flex flex-col gap-1.5 text-sm font-medium">
-                Message
-                <textarea required name="message" rows={5} placeholder="Tell us how we can help…" className="resize-none rounded-xl border border-input bg-background px-4 py-3 text-sm outline-none transition focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/20" />
-              </label>
-              <button type="submit" className="inline-flex h-12 items-center justify-center rounded-xl bg-primary px-6 text-base font-semibold text-primary-foreground shadow-card transition hover:opacity-90">
-                Send message
-              </button>
-              <p className="text-center text-xs text-muted-foreground">This opens your email app with the message pre-filled.</p>
-            </form>
+            <ContactForm />
           </div>
         </div>
       </main>

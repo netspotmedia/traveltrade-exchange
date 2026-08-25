@@ -1,6 +1,7 @@
 "use client"
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { Alert } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 
@@ -48,12 +49,10 @@ export function RequestForm({ serviceId }: { serviceId: string }) {
       </label>
 
       {message && (
-        <p role="alert" className="rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive">
-          {message}
-        </p>
+        <Alert variant="error">{message}</Alert>
       )}
 
-      <Button type="submit" disabled={busy} size="lg" className="h-12 text-base">
+      <Button type="submit" disabled={busy} size="lg">
         {busy ? 'Submitting…' : 'Request a quote'}
       </Button>
       <p className="text-center text-xs text-muted-foreground">Free to request. You only pay when you agree on a plan.</p>

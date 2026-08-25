@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import {
   ArrowLeft,
   BadgeCheck,
+  Compass,
   Handshake,
   Lock,
   MapPin,
@@ -12,6 +13,7 @@ import {
 import { createClient } from '@/lib/supabase/server'
 import { ServiceCard } from '@/components/service-card'
 import { Avatar } from '@/components/ui/avatar'
+import { EmptyState } from '@/components/ui/empty-state'
 import { StatusBadge } from '@/components/ui/status-badge'
 import { Button } from '@/components/ui/button'
 import { VerificationBadges } from '@/components/ui/verification-badges'
@@ -162,9 +164,11 @@ export default async function AgentProfilePage({ params }: { params: Promise<{ s
 
           <div className="mt-6">
             {list.length === 0 ? (
-              <p className="rounded-2xl border border-dashed border-border bg-background/60 px-4 py-10 text-center text-sm text-muted-foreground">
-                {verified ? 'No published services yet.' : 'This agent is finishing verification and will add services soon.'}
-              </p>
+              <EmptyState
+                icon={Compass}
+                title="No published services yet"
+                description={verified ? 'This agent will add services soon.' : 'This agent is finishing verification and will add services soon.'}
+              />
             ) : (
               <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {list.map((s) => {

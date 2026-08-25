@@ -1,6 +1,7 @@
 'use client'
 import { FormEvent, useState } from 'react'
 import { AuthShell } from '@/components/auth/auth-shell'
+import { Alert } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
@@ -46,11 +47,9 @@ export default function ForgotPasswordPage() {
           <Input required type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" autoComplete="email" />
         </label>
         {message && (
-          <p role="status" className={message.startsWith('If that email') ? 'rounded-xl bg-success/30 px-4 py-3 text-sm text-success-foreground' : 'rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive'}>
-            {message}
-          </p>
+          <Alert variant={message.startsWith('If that email') ? 'success' : 'error'}>{message}</Alert>
         )}
-        <Button type="submit" disabled={busy} size="lg" className="h-12 text-base">
+        <Button type="submit" disabled={busy} size="lg">
           {busy ? 'Sending…' : 'Send reset link'}
         </Button>
       </form>

@@ -199,7 +199,7 @@ export default async function MarketplacePage({ searchParams }: { searchParams: 
                 <ChevronLeft className="size-4" /> Previous
               </span>
             )}
-            <span className="text-sm text-muted-foreground">
+            <span className="text-sm text-muted-foreground" aria-current="page">
               Page <strong className="text-foreground">{currentPage}</strong> of {totalPages}
             </span>
             {currentPage < totalPages ? (

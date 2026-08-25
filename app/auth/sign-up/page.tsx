@@ -2,6 +2,7 @@
 import { FormEvent, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { AuthShell } from '@/components/auth/auth-shell'
+import { Alert } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
@@ -58,11 +59,9 @@ export default function SignUpPage() {
           <Input required minLength={8} type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="At least 8 characters" autoComplete="new-password" />
         </label>
         {message && (
-          <p role="status" className={message.startsWith('Check') ? 'rounded-xl bg-success/30 px-4 py-3 text-sm text-success-foreground' : 'rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive'}>
-            {message}
-          </p>
+          <Alert variant={message.startsWith('Check') ? 'success' : 'error'}>{message}</Alert>
         )}
-        <Button type="submit" disabled={busy} size="lg" className="h-12 text-base">
+        <Button type="submit" disabled={busy} size="lg">
           {busy ? 'Creating account…' : 'Create account'}
         </Button>
         <p className="text-center text-xs text-muted-foreground">By continuing you agree to use TravelTrade Exchange for legitimate travel services.</p>

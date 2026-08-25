@@ -2,6 +2,7 @@
 import { FormEvent, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { AuthShell } from '@/components/auth/auth-shell'
+import { Alert } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
@@ -54,11 +55,9 @@ export default function LoginPage() {
           <Input required type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" autoComplete="current-password" />
         </label>
         {message && (
-          <p role="alert" className="rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive">
-            {message}
-          </p>
+          <Alert variant="error">{message}</Alert>
         )}
-        <Button type="submit" disabled={busy} size="lg" className="h-12 text-base">
+        <Button type="submit" disabled={busy} size="lg">
           {busy ? 'Signing in…' : 'Sign in'}
         </Button>
       </form>

@@ -20,10 +20,11 @@ export default async function AppShell({ children }: { children: React.ReactNode
 
   if (!user) redirect('/auth/login')
 
-  const [profileRes, agencyRes, notifRes] = await Promise.all([
+  const [profileRes, agencyRes, notifRes, boughtOrdersRes] = await Promise.all([
     supabase.from('profiles').select('role, full_name').eq('id', user.id).maybeSingle(),
     supabase.from('agencies').select('id').eq('owner_id', user.id).is('deleted_at', null).maybeSingle(),
     supabase.from('notifications').select('id', { count: 'exact', head: true }).eq('user_id', user.id).is('read_at', null),
+    supabase.from('orders').select('id').eq('buyer_id', user.id).is('deleted_at', null),
   ])
 
   const profileRole = (profileRes.data?.role as string | null) ?? null
@@ -31,19 +32,23 @@ export default async function AppShell({ children }: { children: React.ReactNode
   const role = resolveRole(profileRole, hasAgency)
   const unreadNotifications = notifRes.count ?? 0
 
-  // Unread message count scoped to the user's own orders (buyer or owned agency).
-  let unreadMessages = 0
+  // Unread message count scoped to the user's own orders. For agents, also
+  // fetch the orders they sell for — both batches run in parallel.
   const agencyId = (agencyRes.data?.id as string | null) ?? null
-  const ownOrderQuery = agencyId
-    ? supabase.from('orders').select('id').or(`buyer_id.eq.${user.id},agency_id.eq.${agencyId}`).is('deleted_at', null)
-    : supabase.from('orders').select('id').eq('buyer_id', user.id).is('deleted_at', null)
-  const { data: ownOrders } = await ownOrderQuery
-  const orderIds = (ownOrders ?? []).map((o) => o.id as string).filter(Boolean)
-  if (orderIds.length > 0) {
+  const soldOrdersRes = agencyId
+    ? await supabase.from('orders').select('id').eq('agency_id', agencyId).is('deleted_at', null)
+    : { data: [] as { id: string }[] }
+
+  const orderIds = new Set<string>()
+  for (const o of (boughtOrdersRes.data ?? []) as { id: string }[]) orderIds.add(o.id)
+  for (const o of (soldOrdersRes.data ?? []) as { id: string }[]) orderIds.add(o.id)
+
+  let unreadMessages = 0
+  if (orderIds.size > 0) {
     const { count } = await supabase
       .from('order_messages')
       .select('id', { count: 'exact', head: true })
-      .in('order_id', orderIds)
+      .in('order_id', Array.from(orderIds))
       .neq('sender_id', user.id)
       .is('read_at', null)
     unreadMessages = count ?? 0
