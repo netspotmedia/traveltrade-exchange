@@ -141,13 +141,12 @@ export default async function DashboardPage() {
     <div className="min-h-screen bg-background">
       <main id="main" className="mx-auto max-w-6xl px-4 py-8 pb-24 lg:px-8">
         {/* Ambient depth behind the header */}
-        <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-64 bg-[radial-gradient(60%_100%_at_50%_-10%,var(--brand-soft),transparent)]" aria-hidden="true" />
+        <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-72 bg-[radial-gradient(55%_100%_at_50%_-10%,var(--brand-soft),transparent)]" aria-hidden="true" />
 
         <Reveal>
           <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end">
             <div>
-              <p className="font-eyebrow text-primary">Dashboard</p>
-              <h1 className="font-display mt-3 text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
+              <h1 className="font-display text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
                 {firstName ? `Welcome back, ${firstName}.` : 'Welcome back.'}
               </h1>
               <p className="mt-2 text-muted-foreground">
@@ -156,9 +155,10 @@ export default async function DashboardPage() {
             </div>
             <Link
               href={isSeller ? '/agent/services/new' : '/marketplace'}
-              className="inline-flex w-fit items-center gap-1.5 rounded-full bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:opacity-90 active:scale-[0.98]"
+              className="group inline-flex w-fit items-center gap-1.5 rounded-full bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:opacity-90 active:scale-[0.98]"
             >
-              {isSeller ? 'New service' : 'Find a service'} <ArrowRight className="size-4" />
+              {isSeller ? 'New service' : 'Find a service'}
+              <ArrowRight className="size-4 transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true" />
             </Link>
           </div>
         </Reveal>
@@ -174,7 +174,7 @@ export default async function DashboardPage() {
             </Reveal>
           )}
           <Reveal delay={isSeller ? 120 : 60}>
-            <KpiCard label="Held securely" value={formatMoney(wallet?.escrow_balance, wallet?.currency)} hint="Protected against active orders" icon={ShieldCheck} />
+            <KpiCard label="Held securely" value={formatMoney(wallet?.escrow_balance, wallet?.currency)} hint="Protected against active orders" icon={ShieldCheck} accent="teal" />
           </Reveal>
           <Reveal delay={isSeller ? 180 : 120}>
             <KpiCard
@@ -182,7 +182,7 @@ export default async function DashboardPage() {
               value={formatNumber(unread)}
               hint={unread > 0 ? `${unread} unread` : "You're all caught up"}
               icon={MessageSquareText}
-              accent={unread > 0 ? 'primary' : 'default'}
+              accent={unread > 0 ? 'amber' : 'default'}
             />
           </Reveal>
         </div>
@@ -191,9 +191,17 @@ export default async function DashboardPage() {
         <Reveal delay={200}>
           <section className="mt-10">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold tracking-tight">Needs your attention</h2>
-              <Link href="/orders" className="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline">
-                All orders <ArrowRight className="size-4" />
+              <div className="flex items-center gap-2.5">
+                {attention.length > 0 && (
+                  <span className="relative flex size-2" aria-hidden="true">
+                    <span className="animate-pulse-soft absolute inline-flex h-full w-full rounded-full bg-accent" />
+                    <span className="relative inline-flex size-2 rounded-full bg-accent" />
+                  </span>
+                )}
+                <h2 className="text-lg font-semibold tracking-tight">Needs your attention</h2>
+              </div>
+              <Link href="/orders" className="group inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline">
+                All orders <ArrowRight className="size-4 transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true" />
               </Link>
             </div>
             <div className="mt-4">
@@ -209,7 +217,7 @@ export default async function DashboardPage() {
                     <Link
                       key={o.id}
                       href={`/dashboard/orders/${o.id}`}
-                      className="group flex flex-col gap-3 rounded-[1.25rem] border border-border bg-card p-5 shadow-soft transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:shadow-soft-lg sm:flex-row sm:items-center sm:justify-between"
+                      className="group flex flex-col gap-3 rounded-2xl border border-border bg-card p-5 surface-soft transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:border-primary/15 hover:shadow-soft-lg active:scale-[0.995] sm:flex-row sm:items-center sm:justify-between"
                     >
                       <div className="min-w-0">
                         <div className="flex flex-wrap items-center gap-2">
@@ -219,7 +227,7 @@ export default async function DashboardPage() {
                         <p className="mt-1 text-sm text-muted-foreground">{actionHint(o.status, isSeller)}</p>
                       </div>
                       <span className="hidden shrink-0 items-center gap-1.5 rounded-full bg-brand-soft px-3.5 py-1.5 text-sm font-medium text-brand transition-colors duration-300 group-hover:bg-brand group-hover:text-primary-foreground sm:inline-flex">
-                        View <ArrowRight className="size-3.5" />
+                        View <ArrowRight className="size-3.5 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden="true" />
                       </span>
                     </Link>
                   ))}
@@ -264,9 +272,9 @@ export default async function DashboardPage() {
             <Reveal delay={280}>
               <section>
                 <div className="flex items-center justify-between">
-                  <h2 className="text-xl font-semibold tracking-tight">Recent conversations</h2>
-                  <Link href="/messages" className="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline">
-                    All messages <ArrowRight className="size-4" />
+                  <h2 className="text-lg font-semibold tracking-tight">Recent conversations</h2>
+                  <Link href="/messages" className="group inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline">
+                    All messages <ArrowRight className="size-4 transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true" />
                   </Link>
                 </div>
                 <div className="mt-4 flex flex-col gap-3">
@@ -279,14 +287,14 @@ export default async function DashboardPage() {
                       <Link
                         key={c.order.id}
                         href={`/dashboard/orders/${c.order.id}`}
-                        className="flex items-center gap-3 rounded-[1.25rem] border border-border bg-card p-4 shadow-soft transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:shadow-soft-lg"
+                        className="group flex items-center gap-3 rounded-2xl border border-border bg-card p-4 surface-soft transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:border-primary/15 hover:shadow-soft-lg active:scale-[0.995]"
                       >
                         <Avatar name={other} size="md" />
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-2">
                             <p className="truncate font-semibold">{other}</p>
                             {c.unread > 0 && (
-                              <span className="inline-flex min-w-5 items-center justify-center rounded-full bg-primary px-1.5 py-0.5 text-[11px] font-semibold text-primary-foreground">{c.unread}</span>
+                              <span className="inline-flex min-w-5 items-center justify-center rounded-full bg-accent px-1.5 py-0.5 text-[11px] font-semibold text-accent-foreground dark:text-primary-foreground">{c.unread}</span>
                             )}
                           </div>
                           <p className="truncate text-sm text-muted-foreground">{c.latest.body}</p>
@@ -304,14 +312,14 @@ export default async function DashboardPage() {
             <Reveal delay={320}>
               <section>
                 <div className="flex items-center justify-between">
-                  <h2 className="text-xl font-semibold tracking-tight">Latest alerts</h2>
-                  <Link href="/dashboard/notifications" className="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline">
-                    View all <ArrowRight className="size-4" />
+                  <h2 className="text-lg font-semibold tracking-tight">Latest alerts</h2>
+                  <Link href="/dashboard/notifications" className="group inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline">
+                    View all <ArrowRight className="size-4 transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true" />
                   </Link>
                 </div>
                 <div className="mt-4 flex flex-col gap-2">
                   {recentNotifs.map((n) => (
-                    <div key={n.id} className="flex items-center justify-between gap-3 rounded-[1.25rem] border border-border bg-card px-4 py-3 shadow-soft">
+                    <div key={n.id} className="flex items-center justify-between gap-3 rounded-2xl border border-border bg-card px-4 py-3 surface-soft transition-colors duration-300 hover:border-primary/10">
                       <p className="truncate text-sm font-medium">{n.title}</p>
                       <span className="shrink-0 text-xs text-muted-foreground">{formatDateTime(n.created_at)}</span>
                     </div>
@@ -327,9 +335,9 @@ export default async function DashboardPage() {
           <Reveal delay={360}>
             <section className="mt-10">
               <div className="flex items-center justify-between">
-                <h2 className="text-xl font-semibold tracking-tight">Recommended for you</h2>
-                <Link href="/marketplace" className="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline">
-                  Browse all <ArrowRight className="size-4" />
+                <h2 className="text-lg font-semibold tracking-tight">Recommended for you</h2>
+                <Link href="/marketplace" className="group inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline">
+                  Browse all <ArrowRight className="size-4 transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true" />
                 </Link>
               </div>
               <div className="mt-4 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -344,7 +352,7 @@ export default async function DashboardPage() {
 
         {/* Quick links */}
         <section className="mt-10">
-          <h2 className="text-xl font-semibold tracking-tight">Quick links</h2>
+          <h2 className="text-lg font-semibold tracking-tight">Quick links</h2>
           <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {[
               { href: '/marketplace', label: 'Find services', detail: 'Browse verified travel professionals', icon: BriefcaseBusiness },
@@ -358,9 +366,9 @@ export default async function DashboardPage() {
                   ]
                 : []),
             ].map(({ href, label, detail, icon: Icon }) => (
-              <Link key={href} href={href} className="group flex items-center justify-between rounded-[1.25rem] border border-border bg-card p-4 shadow-soft transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:shadow-soft-lg">
+              <Link key={href} href={href} className="group flex items-center justify-between rounded-2xl border border-border bg-card p-4 surface-soft transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:border-primary/15 hover:shadow-soft-lg active:scale-[0.995]">
                 <span className="flex items-center gap-3">
-                  <span className="grid size-10 place-items-center rounded-full bg-brand-soft text-brand transition-colors duration-300 group-hover:bg-brand group-hover:text-primary-foreground" aria-hidden="true">
+                  <span className="grid size-10 place-items-center rounded-full bg-brand-soft text-brand transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105 group-hover:bg-brand group-hover:text-primary-foreground" aria-hidden="true">
                     <Icon className="size-5" />
                   </span>
                   <span>
@@ -368,7 +376,7 @@ export default async function DashboardPage() {
                     <span className="block text-sm text-muted-foreground">{detail}</span>
                   </span>
                 </span>
-                <ArrowRight className="size-4 text-muted-foreground transition-colors group-hover:text-primary" />
+                <ArrowRight className="size-4 text-muted-foreground transition-all duration-200 group-hover:translate-x-0.5 group-hover:text-primary" aria-hidden="true" />
               </Link>
             ))}
           </div>
@@ -380,8 +388,8 @@ export default async function DashboardPage() {
 
 function TaskCard({ href, icon: Icon, title, value, hint }: { href: string; icon: LucideIcon; title: string; value: string | number; hint: string }) {
   return (
-    <Link href={href} className="group flex flex-col gap-3 rounded-[1.25rem] border border-border bg-card p-5 shadow-soft transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:shadow-soft-lg">
-      <span className="grid size-10 place-items-center rounded-full bg-brand-soft text-brand transition-colors duration-300 group-hover:bg-brand group-hover:text-primary-foreground" aria-hidden="true">
+    <Link href={href} className="group flex flex-col gap-3 rounded-2xl border border-border bg-card p-5 surface-soft transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:border-primary/15 hover:shadow-soft-lg active:scale-[0.995]">
+      <span className="grid size-10 place-items-center rounded-full bg-brand-soft text-brand transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105 group-hover:bg-brand group-hover:text-primary-foreground" aria-hidden="true">
         <Icon className="size-5" />
       </span>
       <div>

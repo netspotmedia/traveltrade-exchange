@@ -73,6 +73,10 @@
 
   /* Alternating section surface (quiet tone change, no borders) */
   --color-surface-alt: var(--surface-alt);
+
+  /* Tinted semantic surfaces (KPI accents, status chips) */
+  --color-secondary-soft: var(--secondary-soft);
+  --color-accent-soft: var(--accent-soft);
 }
 
 :root {
@@ -296,10 +300,30 @@
     @apply bg-background text-foreground antialiased;
     font-family: var(--font-sans);
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    font-variant-numeric: tabular-nums;
+    caret-color: var(--brand);
     overflow-x: clip;
   }
   ::selection {
     background-color: color-mix(in oklch, var(--brand) 22%, transparent);
+  }
+  /* Themed thin scrollbars — browser surfaces belong to the design system. */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in oklch, var(--muted-foreground) 35%, transparent) transparent;
+  }
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  *::-webkit-scrollbar-thumb {
+    background: color-mix(in oklch, var(--muted-foreground) 35%, transparent);
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
   }
   :focus-visible {
     outline: 2px solid var(--ring);
@@ -358,6 +382,22 @@
       0 2px 4px 0 rgb(11 22 30 / 0.05),
       0 20px 48px -12px rgb(11 22 30 / 0.16),
       0 6px 14px -6px rgb(11 22 30 / 0.08);
+  }
+  /* Machined surface — diffused elevation plus a hairline top highlight so
+     cards read as physical plates rather than flat rectangles. */
+  .surface-soft {
+    box-shadow:
+      0 1px 2px 0 rgb(11 22 30 / 0.04),
+      0 8px 24px -6px rgb(11 22 30 / 0.1),
+      0 2px 6px -2px rgb(11 22 30 / 0.05),
+      inset 0 1px 0 rgb(255 255 255 / 0.5);
+  }
+  .dark .surface-soft {
+    box-shadow:
+      0 1px 2px 0 rgb(0 0 0 / 0.2),
+      0 8px 24px -6px rgb(0 0 0 / 0.35),
+      0 2px 6px -2px rgb(0 0 0 / 0.2),
+      inset 0 1px 0 rgb(255 255 255 / 0.05);
   }
   /* Faint architectural grid for the hero — masked toward the edges so it
      reads as depth, never as a screenshot of a spreadsheet. */
