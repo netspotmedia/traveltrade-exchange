@@ -47,15 +47,21 @@ export default async function AgentRequestsPage() {
             />
           ) : (
             (orders as OrderRow[]).map((o) => (
-              <Link key={o.id} href={`/dashboard/orders/${o.id}`} className="rounded-2xl border border-border bg-card p-5 shadow-card transition hover:-translate-y-0.5 hover:shadow-lift">
-                <div className="flex items-center justify-between gap-3">
-                  <div>
-                    <p className="font-semibold">{o.title}</p>
-                    <p className="text-sm text-muted-foreground">{o.buyer?.email || 'Buyer'} · {new Date(o.created_at).toLocaleDateString()}</p>
-                  </div>
-                  <StatusBadge domain="order" status={o.status} />
+              <div key={o.id} className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-card p-5 shadow-card transition hover:-translate-y-0.5 hover:shadow-lift">
+                <div className="min-w-0">
+                  <p className="font-semibold">{o.title}</p>
+                  <p className="text-sm text-muted-foreground">{o.buyer?.email || 'Buyer'} · {new Date(o.created_at).toLocaleDateString()}</p>
                 </div>
-              </Link>
+                <div className="flex items-center gap-3">
+                  <StatusBadge domain="order" status={o.status} />
+                  <Link
+                    href={`/agent/requests/${o.id}/propose`}
+                    className="inline-flex items-center rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-card transition hover:opacity-90"
+                  >
+                    Submit proposal
+                  </Link>
+                </div>
+              </div>
             ))
           )}
         </div>

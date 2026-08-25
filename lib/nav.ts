@@ -36,6 +36,7 @@ export const appNav: NavItem[] = [
   { label: 'Proposals', href: '/agent/proposals', icon: FileText, roles: ['seller'] },
   { label: 'Verification', href: '/agent/verification', icon: ShieldCheck, roles: ['seller'] },
   { label: 'Wallet', href: '/dashboard/wallet', icon: WalletCards, roles: ['seller'] },
+  { label: 'Withdrawals', href: '/agent/withdrawals', icon: WalletCards, roles: ['seller'] },
   { label: 'Admin Console', href: '/admin', icon: ShieldCheck, roles: ['admin'] },
   { label: 'Users', href: '/admin/users', icon: FileText, roles: ['admin'] },
   { label: 'Verification', href: '/admin/verification', icon: BadgeCheck, roles: ['admin'] },

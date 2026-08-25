@@ -217,7 +217,7 @@ export default async function DashboardPage() {
               hint={sellerServices.length > 0 ? `${sellerServices.length} draft or pending` : 'All services live'}
             />
             <TaskCard
-              href="/dashboard/wallet"
+              href="/agent/withdrawals"
               icon={WalletCards}
               title="Withdraw earnings"
               value={Number(wallet?.available_balance) > 0 ? formatMoney(wallet?.available_balance, wallet?.currency) : '—'}
