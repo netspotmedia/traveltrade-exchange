@@ -6,6 +6,8 @@ import { requireVerifiedAgent } from '@/lib/server/workflows'
 import { WithdrawalForm } from '../../dashboard/wallet/withdrawal-form'
 import { StatusBadge } from '@/components/ui/status-badge'
 import { EmptyState } from '@/components/ui/empty-state'
+import { PageHeader } from '@/components/dashboard/page-header'
+import { Panel, SectionTitle } from '@/components/dashboard/panel'
 import { formatMoney, formatDate } from '@/lib/format'
 
 type WithdrawalItem = { id: string; amount: number; currency: string; status: string; created_at: string; failure_reason?: string | null }
@@ -28,12 +30,11 @@ export default async function AgentWithdrawalsPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <main id="main" className="mx-auto max-w-4xl px-4 py-8 pb-24 lg:px-8">
-        <div>
-          <p className="font-eyebrow text-primary">Withdrawals</p>
-          <h1 className="mt-1 text-3xl font-semibold tracking-tight">Request a withdrawal</h1>
-          <p className="mt-1 text-muted-foreground">Move your available balance to your bank account.</p>
-        </div>
+      <main id="main" className="relative w-full px-4 py-8 pb-24 lg:px-8 lg:py-10">
+        <PageHeader
+          title="Request a withdrawal"
+          description="Move your available balance to your bank account."
+        />
 
         {/* Available balance */}
         <section className="mt-6 rounded-3xl border border-border bg-primary p-6 text-primary-foreground shadow-card">
@@ -57,14 +58,14 @@ export default async function AgentWithdrawalsPage() {
         </section>
 
         {/* Withdrawal form */}
-        <section className="mt-5 rounded-[1.5rem] border border-border bg-card p-6 shadow-soft sm:p-8">
-          <h2 className="text-lg font-semibold">Request a withdrawal</h2>
+        <Panel className="mt-5 p-6 sm:p-8">
+          <SectionTitle>Request a withdrawal</SectionTitle>
           <WithdrawalForm />
-        </section>
+        </Panel>
 
         {/* History */}
-        <section className="mt-5 rounded-[1.5rem] border border-border bg-card p-6 shadow-soft sm:p-8">
-          <h2 className="text-lg font-semibold">Withdrawal history</h2>
+        <Panel className="mt-5 p-6 sm:p-8">
+          <SectionTitle>Withdrawal history</SectionTitle>
           <div className="mt-4">
             {withdrawals.length === 0 ? (
               <EmptyState
@@ -75,7 +76,7 @@ export default async function AgentWithdrawalsPage() {
             ) : (
               <div className="flex flex-col gap-3">
                 {withdrawals.map((w) => (
-                  <div key={w.id} className="flex flex-wrap items-center justify-between gap-3 border-b border-border py-3 text-sm last:border-0">
+                  <div key={w.id} className="group flex flex-wrap items-center justify-between gap-3 border-b border-border py-3 text-sm surface-soft transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:border-primary/15 hover:shadow-soft-lg active:scale-[0.995] last:border-0">
                     <div>
                       <span className="font-medium">{formatMoney(w.amount, w.currency)}</span>
                       <span className="ml-3 text-muted-foreground">{formatDate(w.created_at)}</span>
@@ -87,7 +88,7 @@ export default async function AgentWithdrawalsPage() {
               </div>
             )}
           </div>
-        </section>
+        </Panel>
       </main>
     </div>
   )

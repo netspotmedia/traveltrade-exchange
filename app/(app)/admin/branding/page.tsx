@@ -1,6 +1,8 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { BrandingForm } from './branding-form'
+import { PageHeader } from '@/components/dashboard/page-header'
+import { Panel, SectionTitle } from '@/components/dashboard/panel'
 
 const ASSETS = [
   { key: 'logo', label: 'Site logo', description: 'Used in the header, sidebar, footer and auth screens.' },
@@ -19,31 +21,32 @@ export default async function AdminBrandingPage() {
   const map = Object.fromEntries((assets ?? []).map((a) => [a.key, a]))
 
   return (
-    <main className="min-h-screen bg-background px-6 py-10">
-      <div className="mx-auto flex max-w-3xl flex-col gap-8">
-        <div>
-          <p className="text-sm font-semibold text-primary">Branding</p>
-          <h1 className="mt-2 text-4xl font-semibold">Brand & assets</h1>
-          <p className="mt-1 text-muted-foreground">Manage logo, favicon and social-share assets. These are site-wide.</p>
-        </div>
+    <div className="min-h-screen bg-background">
+      <main id="main" className="relative w-full px-4 py-8 pb-24 lg:px-8 lg:py-10">
+        <div className="flex w-full flex-col gap-8">
+          <PageHeader
+            title="Brand & assets"
+            description="Manage logo, favicon and social-share assets. These are site-wide."
+          />
 
-        {ASSETS.map((asset) => (
-          <div key={asset.key} className="rounded-2xl border border-border bg-card p-6 shadow-card">
-            <h2 className="text-lg font-semibold">{asset.label}</h2>
-            <p className="mt-1 text-sm text-muted-foreground">{asset.description}</p>
-            <div className="mt-4">
-              <BrandingForm
-                assetKey={asset.key}
-                current={
-                  map[asset.key]
-                    ? { url: map[asset.key].url, alt: map[asset.key].alt ?? '', width: map[asset.key].width, height: map[asset.key].height }
-                    : null
-                }
-              />
-            </div>
-          </div>
-        ))}
-      </div>
-    </main>
+          {ASSETS.map((asset) => (
+            <Panel key={asset.key} className="p-6">
+              <SectionTitle>{asset.label}</SectionTitle>
+              <p className="mt-1 text-sm text-muted-foreground">{asset.description}</p>
+              <div className="mt-4">
+                <BrandingForm
+                  assetKey={asset.key}
+                  current={
+                    map[asset.key]
+                      ? { url: map[asset.key].url, alt: map[asset.key].alt ?? '', width: map[asset.key].width, height: map[asset.key].height }
+                      : null
+                  }
+                />
+              </div>
+            </Panel>
+          ))}
+        </div>
+      </main>
+    </div>
   )
 }

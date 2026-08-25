@@ -4,6 +4,8 @@ import { Mail } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { EmptyState } from '@/components/ui/empty-state'
 import { cn } from '@/lib/utils'
+import { PageHeader } from '@/components/dashboard/page-header'
+import { Panel } from '@/components/dashboard/panel'
 
 const STATUSES = ['sent', 'failed', 'retrying', 'queued', 'sending']
 
@@ -50,31 +52,31 @@ export default async function AdminEmailLogsPage({ searchParams }: { searchParam
   }
 
   return (
-    <main className="min-h-screen bg-background px-6 py-10">
-      <div className="mx-auto flex max-w-6xl flex-col gap-8">
-        <div>
-          <p className="text-sm font-semibold text-primary">Email</p>
-          <h1 className="mt-2 text-4xl font-semibold">Email delivery</h1>
-          <p className="mt-1 text-muted-foreground">Monitor transactional email delivery. Recipients are masked for privacy.</p>
-        </div>
+    <div className="min-h-screen bg-background">
+      <main id="main" className="relative w-full px-4 py-8 pb-24 lg:px-8 lg:py-10">
+        <div className="flex w-full flex-col gap-8">
+          <PageHeader
+            title="Email delivery"
+            description="Monitor transactional email delivery. Recipients are masked for privacy."
+          />
 
-        {/* Status summary */}
-        <div className="grid gap-4 sm:grid-cols-5">
-          {STATUSES.map((st) => (
-            <Link key={st} href={buildHref(st)} className={cn('rounded-2xl border bg-card p-4 text-center transition hover:-translate-y-0.5 hover:shadow-lift', filter === st ? 'border-primary/40 ring-2 ring-primary/30' : 'border-border')}>
-              <p className="font-mono text-2xl font-semibold">{countMap[st] ?? 0}</p>
-              <p className="text-sm capitalize text-muted-foreground">{st}</p>
-            </Link>
-          ))}
-        </div>
+          {/* Status summary */}
+          <div className="grid gap-4 sm:grid-cols-5">
+            {STATUSES.map((st) => (
+              <Link key={st} href={buildHref(st)} className={cn('rounded-2xl border bg-card p-4 text-center transition hover:-translate-y-0.5 hover:shadow-lift active:scale-[0.995]', filter === st ? 'border-primary/40 ring-2 ring-primary/30' : 'border-border')}>
+                <p className="font-mono text-2xl font-semibold">{countMap[st] ?? 0}</p>
+                <p className="text-sm capitalize text-muted-foreground">{st}</p>
+              </Link>
+            ))}
+          </div>
 
         {/* Filter bar */}
         <div className="flex flex-wrap gap-2" role="group" aria-label="Filter by status">
-          <Link href={buildHref(null)} className={cn('rounded-full border px-3 py-1 text-sm transition', !filter ? 'border-primary bg-primary-soft text-primary' : 'border-border bg-card text-muted-foreground hover:bg-muted')}>
+          <Link href={buildHref(null)} className={cn('rounded-full border px-3 py-1 text-sm transition active:scale-[0.995]', !filter ? 'border-primary bg-primary-soft text-primary' : 'border-border bg-card text-muted-foreground hover:bg-muted')}>
             All
           </Link>
           {STATUSES.map((st) => (
-            <Link key={st} href={buildHref(st)} className={cn('rounded-full border px-3 py-1 text-sm capitalize transition', filter === st ? 'border-primary bg-primary-soft text-primary' : 'border-border bg-card text-muted-foreground hover:bg-muted')}>
+            <Link key={st} href={buildHref(st)} className={cn('rounded-full border px-3 py-1 text-sm capitalize transition active:scale-[0.995]', filter === st ? 'border-primary bg-primary-soft text-primary' : 'border-border bg-card text-muted-foreground hover:bg-muted')}>
               {st}
             </Link>
           ))}
@@ -87,7 +89,7 @@ export default async function AdminEmailLogsPage({ searchParams }: { searchParam
             description={filter ? 'Try a different status.' : 'Transactional emails will appear here once they are sent.'}
           />
         ) : (
-          <div className="overflow-x-auto rounded-2xl border border-border bg-card shadow-card">
+          <Panel className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border text-left text-xs uppercase tracking-wide text-muted-foreground">
@@ -121,9 +123,10 @@ export default async function AdminEmailLogsPage({ searchParams }: { searchParam
                 ))}
               </tbody>
             </table>
-          </div>
+          </Panel>
         )}
       </div>
     </main>
+  </div>
   )
 }

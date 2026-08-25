@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { Bell } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
+import { PageHeader } from '@/components/dashboard/page-header'
 import { NotificationList } from './notification-list'
 
 export default async function NotificationsPage() {
@@ -19,19 +20,16 @@ export default async function NotificationsPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <main id="main" className="mx-auto max-w-3xl px-4 py-8 pb-24 lg:px-8">
-        <div className="flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <p className="text-sm font-semibold text-primary">Notifications</p>
-            <h1 className="mt-1 text-3xl font-semibold tracking-tight">Your alerts</h1>
-            <p className="mt-1 text-muted-foreground">
-              {unread > 0 ? `${unread} unread.` : "You're all caught up."}
-            </p>
-          </div>
-          <span className="hidden items-center gap-1.5 text-sm text-muted-foreground sm:inline-flex">
-            <Bell className="size-4" /> Updates about your orders and account
-          </span>
-        </div>
+      <main id="main" className="relative w-full px-4 py-8 pb-24 lg:px-8 lg:py-10">
+        <PageHeader
+          title="Your alerts"
+          description={unread > 0 ? `${unread} unread.` : "You're all caught up."}
+          actions={
+            <span className="hidden items-center gap-1.5 text-sm text-muted-foreground sm:inline-flex">
+              <Bell className="size-4" /> Updates about your orders and account
+            </span>
+          }
+        />
 
         <div className="mt-6">
           <NotificationList notifications={(notifications ?? []) as NotificationRow[]} />

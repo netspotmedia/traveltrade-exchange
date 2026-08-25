@@ -5,6 +5,9 @@ import { redirect } from 'next/navigation'
 import { StatusBadge } from '@/components/ui/status-badge'
 import { EmptyState } from '@/components/ui/empty-state'
 import { Button } from '@/components/ui/button'
+import { PageHeader } from '@/components/dashboard/page-header'
+import { rowMotion } from '@/components/dashboard/panel'
+import { cn } from '@/lib/utils'
 import { formatMoney, formatDate } from '@/lib/format'
 
 type OrderRow = {
@@ -48,17 +51,16 @@ export default async function OrdersPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <main id="main" className="mx-auto max-w-4xl px-4 py-8 pb-24 lg:px-8">
-        <div className="flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <p className="text-sm font-semibold text-primary">Orders</p>
-            <h1 className="mt-1 text-3xl font-semibold tracking-tight">Your orders</h1>
-            <p className="mt-1 text-muted-foreground">Track your agreements and see what needs your attention.</p>
-          </div>
-          <Link href="/marketplace" className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline">
-            Find a service <ArrowRight className="size-4" />
-          </Link>
-        </div>
+      <main id="main" className="relative w-full px-4 py-8 pb-24 lg:px-8 lg:py-10">
+        <PageHeader
+          title="Your orders"
+          description="Track your agreements and see what needs your attention."
+          actions={
+            <Link href="/marketplace" className="group inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline">
+              Find a service <ArrowRight className="size-4 transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true" />
+            </Link>
+          }
+        />
 
         {orders.length === 0 ? (
           <div className="mt-8">
@@ -107,7 +109,7 @@ function OrderCard({ order, agencyName }: { order: OrderRow; agencyName: string 
   return (
     <Link
       href={`/dashboard/orders/${order.id}`}
-      className="group flex flex-col gap-3 rounded-2xl border border-border bg-card p-5 shadow-card transition hover:-translate-y-0.5 hover:shadow-lift sm:flex-row sm:items-center sm:justify-between"
+      className={cn(rowMotion, 'group flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between')}
     >
       <div className="min-w-0">
         <div className="flex flex-wrap items-center gap-2">

@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import { requireVerifiedAgent } from '@/lib/server/workflows'
 import { StatusBadge } from '@/components/ui/status-badge'
 import { EmptyState } from '@/components/ui/empty-state'
+import { PageHeader } from '@/components/dashboard/page-header'
 import { Inbox } from 'lucide-react'
 
 type OrderRow = {
@@ -32,12 +33,11 @@ export default async function AgentRequestsPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <main id="main" className="mx-auto max-w-4xl px-4 py-8 pb-24 lg:px-8">
-        <div>
-          <p className="font-eyebrow text-primary">Quote requests</p>
-          <h1 className="mt-1 text-3xl font-semibold tracking-tight">Incoming requests</h1>
-          <p className="mt-2 text-muted-foreground">Respond with a proposal and milestone breakdown.</p>
-        </div>
+      <main id="main" className="relative w-full px-4 py-8 pb-24 lg:px-8 lg:py-10">
+        <PageHeader
+          title="Incoming requests"
+          description="Respond with a proposal and milestone breakdown."
+        />
         <div className="mt-6 flex flex-col gap-4">
           {!orders || orders.length === 0 ? (
             <EmptyState
@@ -47,7 +47,7 @@ export default async function AgentRequestsPage() {
             />
           ) : (
             (orders as OrderRow[]).map((o) => (
-              <div key={o.id} className="flex flex-wrap items-center justify-between gap-3 rounded-[1.25rem] border border-border bg-card p-5 shadow-soft transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:shadow-soft-lg">
+              <div key={o.id} className="group flex flex-wrap items-center justify-between gap-3 rounded-[1.25rem] border border-border bg-card p-5 shadow-soft surface-soft transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-primary/15 hover:-translate-y-0.5 hover:shadow-soft-lg active:scale-[0.995]">
                 <div className="min-w-0">
                   <p className="font-semibold">{o.title}</p>
                   <p className="text-sm text-muted-foreground">{o.buyer?.email || 'Buyer'} · {new Date(o.created_at).toLocaleDateString()}</p>

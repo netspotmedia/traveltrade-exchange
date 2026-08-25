@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { FileText } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
+import { PageHeader } from '@/components/dashboard/page-header'
 
 const PAGES = [
   { slug: 'landing', title: 'Landing', href: '/' },
@@ -28,23 +29,23 @@ export default async function AdminCmsPage() {
   }
 
   return (
-    <main className="min-h-screen bg-background px-6 py-10">
-      <div className="mx-auto flex max-w-5xl flex-col gap-8">
-        <div>
-          <p className="text-sm font-semibold text-primary">Content</p>
-          <h1 className="mt-2 text-4xl font-semibold">Marketing pages</h1>
-          <p className="mt-1 text-muted-foreground">Edit page copy. Each page falls back to built-in defaults until you publish content.</p>
-        </div>
+    <div className="min-h-screen bg-background">
+      <main id="main" className="relative w-full px-4 py-8 pb-24 lg:px-8 lg:py-10">
+        <div className="flex w-full flex-col gap-8">
+          <PageHeader
+            title="Marketing pages"
+            description="Edit page copy. Each page falls back to built-in defaults until you publish content."
+          />
 
-        <div className="grid gap-4 sm:grid-cols-2">
-          {PAGES.map((p) => {
-            const isPublished = published.has(p.slug)
-            return (
-              <Link
-                key={p.slug}
-                href={`/admin/cms/${p.slug}`}
-                className="flex items-center justify-between gap-4 rounded-2xl border border-border bg-card p-5 shadow-card transition hover:-translate-y-0.5 hover:shadow-lift"
-              >
+          <div className="grid gap-4 sm:grid-cols-2">
+            {PAGES.map((p) => {
+              const isPublished = published.has(p.slug)
+              return (
+                <Link
+                  key={p.slug}
+                  href={`/admin/cms/${p.slug}`}
+                  className="flex items-center justify-between gap-4 rounded-2xl border border-border bg-card p-5 surface-soft transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:border-primary/15 hover:shadow-soft-lg active:scale-[0.995]"
+                >
                 <span className="flex items-center gap-3">
                   <span className="grid size-10 place-items-center rounded-xl bg-brand-soft text-brand" aria-hidden="true">
                     <FileText className="size-5" />
@@ -67,5 +68,6 @@ export default async function AdminCmsPage() {
         </div>
       </div>
     </main>
+  </div>
   )
 }

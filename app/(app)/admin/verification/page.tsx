@@ -4,6 +4,8 @@ import { createClient } from '@/lib/supabase/server'
 import { EmptyState } from '@/components/ui/empty-state'
 import { StatusBadge } from '@/components/ui/status-badge'
 import { VerificationReviewActions } from './verification-review-actions'
+import { PageHeader } from '@/components/dashboard/page-header'
+import { Panel } from '@/components/dashboard/panel'
 
 type SubmissionRow = {
   id: string
@@ -36,15 +38,13 @@ export default async function AdminVerificationPage() {
   const list = (rows ?? []) as SubmissionRow[]
 
   return (
-    <main className="min-h-screen bg-background px-6 py-10">
-      <div className="mx-auto flex max-w-5xl flex-col gap-8">
-        <div>
-          <p className="text-sm font-semibold text-primary">Verification</p>
-          <h1 className="mt-2 text-4xl font-semibold">Verification reviews</h1>
-          <p className="mt-1 text-muted-foreground">
-            {list.length} pending {list.length === 1 ? 'submission' : 'submissions'} to review.
-          </p>
-        </div>
+    <div className="min-h-screen bg-background">
+      <main id="main" className="relative w-full px-4 py-8 pb-24 lg:px-8 lg:py-10">
+        <div className="flex w-full flex-col gap-8">
+          <PageHeader
+            title="Verification reviews"
+            description={`${list.length} pending ${list.length === 1 ? 'submission' : 'submissions'} to review.`}
+          />
 
         {list.length === 0 ? (
           <EmptyState
@@ -57,7 +57,7 @@ export default async function AdminVerificationPage() {
             {list.map((sub) => {
               const agency = Array.isArray(sub.agencies) ? sub.agencies[0] : sub.agencies
               return (
-                <div key={sub.id} className="rounded-2xl border border-border bg-card p-6 shadow-card">
+                <Panel key={sub.id} className="p-6">
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
                       <p className="font-semibold">{agency?.name || 'Agency'}</p>
@@ -83,12 +83,13 @@ export default async function AdminVerificationPage() {
                   )}
 
                   <VerificationReviewActions submissionId={sub.id} />
-                </div>
+                </Panel>
               )
             })}
           </div>
         )}
       </div>
     </main>
+  </div>
   )
 }

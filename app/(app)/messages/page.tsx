@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { ArrowRight } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
+import { PageHeader } from '@/components/dashboard/page-header'
 import { MessagesInbox, type InboxConversation } from '@/components/messages/inbox'
 
 type OrderRow = {
@@ -74,19 +75,18 @@ export default async function MessagesPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <main id="main" className="mx-auto max-w-6xl px-4 py-8 pb-24 lg:px-8">
-        <div className="flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <p className="text-sm font-semibold text-primary">Messages</p>
-            <h1 className="mt-1 text-3xl font-semibold tracking-tight">Conversations</h1>
-            <p className="mt-1 text-muted-foreground">
-              {totalUnread > 0 ? `${totalUnread} unread across your orders.` : 'Messages with your travel partners, inside each order.'}
-            </p>
-          </div>
-          <Link href="/orders" className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline">
-            All orders <ArrowRight className="size-4" />
-          </Link>
-        </div>
+      <main id="main" className="relative w-full px-4 py-8 pb-24 lg:px-8 lg:py-10">
+        <PageHeader
+          title="Conversations"
+          description={
+            totalUnread > 0 ? `${totalUnread} unread across your orders.` : 'Messages with your travel partners, inside each order.'
+          }
+          actions={
+            <Link href="/orders" className="group inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline">
+              All orders <ArrowRight className="size-4 transition-transform duration-200 group-hover:translate-x-0.5" />
+            </Link>
+          }
+        />
 
         <div className="mt-6">
           <MessagesInbox conversations={conversations} currentUserId={user.id} />

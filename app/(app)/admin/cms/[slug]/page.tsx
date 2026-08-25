@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { CmsEditor } from './cms-editor'
+import { PageHeader } from '@/components/dashboard/page-header'
 
 const PAGE_META: Record<string, { title: string; fields: { key: string; label: string; textarea?: boolean }[] }> = {
   landing: {
@@ -66,22 +67,21 @@ export default async function AdminCmsEditPage({ params }: { params: Promise<{ s
   const hero = sections.hero ?? {}
 
   return (
-    <main className="min-h-screen bg-background px-6 py-10">
-      <div className="mx-auto max-w-3xl">
-        <a href="/admin/cms" className="text-sm font-medium text-muted-foreground transition hover:text-foreground">
-          ← Back to pages
-        </a>
-        <div className="mt-4">
-          <p className="text-sm font-semibold text-primary">Content</p>
-          <h1 className="mt-2 text-3xl font-semibold">{meta.title}</h1>
-          <p className="mt-1 text-muted-foreground">
-            Edit the hero copy. Publishing makes it live; while unpublished, the built-in defaults are shown to visitors.
-          </p>
+    <div className="min-h-screen bg-background">
+      <main id="main" className="relative w-full px-4 py-8 pb-24 lg:px-8 lg:py-10">
+        <div className="flex w-full flex-col gap-8">
+          <a href="/admin/cms" className="text-sm font-medium text-muted-foreground transition hover:text-foreground">
+            ← Back to pages
+          </a>
+          <PageHeader
+            title={meta.title}
+            description="Edit the hero copy. Publishing makes it live; while unpublished, the built-in defaults are shown to visitors."
+          />
+          <div className="mt-6">
+            <CmsEditor slug={slug} initial={hero as Record<string, string>} isPublished={Boolean(row?.is_published)} fields={meta.fields} />
+          </div>
         </div>
-        <div className="mt-6">
-          <CmsEditor slug={slug} initial={hero as Record<string, string>} isPublished={Boolean(row?.is_published)} fields={meta.fields} />
-        </div>
-      </div>
-    </main>
+      </main>
+    </div>
   )
 }

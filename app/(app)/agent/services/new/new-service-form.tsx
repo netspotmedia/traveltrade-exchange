@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
+import { Panel } from '@/components/dashboard/panel'
 
 export function NewServiceForm() {
   const [title, setTitle] = useState('')
@@ -50,7 +51,8 @@ export function NewServiceForm() {
   }
 
   return (
-    <form onSubmit={submit} className="mx-auto flex max-w-2xl flex-col gap-5 rounded-3xl border border-border bg-card p-6 shadow-soft sm:p-8">
+    <Panel className="p-6 sm:p-8">
+      <form onSubmit={submit} className="mx-auto flex max-w-2xl flex-col gap-5">
       <div>
         <p className="text-sm font-semibold text-primary">Sell a service</p>
         <h1 className="mt-1 text-3xl font-semibold tracking-tight">Create a new service</h1>
@@ -110,6 +112,7 @@ export function NewServiceForm() {
         </Button>
         {message && <p className="text-sm text-muted-foreground">{message}</p>}
       </div>
-    </form>
+      </form>
+    </Panel>
   )
 }

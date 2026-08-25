@@ -91,7 +91,7 @@ export default async function AppShell({ children }: { children: React.ReactNode
         </div>
       </header>
 
-      <div className="mx-auto flex w-full max-w-7xl">
+      <div className="flex w-full">
         {/* Desktop sidebar */}
         <aside className="sticky top-0 hidden h-screen w-64 shrink-0 border-r border-border bg-card lg:flex lg:flex-col">
           <div className="flex h-16 items-center border-b border-border px-4">

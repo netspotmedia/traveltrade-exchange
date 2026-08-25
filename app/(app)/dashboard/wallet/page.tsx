@@ -1,6 +1,8 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { StatusBadge } from '@/components/ui/status-badge'
+import { PageHeader } from '@/components/dashboard/page-header'
+import { Panel, SectionTitle } from '@/components/dashboard/panel'
 import { WalletTopUp } from './wallet-top-up'
 import { WithdrawalForm } from './withdrawal-form'
 import { formatMoney, formatDate } from '@/lib/format'
@@ -33,14 +35,13 @@ export default async function WalletPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <main id="main" className="mx-auto max-w-4xl px-4 py-8 pb-24 lg:px-8">
-        <div>
-          <p className="text-sm font-semibold text-primary">Wallet</p>
-          <h1 className="mt-1 text-3xl font-semibold tracking-tight">Your balance</h1>
-          <p className="mt-1 text-muted-foreground">Top up to pay for services, and withdraw what you've earned.</p>
-        </div>
+      <main id="main" className="relative w-full px-4 py-8 pb-24 lg:px-8 lg:py-10">
+        <PageHeader
+          title="Your balance"
+          description="Top up to pay for services, and withdraw what you've earned."
+        />
 
-        <section className="mt-6 rounded-3xl border border-border bg-card p-6 shadow-card sm:p-8">
+        <Panel className="mt-6 p-6 sm:p-8">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
               <p className="text-sm text-muted-foreground">Available balance</p>
@@ -52,17 +53,17 @@ export default async function WalletPage() {
           </div>
           <WalletTopUp />
           {isSeller && <WithdrawalForm />}
-        </section>
+        </Panel>
 
         {isSeller && (
-          <section className="mt-5 rounded-3xl border border-border bg-card p-6 shadow-card sm:p-8">
-            <h2 className="text-lg font-semibold">Withdrawals</h2>
-            <div className="mt-4 flex flex-col gap-3">
+          <Panel className="mt-5 p-6 sm:p-8">
+            <SectionTitle>Withdrawals</SectionTitle>
+            <div className="mt-4 flex flex-col gap-3 divide-y divide-border">
               {!withdrawals || (withdrawals as WithdrawalItem[]).length === 0 ? (
                 <p className="text-sm text-muted-foreground">No withdrawals yet. When you're ready, request a withdrawal above.</p>
               ) : (
                 (withdrawals as WithdrawalItem[]).map((w) => (
-                  <div key={w.id} className="flex flex-wrap items-center justify-between gap-3 border-b border-border py-3 text-sm last:border-0">
+                  <div key={w.id} className="flex flex-wrap items-center justify-between gap-3 py-3 text-sm">
                     <div>
                       <span className="font-medium">{formatMoney(w.amount, w.currency)}</span>
                       <span className="ml-3 text-muted-foreground">{formatDate(w.created_at)}</span>
@@ -73,17 +74,17 @@ export default async function WalletPage() {
                 ))
               )}
             </div>
-          </section>
+          </Panel>
         )}
 
-        <section className="mt-5 rounded-3xl border border-border bg-card p-6 shadow-card sm:p-8">
-          <h2 className="text-lg font-semibold">Activity</h2>
-          <div className="mt-4 flex flex-col gap-3">
+        <Panel className="mt-5 p-6 sm:p-8">
+          <SectionTitle>Activity</SectionTitle>
+          <div className="mt-4 flex flex-col gap-3 divide-y divide-border">
             {ledger.length === 0 ? (
               <p className="text-sm text-muted-foreground">No activity yet. Your top-ups, payments and withdrawals will appear here.</p>
             ) : (
               ledger.map((item: LedgerItem) => (
-                <div className="flex items-center justify-between border-b border-border py-3 text-sm last:border-0" key={item.id}>
+                <div className="flex items-center justify-between py-3 text-sm" key={item.id}>
                   <div>
                     <p className="font-medium">{LEDGER_LABELS[item.entry_type] ?? item.entry_type}</p>
                     <p className="text-xs text-muted-foreground">{formatDate(item.created_at)}</p>
@@ -93,7 +94,7 @@ export default async function WalletPage() {
               ))
             )}
           </div>
-        </section>
+        </Panel>
       </main>
     </div>
   )

@@ -8,6 +8,8 @@ import { RefundRequestForm } from './refund-request-form'
 import { MessageThread } from '@/components/messages/message-thread'
 import { ProposalPanel } from './proposal-panel'
 import { ReviewForm } from './review-form'
+import { PageHeader } from '@/components/dashboard/page-header'
+import { Panel, SectionTitle } from '@/components/dashboard/panel'
 import { formatMoney, formatDate } from '@/lib/format'
 import { cn } from '@/lib/utils'
 
@@ -121,21 +123,20 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
 
   return (
     <div className="min-h-screen bg-background">
-      <main id="main" className="mx-auto max-w-4xl px-4 py-8 pb-24 lg:px-8">
+      <main id="main" className="relative w-full px-4 py-8 pb-24 lg:px-8 lg:py-10">
         {/* Header */}
-        <div className="flex flex-col gap-3 rounded-[1.5rem] border border-border bg-card p-6 shadow-soft sm:flex-row sm:items-start sm:justify-between sm:p-8">
-          <div>
-            <p className="font-eyebrow text-primary">Order</p>
-            <h1 className="font-display mt-3 text-2xl font-semibold leading-tight tracking-tight sm:text-3xl">{order.title}</h1>
-            <p className="mt-2 text-sm text-muted-foreground">
+        <PageHeader
+          title={order.title}
+          description={
+            <>
               {agency?.name || 'Travel partner'} · {formatMoney(order.total_amount, order.currency)} · Started {formatDate(order.created_at)}
-            </p>
-          </div>
-          <StatusBadge domain="order" status={order.status} className="self-start text-sm" />
-        </div>
+            </>
+          }
+          actions={<StatusBadge domain="order" status={order.status} className="self-start text-sm" />}
+        />
 
         {/* Progress timeline */}
-        <section className="mt-5 rounded-[1.5rem] border border-border bg-card p-6 shadow-soft">
+        <Panel className="mt-5 p-6 sm:p-8">
           <div className="flex items-start gap-2 text-sm">
             {order.status === 'disputed' ? (
               <AlertTriangle className="mt-0.5 size-4 shrink-0 text-warning-foreground" />
@@ -176,13 +177,13 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
               Your payment is secured in escrow. It is only released when you approve the delivered work.
             </div>
           )}
-        </section>
+        </Panel>
 
         {/* Agreement & signatures */}
         {agreement && (
-          <section className="mt-5 rounded-[1.5rem] border border-border bg-card p-6 shadow-soft sm:p-8">
+          <Panel className="mt-5 p-6 sm:p-8">
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <h2 className="text-lg font-semibold">Agreement & signatures</h2>
+              <SectionTitle>Agreement & signatures</SectionTitle>
               <StatusBadge domain="agreement" status={agreement.status as string} />
             </div>
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
@@ -213,12 +214,12 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
                 status={agreement.status as string}
               />
             </div>
-          </section>
+          </Panel>
         )}
 
         {/* Milestones */}
-        <section className="mt-5 rounded-[1.5rem] border border-border bg-card p-6 shadow-soft sm:p-8">
-          <h2 className="text-lg font-semibold">Payment plan</h2>
+        <Panel className="mt-5 p-6 sm:p-8">
+          <SectionTitle>Payment plan</SectionTitle>
           <div className="mt-4 flex flex-col gap-3">
             {milestones.length === 0 && <p className="text-sm text-muted-foreground">The payment plan is agreed with the agent before anything is funded.</p>}
             {milestones.map((m) => (
@@ -243,7 +244,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
               <EscrowActions orderId={id} orderStatus={order.status} milestones={milestones} isBuyer={isBuyer} isSeller={isSeller} signatureState={signatureState} />
             </div>
           )}
-        </section>
+        </Panel>
 
         <div className="mt-5">
           <ProposalPanel orderId={id} isBuyer={isBuyer} isSeller={isSeller} proposals={proposalList} />
@@ -256,7 +257,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
           </div>
         )}
         {isBuyer && refundReq && (
-          <div className="mt-5 rounded-2xl border border-border bg-card p-5 shadow-card">
+          <Panel className="mt-5 p-5">
             <div className="flex items-center justify-between gap-3">
               <div>
                 <p className="text-sm font-medium">Refund request {refundReq.status}</p>
@@ -270,17 +271,17 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
               </div>
               <StatusBadge domain="refund" status={refundReq.status} />
             </div>
-          </div>
+          </Panel>
         )}
 
         <div className="mt-5">
-          <section className="rounded-3xl border border-border bg-card shadow-card">
+          <Panel className="overflow-hidden">
             <div className="border-b border-border px-5 py-4">
               <h2 className="font-semibold">Messages</h2>
               <p className="mt-0.5 text-xs text-muted-foreground">Chat with your travel partner about this order.</p>
             </div>
             <MessageThread orderId={id} currentUserId={user.id} scrollClassName="max-h-96" />
-          </section>
+          </Panel>
         </div>
 
         {isBuyer && order.status === 'completed' && (

@@ -32,7 +32,7 @@ export default function OrderForm({ serviceId, agencyId }: { serviceId: string |
   }
 
   return (
-    <form onSubmit={submit} className="flex flex-col gap-5 rounded-3xl border border-border bg-card p-6 shadow-card sm:p-8">
+    <form onSubmit={submit} className="flex flex-col gap-5 rounded-2xl border border-border bg-card p-6 surface-soft sm:p-8">
       <div>
         <p className="text-sm font-semibold text-primary">New order</p>
         <h1 className="mt-1 text-3xl font-semibold tracking-tight">Tell the agent what you need</h1>

@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/server'
 import { requireVerifiedAgent } from '@/lib/server/workflows'
 import { ProposeForm } from './propose-form'
 import { StatusBadge } from '@/components/ui/status-badge'
+import { PageHeader } from '@/components/dashboard/page-header'
 import { formatMoney } from '@/lib/format'
 
 type OrderRow = {
@@ -40,22 +41,17 @@ export default async function ProposePage({ params }: { params: Promise<{ id: st
 
   return (
     <div className="min-h-screen bg-background">
-      <main id="main" className="mx-auto max-w-3xl px-4 py-8 pb-24 lg:px-8">
+      <main id="main" className="relative w-full px-4 py-8 pb-24 lg:px-8 lg:py-10">
         <Link href="/agent/requests" className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition hover:text-foreground">
           <ArrowLeft className="size-4" /> Back to requests
         </Link>
 
         <div className="mt-5">
-          <div className="flex flex-wrap items-end justify-between gap-4">
-            <div>
-              <p className="font-eyebrow text-primary">Submit a proposal</p>
-              <h1 className="mt-1 text-3xl font-semibold tracking-tight">{order.title}</h1>
-              <p className="mt-2 text-muted-foreground">
-                {buyer?.email || 'Customer'} · {formatMoney(order.total_amount, order.currency)}
-              </p>
-            </div>
-            <StatusBadge domain="order" status={order.status} />
-          </div>
+          <PageHeader
+            title={order.title}
+            description={`${buyer?.email || 'Customer'} · ${formatMoney(order.total_amount, order.currency)}`}
+            actions={<StatusBadge domain="order" status={order.status} />}
+          />
         </div>
 
         <div className="mt-6">

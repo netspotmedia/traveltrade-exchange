@@ -3,6 +3,8 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { EmptyState } from '@/components/ui/empty-state'
 import { Badge } from '@/components/ui/badge'
+import { PageHeader } from '@/components/dashboard/page-header'
+import { Panel } from '@/components/dashboard/panel'
 
 const PER_PAGE = 50
 
@@ -46,19 +48,19 @@ export default async function AdminUsersPage({ searchParams }: { searchParams: P
   }
 
   return (
-    <main className="min-h-screen bg-background px-6 py-10">
-      <div className="mx-auto flex max-w-6xl flex-col gap-8">
-        <div>
-          <p className="text-sm font-semibold text-primary">Users</p>
-          <h1 className="mt-2 text-4xl font-semibold">All users</h1>
-          <p className="mt-1 text-muted-foreground">{totalCount} registered {totalCount === 1 ? 'account' : 'accounts'} on the platform.</p>
-        </div>
+    <div className="min-h-screen bg-background">
+      <main id="main" className="relative w-full px-4 py-8 pb-24 lg:px-8 lg:py-10">
+        <div className="flex w-full flex-col gap-8">
+          <PageHeader
+            title="All users"
+            description={`${totalCount} registered ${totalCount === 1 ? 'account' : 'accounts'} on the platform.`}
+          />
 
         {list.length === 0 ? (
           <EmptyState title="No users yet" description="Registered users will appear here as accounts are created." />
         ) : (
           <>
-            <div className="overflow-x-auto rounded-2xl border border-border bg-card shadow-card">
+            <Panel className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-border text-left text-xs uppercase tracking-wide text-muted-foreground">
@@ -81,12 +83,12 @@ export default async function AdminUsersPage({ searchParams }: { searchParams: P
                   ))}
                 </tbody>
               </table>
-            </div>
+            </Panel>
 
             {totalPages > 1 && (
               <nav className="flex items-center justify-center gap-3" aria-label="Pagination">
                 {page > 1 ? (
-                  <Link href={buildPage(page - 1)} className="inline-flex h-10 items-center rounded-xl border border-border bg-card px-4 text-sm font-medium shadow-card transition hover:bg-muted">
+                  <Link href={buildPage(page - 1)} className="inline-flex h-10 items-center rounded-xl border border-border bg-card px-4 text-sm font-medium shadow-card transition hover:bg-muted active:scale-[0.995]">
                     Previous
                   </Link>
                 ) : (
@@ -96,7 +98,7 @@ export default async function AdminUsersPage({ searchParams }: { searchParams: P
                   Page <strong className="text-foreground">{page}</strong> of {totalPages}
                 </span>
                 {page < totalPages ? (
-                  <Link href={buildPage(page + 1)} className="inline-flex h-10 items-center rounded-xl border border-border bg-card px-4 text-sm font-medium shadow-card transition hover:bg-muted">
+                  <Link href={buildPage(page + 1)} className="inline-flex h-10 items-center rounded-xl border border-border bg-card px-4 text-sm font-medium shadow-card transition hover:bg-muted active:scale-[0.995]">
                     Next
                   </Link>
                 ) : (
@@ -108,5 +110,6 @@ export default async function AdminUsersPage({ searchParams }: { searchParams: P
         )}
       </div>
     </main>
+  </div>
   )
 }

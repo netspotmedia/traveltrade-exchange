@@ -6,6 +6,7 @@ import { SubmitServiceAction } from './submit-action'
 import { StatusBadge } from '@/components/ui/status-badge'
 import { EmptyState } from '@/components/ui/empty-state'
 import { Button } from '@/components/ui/button'
+import { PageHeader } from '@/components/dashboard/page-header'
 import { Store } from 'lucide-react'
 
 type ServiceRow = { id: string; title: string; category: string; status: string; base_price: number; currency: string }
@@ -27,16 +28,15 @@ export default async function AgentServicesPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <main id="main" className="mx-auto max-w-4xl px-4 py-8 pb-24 lg:px-8">
-        <div className="flex items-end justify-between">
-          <div>
-            <p className="font-eyebrow text-primary">Your services</p>
-            <h1 className="mt-1 text-3xl font-semibold tracking-tight">Manage your services</h1>
-          </div>
-          <Link href="/agent/services/new" className="rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground shadow-card transition hover:opacity-90">
-            New service
-          </Link>
-        </div>
+      <main id="main" className="relative w-full px-4 py-8 pb-24 lg:px-8 lg:py-10">
+        <PageHeader
+          title="Manage your services"
+          actions={
+            <Link href="/agent/services/new" className="rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground shadow-card transition hover:opacity-90">
+              New service
+            </Link>
+          }
+        />
         <div className="mt-6 flex flex-col gap-4">
           {!services || services.length === 0 ? (
             <EmptyState
@@ -51,7 +51,7 @@ export default async function AgentServicesPage() {
             />
           ) : (
             (services as ServiceRow[]).map((svc) => (
-              <div key={svc.id} className="flex flex-wrap items-center justify-between gap-3 rounded-[1.25rem] border border-border bg-card p-5 shadow-soft">
+              <div key={svc.id} className="group flex flex-wrap items-center justify-between gap-3 rounded-[1.25rem] border border-border bg-card p-5 shadow-soft surface-soft transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-primary/15 hover:-translate-y-0.5 hover:shadow-soft-lg active:scale-[0.995]">
                 <div>
                   <p className="font-semibold">{svc.title}</p>
                   <p className="text-sm text-muted-foreground">

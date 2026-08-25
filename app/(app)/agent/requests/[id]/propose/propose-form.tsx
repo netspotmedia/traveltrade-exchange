@@ -7,6 +7,7 @@ import { Alert } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
+import { Panel } from '@/components/dashboard/panel'
 
 export function ProposeForm({ orderId }: { orderId: string }) {
   const [fee, setFee] = useState('')
@@ -45,7 +46,8 @@ export function ProposeForm({ orderId }: { orderId: string }) {
   }
 
   return (
-    <form onSubmit={submit} className="flex flex-col gap-5 rounded-3xl border border-border bg-card p-6 shadow-soft sm:p-8">
+    <Panel className="p-6 sm:p-8">
+      <form onSubmit={submit} className="flex flex-col gap-5">
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="flex flex-col gap-1.5 text-sm font-medium">
           Fee (NGN)
@@ -100,5 +102,6 @@ export function ProposeForm({ orderId }: { orderId: string }) {
         {busy ? 'Submitting…' : 'Submit proposal'}
       </Button>
     </form>
+    </Panel>
   )
 }

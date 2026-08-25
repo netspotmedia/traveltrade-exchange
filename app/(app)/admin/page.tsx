@@ -7,6 +7,8 @@ import { DisputeReviewActions } from './dispute-review-actions'
 import { FailedCallbackActions } from './failed-callback-actions'
 import { RefundReviewActions } from './refund-review-actions'
 import { StatusBadge } from '@/components/ui/status-badge'
+import { PageHeader } from '@/components/dashboard/page-header'
+import { Panel, SectionTitle } from '@/components/dashboard/panel'
 
 type AgencyRow = {
   id: string
@@ -100,60 +102,58 @@ export default async function AdminPage() {
   const callbacks = (failedCallbacks ?? []) as { id: string; reference: string; reason: string | null; amount: number | null; currency: string | null; status: string; retry_count: number; created_at: string }[]
 
   return (
-    <main className="min-h-screen bg-background px-6 py-10">
-      <div className="mx-auto flex max-w-6xl flex-col gap-8">
-        <div>
-          <p className="font-eyebrow text-primary">Operations console</p>
-          <h1 className="font-display mt-3 text-4xl font-semibold leading-tight tracking-tight">Overview</h1>
-        </div>
+    <div className="min-h-screen bg-background">
+      <main id="main" className="relative w-full px-4 py-8 pb-24 lg:px-8 lg:py-10">
+        <div className="flex w-full flex-col gap-8">
+          <PageHeader title="Overview" />
 
-        <div className="grid gap-5 md:grid-cols-3 lg:grid-cols-6">
-          {[
-            ['Escrow held', kpi?.escrow_held ?? 0, '₦'],
-            ['Fees collected', kpi?.fees_collected ?? 0, '₦'],
-            ['Active orders', kpi?.active_orders ?? 0, ''],
-            ['Verified agencies', kpi?.verified_agencies ?? 0, ''],
-            ['Published services', kpi?.published_services ?? 0, ''],
-            ['Total users', kpi?.total_users ?? 0, ''],
-          ].map(([title, value, prefix]) => (
-            <section key={title as string} className="rounded-[1.25rem] border bg-card p-5 shadow-soft">
-              <h2 className="text-sm font-medium text-muted-foreground">{title as string}</h2>
-              <p className="mt-3 font-mono text-2xl font-semibold">{prefix}{Number(value).toLocaleString()}</p>
-            </section>
-          ))}
-        </div>
+          <div className="grid gap-5 md:grid-cols-3 lg:grid-cols-6">
+            {[
+              ['Escrow held', kpi?.escrow_held ?? 0, '₦'],
+              ['Fees collected', kpi?.fees_collected ?? 0, '₦'],
+              ['Active orders', kpi?.active_orders ?? 0, ''],
+              ['Verified agencies', kpi?.verified_agencies ?? 0, ''],
+              ['Published services', kpi?.published_services ?? 0, ''],
+              ['Total users', kpi?.total_users ?? 0, ''],
+            ].map(([title, value, prefix]) => (
+              <Panel key={title as string} className="p-5">
+                <h2 className="text-sm font-medium text-muted-foreground">{title as string}</h2>
+                <p className="mt-3 font-mono text-2xl font-semibold">{prefix}{Number(value).toLocaleString()}</p>
+              </Panel>
+            ))}
+          </div>
 
-        <div className="grid gap-5 md:grid-cols-3">
-          {[
-            ['Agency KYB', pendingAgencies?.length ?? 0],
-            ['Service approvals', pendingServices?.length ?? 0],
-            ['Withdrawals', pendingWithdrawals?.length ?? 0],
-          ].map(([title, count]) => (
-            <section key={title as string} className="rounded-[1.25rem] border bg-card p-5 shadow-soft">
-              <h2 className="font-semibold">{title as string}</h2>
-              <p className="mt-4 font-mono text-3xl font-semibold">{count}</p>
-              <p className="text-sm text-muted-foreground">Awaiting review</p>
-            </section>
-          ))}
-        </div>
+          <div className="grid gap-5 md:grid-cols-3">
+            {[
+              ['Agency KYB', pendingAgencies?.length ?? 0],
+              ['Service approvals', pendingServices?.length ?? 0],
+              ['Withdrawals', pendingWithdrawals?.length ?? 0],
+            ].map(([title, count]) => (
+              <Panel key={title as string} className="p-5">
+                <h2 className="font-semibold">{title as string}</h2>
+                <p className="mt-4 font-mono text-3xl font-semibold">{count}</p>
+                <p className="text-sm text-muted-foreground">Awaiting review</p>
+              </Panel>
+            ))}
+          </div>
 
-        <div className="grid gap-5 md:grid-cols-3">
-          <section className="rounded-2xl border bg-card p-5">
-            <h2 className="font-semibold">Pending withdrawals</h2>
-            <p className="mt-4 text-3xl font-semibold">{summ?.pending_withdrawals ?? 0}</p>
-          </section>
-          <section className="rounded-2xl border bg-card p-5">
-            <h2 className="font-semibold">Open disputes</h2>
-            <p className="mt-4 text-3xl font-semibold">{summ?.open_disputes ?? 0}</p>
-          </section>
-          <section className="rounded-2xl border bg-card p-5">
-            <h2 className="font-semibold">Failed emails</h2>
-            <p className="mt-4 text-3xl font-semibold">{summ?.failed_emails ?? 0}</p>
-          </section>
-        </div>
+          <div className="grid gap-5 md:grid-cols-3">
+            <Panel className="p-5">
+              <h2 className="font-semibold">Pending withdrawals</h2>
+              <p className="mt-4 text-3xl font-semibold">{summ?.pending_withdrawals ?? 0}</p>
+            </Panel>
+            <Panel className="p-5">
+              <h2 className="font-semibold">Open disputes</h2>
+              <p className="mt-4 text-3xl font-semibold">{summ?.open_disputes ?? 0}</p>
+            </Panel>
+            <Panel className="p-5">
+              <h2 className="font-semibold">Failed emails</h2>
+              <p className="mt-4 text-3xl font-semibold">{summ?.failed_emails ?? 0}</p>
+            </Panel>
+          </div>
 
-        <section className="rounded-[1.25rem] border bg-card p-6 shadow-soft">
-          <h2 className="text-lg font-semibold">Pending agency KYB</h2>
+        <Panel className="p-6">
+          <SectionTitle>Pending agency KYB</SectionTitle>
           <div className="mt-4 flex flex-col gap-4">
             {!pendingAgencies || pendingAgencies.length === 0 ? (
               <p className="text-sm text-muted-foreground">No agencies awaiting verification.</p>
@@ -182,9 +182,9 @@ export default async function AdminPage() {
               ))
             )}
           </div>
-        </section>
-        <section className="rounded-[1.25rem] border bg-card p-6 shadow-soft">
-          <h2 className="text-lg font-semibold">Pending service approvals</h2>
+        </Panel>
+        <Panel className="p-6">
+          <SectionTitle>Pending service approvals</SectionTitle>
           <div className="mt-4 flex flex-col gap-4">
             {!pendingServices || pendingServices.length === 0 ? (
               <p className="text-sm text-muted-foreground">No services awaiting moderation.</p>
@@ -209,9 +209,9 @@ export default async function AdminPage() {
               })
             )}
           </div>
-        </section>
-        <section className="rounded-[1.25rem] border bg-card p-6 shadow-soft">
-          <h2 className="text-lg font-semibold">Pending withdrawals</h2>
+        </Panel>
+        <Panel className="p-6">
+          <SectionTitle>Pending withdrawals</SectionTitle>
           <div className="mt-4 flex flex-col gap-4">
             {!pendingWithdrawals || pendingWithdrawals.length === 0 ? (
               <p className="text-sm text-muted-foreground">No withdrawals awaiting processing.</p>
@@ -232,9 +232,9 @@ export default async function AdminPage() {
               ))
             )}
           </div>
-        </section>
-        <section className="rounded-[1.25rem] border bg-card p-6 shadow-soft">
-          <h2 className="text-lg font-semibold">Open disputes</h2>
+        </Panel>
+        <Panel className="p-6">
+          <SectionTitle>Open disputes</SectionTitle>
           <div className="mt-4 flex flex-col gap-4">
             {!openDisputes || openDisputes.length === 0 ? (
               <p className="text-sm text-muted-foreground">No open disputes.</p>
@@ -253,9 +253,9 @@ export default async function AdminPage() {
               ))
             )}
           </div>
-        </section>
-        <section className="rounded-[1.25rem] border bg-card p-6 shadow-soft">
-          <h2 className="text-lg font-semibold">Pending refunds</h2>
+        </Panel>
+        <Panel className="p-6">
+          <SectionTitle>Pending refunds</SectionTitle>
           <div className="mt-4 flex flex-col gap-4">
             {!pendingRefunds || (pendingRefunds as RefundRow[]).length === 0 ? (
               <p className="text-sm text-muted-foreground">No refund requests awaiting review.</p>
@@ -277,9 +277,9 @@ export default async function AdminPage() {
               ))
             )}
           </div>
-        </section>
-        <section className="rounded-[1.25rem] border bg-card p-6 shadow-soft">
-          <h2 className="text-lg font-semibold">Recent email activity</h2>
+        </Panel>
+        <Panel className="p-6">
+          <SectionTitle>Recent email activity</SectionTitle>
           <div className="mt-4 flex flex-col gap-2">
             {!logs || logs.length === 0 ? (
               <p className="text-sm text-muted-foreground">No email activity yet.</p>
@@ -300,9 +300,9 @@ export default async function AdminPage() {
               ))
             )}
           </div>
-        </section>
-        <section className="rounded-[1.25rem] border bg-card p-6 shadow-soft">
-          <h2 className="text-lg font-semibold">Failed payment callbacks</h2>
+        </Panel>
+        <Panel className="p-6">
+          <SectionTitle>Failed payment callbacks</SectionTitle>
           <div className="mt-4 flex flex-col gap-2">
             {!callbacks || callbacks.length === 0 ? (
               <p className="text-sm text-muted-foreground">No unresolved payment callbacks.</p>
@@ -326,8 +326,9 @@ export default async function AdminPage() {
               ))
             )}
           </div>
-        </section>
-      </div>
-    </main>
+        </Panel>
+        </div>
+      </main>
+    </div>
   )
 }

@@ -1,6 +1,8 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { StatusBadge } from '@/components/ui/status-badge'
+import { PageHeader } from '@/components/dashboard/page-header'
+import { Panel, SectionTitle } from '@/components/dashboard/panel'
 import { VerificationSubmitForm } from './verification-submit-form'
 
 type SubmissionRow = {
@@ -43,41 +45,38 @@ export default async function AgentVerificationPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <main id="main" className="mx-auto max-w-4xl px-4 py-8 pb-24 lg:px-8">
-        <div>
-          <p className="font-eyebrow text-primary">Verification</p>
-          <h1 className="mt-1 text-3xl font-semibold tracking-tight">Agency verification</h1>
-          <p className="mt-1 text-muted-foreground">
-            Submit documents for KYB, NANTA and IATA. Each is reviewed by our team before it appears on your profile.
-          </p>
-        </div>
+      <main id="main" className="relative w-full px-4 py-8 pb-24 lg:px-8 lg:py-10">
+        <PageHeader
+          title="Agency verification"
+          description="Submit documents for KYB, NANTA and IATA. Each is reviewed by our team before it appears on your profile."
+        />
 
         {/* Current status */}
-        <section className="mt-6 rounded-[1.5rem] border border-border bg-card p-6 shadow-soft sm:p-8">
-          <h2 className="text-lg font-semibold">Current status</h2>
+        <Panel className="mt-6 p-6 sm:p-8">
+          <SectionTitle>Current status</SectionTitle>
           <div className="mt-4 grid gap-3 sm:grid-cols-3">
             {Object.entries(TYPE_LABELS).map(([type, label]) => (
-              <div key={type} className="rounded-2xl border border-border p-4">
+              <div key={type} className="group rounded-2xl border border-border p-4 surface-soft transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-primary/15 hover:-translate-y-0.5 hover:shadow-soft-lg active:scale-[0.995]">
                 <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{label}</p>
                 <StatusBadge domain="verification" status={statusFor(type)} className="mt-2" />
               </div>
             ))}
           </div>
-        </section>
+        </Panel>
 
         {/* Submit */}
-        <section className="mt-5 rounded-[1.5rem] border border-border bg-card p-6 shadow-soft sm:p-8">
-          <h2 className="text-lg font-semibold">Submit verification</h2>
+        <Panel className="mt-5 p-6 sm:p-8">
+          <SectionTitle>Submit verification</SectionTitle>
           <p className="mt-1 text-sm text-muted-foreground">One submission at a time per type. Choose a type and attach a supporting document.</p>
           <div className="mt-4">
             <VerificationSubmitForm pendingTypes={pendingTypes} />
           </div>
-        </section>
+        </Panel>
 
         {/* History */}
-        {list.length > 0 && (
-<section className="mt-5 rounded-[1.5rem] border border-border bg-card p-6 shadow-soft sm:p-8">
-            <h2 className="text-lg font-semibold">Submission history</h2>
+{list.length > 0 && (
+          <Panel className="mt-5 p-6 sm:p-8">
+            <SectionTitle>Submission history</SectionTitle>
             <div className="mt-4 flex flex-col gap-3">
               {list.map((sub) => (
                 <div key={sub.id} className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border p-4">
@@ -92,7 +91,7 @@ export default async function AgentVerificationPage() {
                 </div>
               ))}
             </div>
-          </section>
+          </Panel>
         )}
       </main>
     </div>

@@ -34,7 +34,7 @@ export function RefundRequestForm({ orderId }: { orderId: string }) {
   }
 
   return (
-    <div className="rounded-2xl border border-border bg-card p-5 shadow-card">
+    <div className="rounded-2xl border border-border bg-card p-5 surface-soft">
       <h2 className="text-lg font-semibold">Request a refund</h2>
       <p className="mt-1 text-sm text-muted-foreground">
         Your payment is still held in escrow. If the work hasn&apos;t been delivered, you can request a refund — our team will

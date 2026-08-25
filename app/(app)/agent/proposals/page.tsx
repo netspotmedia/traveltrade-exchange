@@ -5,6 +5,7 @@ import { requireVerifiedAgent } from '@/lib/server/workflows'
 import { StatusBadge } from '@/components/ui/status-badge'
 import { EmptyState } from '@/components/ui/empty-state'
 import { formatMoney } from '@/lib/format'
+import { PageHeader } from '@/components/dashboard/page-header'
 import { FileText } from 'lucide-react'
 
 type ProposalRow = {
@@ -37,12 +38,11 @@ export default async function AgentProposalsPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <main id="main" className="mx-auto max-w-4xl px-4 py-8 pb-24 lg:px-8">
-        <div>
-          <p className="font-eyebrow text-primary">Proposals</p>
-          <h1 className="mt-1 text-3xl font-semibold tracking-tight">My proposals</h1>
-          <p className="mt-1 text-muted-foreground">Offers you&apos;ve submitted in response to customer requests.</p>
-        </div>
+      <main id="main" className="relative w-full px-4 py-8 pb-24 lg:px-8 lg:py-10">
+        <PageHeader
+          title="My proposals"
+          description="Offers you&apos;ve submitted in response to customer requests."
+        />
 
         <div className="mt-6">
           {list.length === 0 ? (
@@ -66,7 +66,7 @@ export default async function AgentProposalsPage() {
                   <Link
                     key={p.id}
                     href={order ? `/dashboard/orders/${order.id}` : '/agent/requests'}
-                    className="rounded-[1.25rem] border border-border bg-card p-5 shadow-soft transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:shadow-soft-lg"
+                    className="group rounded-[1.25rem] border border-border bg-card p-5 shadow-soft surface-soft transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-primary/15 hover:-translate-y-0.5 hover:shadow-soft-lg active:scale-[0.995]"
                   >
                     <div className="flex flex-wrap items-start justify-between gap-3">
                       <div className="min-w-0">

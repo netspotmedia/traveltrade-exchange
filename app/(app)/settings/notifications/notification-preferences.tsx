@@ -47,7 +47,7 @@ export function NotificationPreferences() {
   }
 
   return (
-    <section className="rounded-3xl border border-border bg-card p-6 shadow-card sm:p-8">
+    <section className="rounded-2xl border border-border bg-card p-6 surface-soft sm:p-8">
       <h2 className="text-lg font-semibold">Email notifications</h2>
       <p className="mt-1 text-sm text-muted-foreground">
         Choose which email notifications you receive. Mandatory security emails (withdrawals, refunds, security) are always sent.

@@ -57,7 +57,7 @@ export function ProposalPanel({ orderId, isBuyer, isSeller, proposals }: { order
   }
 
   return (
-    <section className="rounded-3xl border border-border bg-card shadow-card">
+    <section className="rounded-2xl border border-border bg-card surface-soft">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-5 py-4">
         <div>
           <h2 className="font-semibold">Proposal & milestones</h2>

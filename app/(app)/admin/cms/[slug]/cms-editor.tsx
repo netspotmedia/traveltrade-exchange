@@ -59,7 +59,7 @@ export function CmsEditor({
         e.preventDefault()
         save()
       }}
-      className="flex flex-col gap-5 rounded-2xl border border-border bg-card p-6 shadow-card"
+      className="flex flex-col gap-5 rounded-2xl border border-border bg-card p-6 surface-soft"
     >
       {fields.map((f) => (
         <label key={f.key} className="flex flex-col gap-1.5 text-sm font-medium">

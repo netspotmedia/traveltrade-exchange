@@ -2,6 +2,8 @@ import { redirect } from 'next/navigation'
 import { ScrollText } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { EmptyState } from '@/components/ui/empty-state'
+import { PageHeader } from '@/components/dashboard/page-header'
+import { Panel } from '@/components/dashboard/panel'
 
 type AuditRow = {
   id: string
@@ -48,13 +50,13 @@ export default async function AdminAuditPage() {
   }
 
   return (
-    <main className="min-h-screen bg-background px-6 py-10">
-      <div className="mx-auto flex max-w-5xl flex-col gap-8">
-        <div>
-          <p className="text-sm font-semibold text-primary">Audit</p>
-          <h1 className="mt-2 text-4xl font-semibold">Activity log</h1>
-          <p className="mt-1 text-muted-foreground">A chronological trail of admin actions and platform state changes.</p>
-        </div>
+    <div className="min-h-screen bg-background">
+      <main id="main" className="relative w-full px-4 py-8 pb-24 lg:px-8 lg:py-10">
+        <div className="flex w-full flex-col gap-8">
+          <PageHeader
+            title="Activity log"
+            description="A chronological trail of admin actions and platform state changes."
+          />
 
         {error || logs.length === 0 ? (
           <EmptyState
@@ -63,7 +65,7 @@ export default async function AdminAuditPage() {
             description={error ? 'Could not load the audit trail.' : 'Admin actions and platform changes will appear here.'}
           />
         ) : (
-          <div className="rounded-2xl border border-border bg-card shadow-card">
+          <Panel>
             <ul className="divide-y divide-border">
               {logs.map((log) => (
                 <li key={log.id} className="flex flex-col gap-1 px-5 py-3 sm:flex-row sm:items-center sm:justify-between">
@@ -78,9 +80,10 @@ export default async function AdminAuditPage() {
                 </li>
               ))}
             </ul>
-          </div>
+          </Panel>
         )}
       </div>
     </main>
+  </div>
   )
 }

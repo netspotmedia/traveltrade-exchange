@@ -2,7 +2,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 
 export default function AgentServicesLoading() {
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8 pb-24 lg:px-8">
+    <div className="relative w-full px-4 py-8 pb-24 lg:px-8">
       <div className="flex items-end justify-between">
         <div>
           <Skeleton className="h-4 w-28" />
