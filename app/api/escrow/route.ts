@@ -53,8 +53,22 @@ export async function POST(request: Request) {
     if (emailGate) return emailGate
     const orderId = cleanText(body.orderId, 80)
     if (!orderId) return jsonError('Order id is required')
+
+    // If this order has an agreement, both parties must have signed before
+    // escrow can be funded. Orders without an agreement (legacy flow) are
+    // unaffected.
+    const { data: agreement } = await supabase
+      .from('agreements')
+      .select('signed_by_buyer_at, signed_by_seller_at')
+      .eq('order_id', orderId)
+      .maybeSingle()
+    if (agreement && (!agreement.signed_by_buyer_at || !agreement.signed_by_seller_at)) {
+      return jsonError('Both parties must sign the agreement before funding', 400)
+    }
+
     const result = await fundEscrowFromWallet({ orderId, buyerId: user.id })
     if (!result.ok) return jsonError(result.error ?? 'Unable to fund escrow', 400)
+    if (agreement) await supabase.from('agreements').update({ status: 'active', updated_at: new Date().toISOString() }).eq('order_id', orderId)
     return NextResponse.json({ ok: true, status: 'funded' })
   }
 

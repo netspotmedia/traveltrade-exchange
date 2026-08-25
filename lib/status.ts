@@ -8,6 +8,8 @@ export type StatusDomain =
   | 'withdrawal'
   | 'dispute'
   | 'proposal'
+  | 'agreement'
+  | 'refund'
 
 export interface StatusInfo {
   label: string
@@ -63,6 +65,18 @@ const MAP: Record<StatusDomain, Record<string, StatusInfo>> = {
     accepted: { label: 'Accepted', tone: 'success' },
     rejected: { label: 'Rejected', tone: 'destructive' },
     declined: { label: 'Declined', tone: 'destructive' },
+  },
+  agreement: {
+    pending_signatures: { label: 'Awaiting signatures', tone: 'warning' },
+    active: { label: 'Signed', tone: 'success' },
+    completed: { label: 'Completed', tone: 'success' },
+    cancelled: { label: 'Cancelled', tone: 'neutral' },
+    refunded: { label: 'Refunded', tone: 'neutral' },
+  },
+  refund: {
+    pending: { label: 'Under review', tone: 'warning' },
+    approved: { label: 'Approved', tone: 'success' },
+    rejected: { label: 'Declined', tone: 'destructive' },
   },
 }
 

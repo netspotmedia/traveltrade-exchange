@@ -23,7 +23,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
 
   if (!['accept', 'reject'].includes(decision)) return jsonError('Decision must be accept or reject')
 
-  const { data: proposal } = await supabase.from('proposals').select('*, orders(buyer_id, status)').eq('id', id).maybeSingle()
+  const { data: proposal } = await supabase.from('proposals').select('*, orders(buyer_id, status, currency)').eq('id', id).maybeSingle()
   if (!proposal) return jsonError('Proposal not found', 404)
   const order = Array.isArray(proposal.orders) ? proposal.orders[0] : proposal.orders
   if (!order || order.buyer_id !== user.id) return jsonError('Not authorized for this proposal', 403)
@@ -33,6 +33,21 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   const next = decision === 'accept' ? 'accepted' : 'rejected'
   const { error } = await supabase.from('proposals').update({ status: next, updated_at: new Date().toISOString() }).eq('id', id)
   if (error) return jsonError('Unable to update proposal', 400)
+
+  // Accepting a proposal creates the agreement and records the buyer's
+  // signature. The seller signs from the order page before escrow funding.
+  if (decision === 'accept') {
+    await supabase.from('agreements').upsert(
+      {
+        order_id: proposal.order_id,
+        proposal_id: id,
+        total_amount: Number(proposal.fee_amount ?? 0),
+        currency: order?.currency ?? 'NGN',
+        signed_by_buyer_at: new Date().toISOString(),
+      },
+      { onConflict: 'order_id' },
+    )
+  }
 
   return NextResponse.json({ ok: true, status: next })
 }

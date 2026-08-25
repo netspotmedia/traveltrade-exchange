@@ -1,0 +1,51 @@
+'use client'
+
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { Button } from '@/components/ui/button'
+import { Textarea } from '@/components/ui/textarea'
+
+export function RefundReviewActions({ refundId }: { refundId: string }) {
+  const [rejectionReason, setRejectionReason] = useState('')
+  const [busy, setBusy] = useState<string | null>(null)
+  const [message, setMessage] = useState('')
+  const router = useRouter()
+
+  async function decide(decision: 'approve' | 'reject') {
+    setBusy(decision)
+    setMessage('Processing…')
+    try {
+      const r = await fetch('/api/admin/refunds/review', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ refundId, decision, rejectionReason }),
+      })
+      const j = await r.json()
+      setMessage(r.ok ? 'Refund processed.' : (j.error || 'Action failed'))
+      if (r.ok) router.refresh()
+    } finally {
+      setBusy(null)
+    }
+  }
+
+  return (
+    <div className="mt-4 flex flex-col gap-3">
+      <Textarea
+        value={rejectionReason}
+        onChange={(e) => setRejectionReason(e.target.value)}
+        placeholder="Rejection reason (required when declining)"
+        rows={2}
+        className="min-h-16"
+      />
+      <div className="flex flex-wrap gap-3">
+        <Button size="sm" disabled={busy !== null} onClick={() => decide('approve')}>
+          Approve refund
+        </Button>
+        <Button size="sm" variant="destructive" disabled={busy !== null} onClick={() => decide('reject')}>
+          Decline
+        </Button>
+      </div>
+      {message && <p className="text-sm text-muted-foreground">{message}</p>}
+    </div>
+  )
+}

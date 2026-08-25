@@ -6,7 +6,10 @@ import { Menu, X } from 'lucide-react'
 
 const LINKS = [
   { href: '/marketplace', label: 'Find services' },
-  { href: '/#how-it-works', label: 'How it works' },
+  { href: '/agents', label: 'Verified Agents' },
+  { href: '/how-it-works', label: 'How it works' },
+  { href: '/about', label: 'About' },
+  { href: '/help', label: 'Help' },
   { href: '/onboarding', label: 'Sell travel services' },
 ]
 

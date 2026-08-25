@@ -14,5 +14,8 @@ node_modules
 .next/
 .DS_Store
 
+# Supabase CLI temp files
+supabase/.temp/
+
 # TypeScript incremental build cache
 tsconfig.tsbuildinfo

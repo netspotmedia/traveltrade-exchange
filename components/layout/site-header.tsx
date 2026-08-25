@@ -6,7 +6,9 @@ import { cn } from '@/lib/utils'
 
 const NAV_LINKS = [
   { href: '/marketplace', label: 'Find services' },
-  { href: '/#how-it-works', label: 'How it works' },
+  { href: '/agents', label: 'Verified Agents' },
+  { href: '/how-it-works', label: 'How it works' },
+  { href: '/about', label: 'About' },
   { href: '/onboarding', label: 'Sell travel services' },
 ]
 

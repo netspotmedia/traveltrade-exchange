@@ -112,6 +112,13 @@ export function resolveDispute(params: {
   })
 }
 
+export function refundOrderEscrow(params: { orderId: string; actorId: string }) {
+  return callRpc('refund_order_escrow', {
+    p_order_id: params.orderId,
+    p_actor_id: params.actorId,
+  })
+}
+
 export function escalateDispute(params: { disputeId: string; actorId: string }) {
   return callRpc('escalate_dispute', {
     p_dispute_id: params.disputeId,
