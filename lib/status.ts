@@ -10,6 +10,7 @@ export type StatusDomain =
   | 'proposal'
   | 'agreement'
   | 'refund'
+  | 'verification'
 
 export interface StatusInfo {
   label: string
@@ -77,6 +78,12 @@ const MAP: Record<StatusDomain, Record<string, StatusInfo>> = {
     pending: { label: 'Under review', tone: 'warning' },
     approved: { label: 'Approved', tone: 'success' },
     rejected: { label: 'Declined', tone: 'destructive' },
+  },
+  verification: {
+    pending: { label: 'In review', tone: 'warning' },
+    approved: { label: 'Approved', tone: 'success' },
+    rejected: { label: 'Not approved', tone: 'destructive' },
+    unverified: { label: 'Not submitted', tone: 'neutral' },
   },
 }
 

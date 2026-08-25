@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { rateLimit, rateLimitError } from '@/lib/server/rate-limit'
 import { sendNotification } from '@/lib/server/notify'
 import { mfaGate } from '@/lib/server/mfa'
+import { logAudit } from '@/lib/server/audit'
 
 export async function POST(request: Request) {
   const mfa = await mfaGate()
@@ -58,6 +59,8 @@ export async function POST(request: Request) {
       event: 'agency_verification',
     })
   }
+
+  void logAudit('agency_kyb_review', 'agency', agencyId, { decision, note, credentials })
 
   return NextResponse.json({ ok: true, status: data.status })
 }

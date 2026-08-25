@@ -1,5 +1,6 @@
 import type { LucideIcon } from 'lucide-react'
 import {
+  BadgeCheck,
   Bell,
   FileText,
   Inbox,
@@ -31,9 +32,16 @@ export const appNav: NavItem[] = [
   { label: 'Orders', href: '/orders', icon: ShoppingBag },
   { label: 'My Services', href: '/agent/services', icon: Store, roles: ['seller'] },
   { label: 'Quote Requests', href: '/agent/requests', icon: Inbox, roles: ['seller'] },
+  { label: 'Proposals', href: '/agent/proposals', icon: FileText, roles: ['seller'] },
+  { label: 'Verification', href: '/agent/verification', icon: ShieldCheck, roles: ['seller'] },
   { label: 'Wallet', href: '/dashboard/wallet', icon: WalletCards, roles: ['seller'] },
   { label: 'Admin Console', href: '/admin', icon: ShieldCheck, roles: ['admin'] },
+  { label: 'Users', href: '/admin/users', icon: FileText, roles: ['admin'] },
+  { label: 'Verification', href: '/admin/verification', icon: BadgeCheck, roles: ['admin'] },
+  { label: 'Email Logs', href: '/admin/email-logs', icon: MessageSquareText, roles: ['admin'] },
+  { label: 'Audit', href: '/admin/audit', icon: FileText, roles: ['admin'] },
   { label: 'Content', href: '/admin/cms', icon: FileText, roles: ['admin'] },
+  { label: 'Branding', href: '/admin/branding', icon: FileText, roles: ['admin'] },
 ]
 
 /** Active state for a nav item based on the current path. */

@@ -3,12 +3,15 @@ import type { Metadata } from 'next'
 import { BadgeCheck, MapPin, Star } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { Avatar } from '@/components/ui/avatar'
+import { cn } from '@/lib/utils'
 
 export const metadata: Metadata = {
   title: 'Verified Agents',
   description:
     'Browse verified travel agencies on TravelTrade Exchange — trusted professionals you can work with on protected payments.',
 }
+
+const PER_PAGE = 24
 
 type AgencyRow = {
   id: string
@@ -20,18 +23,41 @@ type AgencyRow = {
   completed_orders: number
 }
 
-export default async function AgentsPage() {
+export default async function AgentsPage({ searchParams }: { searchParams: Promise<{ country?: string; page?: string }> }) {
+  const params = await searchParams
+  const country = (params.country ?? '').trim()
+  const page = Math.max(1, Number(params.page) || 1)
+  const skip = (page - 1) * PER_PAGE
+
   const supabase = await createClient()
 
-  const { data: agencies } = await supabase
+  // Available countries for the filter (from verified agencies).
+  const { data: countriesData } = await supabase
     .from('agencies')
-    .select('id, name, slug, country, city, rating, completed_orders')
+    .select('country')
     .eq('verification_status', 'verified')
     .is('deleted_at', null)
-    .order('rating', { ascending: false })
-    .limit(24)
+  const countries = Array.from(new Set((countriesData ?? []).map((c) => (c.country as string) ?? 'Nigeria').filter(Boolean))).sort()
+
+  let query = supabase
+    .from('agencies')
+    .select('id, name, slug, country, city, rating, completed_orders', { count: 'exact' })
+    .eq('verification_status', 'verified')
+    .is('deleted_at', null)
+  if (country) query = query.eq('country', country)
+  const { data: agencies, count } = await query.order('rating', { ascending: false }).range(skip, skip + PER_PAGE - 1)
 
   const list = (agencies ?? []) as AgencyRow[]
+  const total = count ?? 0
+  const totalPages = Math.max(1, Math.ceil(total / PER_PAGE))
+
+  function buildHref(nextCountry: string | null, nextPage: number) {
+    const p = new URLSearchParams()
+    if (nextCountry) p.set('country', nextCountry)
+    if (nextPage > 1) p.set('page', String(nextPage))
+    const qs = p.toString()
+    return qs ? `/agents?${qs}` : '/agents'
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -40,14 +66,28 @@ export default async function AgentsPage() {
           <p className="font-mono text-xs font-bold uppercase tracking-widest text-primary">Verified Agents</p>
           <h1 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">Trusted travel professionals</h1>
           <p className="mt-2 text-muted-foreground">
-            Every agent completes business verification before trading. Work with confidence on protected payments.
+            {total} verified {total === 1 ? 'agent' : 'agents'} ready to serve you — every one completes business verification before trading.
           </p>
         </div>
+
+        {/* Country filter */}
+        {countries.length > 0 && (
+          <div className="mt-8 flex flex-wrap gap-2" role="group" aria-label="Filter by country">
+            <Link href={buildHref(null, 1)} className={cn('rounded-full border px-3 py-1 text-sm transition', !country ? 'border-primary bg-primary-soft text-primary' : 'border-border bg-card text-muted-foreground hover:bg-muted')}>
+              All Countries
+            </Link>
+            {countries.map((c) => (
+              <Link key={c} href={buildHref(c, 1)} className={cn('rounded-full border px-3 py-1 text-sm transition', country === c ? 'border-primary bg-primary-soft text-primary' : 'border-border bg-card text-muted-foreground hover:bg-muted')}>
+                {c}
+              </Link>
+            ))}
+          </div>
+        )}
 
         <div className="mt-10">
           {list.length === 0 ? (
             <p className="rounded-2xl border border-dashed border-border bg-background/60 px-4 py-12 text-center text-sm text-muted-foreground">
-              We are onboarding our first verified agents. Check back soon.
+              {country ? `No verified agents in ${country} yet.` : 'We are onboarding our first verified agents. Check back soon.'}
             </p>
           ) : (
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -87,6 +127,28 @@ export default async function AgentsPage() {
             </div>
           )}
         </div>
+
+        {totalPages > 1 && (
+          <nav className="mt-10 flex items-center justify-center gap-3" aria-label="Pagination">
+            {page > 1 ? (
+              <Link href={buildHref(country || null, page - 1)} className="inline-flex h-10 items-center rounded-xl border border-border bg-card px-4 text-sm font-medium shadow-card transition hover:bg-muted">
+                Previous
+              </Link>
+            ) : (
+              <span className="inline-flex h-10 items-center rounded-xl border border-border px-4 text-sm font-medium text-muted-foreground/50">Previous</span>
+            )}
+            <span className="text-sm text-muted-foreground">
+              Page <strong className="text-foreground">{page}</strong> of {totalPages}
+            </span>
+            {page < totalPages ? (
+              <Link href={buildHref(country || null, page + 1)} className="inline-flex h-10 items-center rounded-xl border border-border bg-card px-4 text-sm font-medium shadow-card transition hover:bg-muted">
+                Next
+              </Link>
+            ) : (
+              <span className="inline-flex h-10 items-center rounded-xl border border-border px-4 text-sm font-medium text-muted-foreground/50">Next</span>
+            )}
+          </nav>
+        )}
       </main>
     </div>
   )

@@ -4,6 +4,7 @@ import { rateLimit, rateLimitError } from '@/lib/server/rate-limit'
 import { mfaGate } from '@/lib/server/mfa'
 import { refundOrderEscrow } from '@/lib/server/money'
 import { sendNotification } from '@/lib/server/notify'
+import { logAudit } from '@/lib/server/audit'
 
 export async function POST(request: Request) {
   const mfa = await mfaGate()
@@ -74,6 +75,8 @@ export async function POST(request: Request) {
       event: 'refund',
     })
   }
+
+  void logAudit('refund_review', 'refund_request', refundId, { decision, orderId: refund.order_id })
 
   return NextResponse.json({ ok: true, status: decision === 'approve' ? 'approved' : 'rejected' })
 }
