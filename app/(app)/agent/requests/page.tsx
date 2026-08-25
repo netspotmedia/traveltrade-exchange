@@ -47,7 +47,7 @@ export default async function AgentRequestsPage() {
             />
           ) : (
             (orders as OrderRow[]).map((o) => (
-              <div key={o.id} className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-card p-5 shadow-card transition hover:-translate-y-0.5 hover:shadow-lift">
+              <div key={o.id} className="flex flex-wrap items-center justify-between gap-3 rounded-[1.25rem] border border-border bg-card p-5 shadow-soft transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:shadow-soft-lg">
                 <div className="min-w-0">
                   <p className="font-semibold">{o.title}</p>
                   <p className="text-sm text-muted-foreground">{o.buyer?.email || 'Buyer'} · {new Date(o.created_at).toLocaleDateString()}</p>

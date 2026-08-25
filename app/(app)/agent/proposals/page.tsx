@@ -66,7 +66,7 @@ export default async function AgentProposalsPage() {
                   <Link
                     key={p.id}
                     href={order ? `/dashboard/orders/${order.id}` : '/agent/requests'}
-                    className="rounded-2xl border border-border bg-card p-5 shadow-card transition hover:-translate-y-0.5 hover:shadow-lift"
+                    className="rounded-[1.25rem] border border-border bg-card p-5 shadow-soft transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:shadow-soft-lg"
                   >
                     <div className="flex flex-wrap items-start justify-between gap-3">
                       <div className="min-w-0">

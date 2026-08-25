@@ -152,7 +152,7 @@ export default async function AdminPage() {
           </section>
         </div>
 
-        <section className="rounded-2xl border bg-card p-6">
+        <section className="rounded-[1.25rem] border bg-card p-6 shadow-soft">
           <h2 className="text-lg font-semibold">Pending agency KYB</h2>
           <div className="mt-4 flex flex-col gap-4">
             {!pendingAgencies || pendingAgencies.length === 0 ? (
@@ -183,7 +183,7 @@ export default async function AdminPage() {
             )}
           </div>
         </section>
-        <section className="rounded-2xl border bg-card p-6">
+        <section className="rounded-[1.25rem] border bg-card p-6 shadow-soft">
           <h2 className="text-lg font-semibold">Pending service approvals</h2>
           <div className="mt-4 flex flex-col gap-4">
             {!pendingServices || pendingServices.length === 0 ? (
@@ -210,7 +210,7 @@ export default async function AdminPage() {
             )}
           </div>
         </section>
-        <section className="rounded-2xl border bg-card p-6">
+        <section className="rounded-[1.25rem] border bg-card p-6 shadow-soft">
           <h2 className="text-lg font-semibold">Pending withdrawals</h2>
           <div className="mt-4 flex flex-col gap-4">
             {!pendingWithdrawals || pendingWithdrawals.length === 0 ? (
@@ -233,7 +233,7 @@ export default async function AdminPage() {
             )}
           </div>
         </section>
-        <section className="rounded-2xl border bg-card p-6">
+        <section className="rounded-[1.25rem] border bg-card p-6 shadow-soft">
           <h2 className="text-lg font-semibold">Open disputes</h2>
           <div className="mt-4 flex flex-col gap-4">
             {!openDisputes || openDisputes.length === 0 ? (
@@ -254,7 +254,7 @@ export default async function AdminPage() {
             )}
           </div>
         </section>
-        <section className="rounded-2xl border bg-card p-6">
+        <section className="rounded-[1.25rem] border bg-card p-6 shadow-soft">
           <h2 className="text-lg font-semibold">Pending refunds</h2>
           <div className="mt-4 flex flex-col gap-4">
             {!pendingRefunds || (pendingRefunds as RefundRow[]).length === 0 ? (
@@ -278,7 +278,7 @@ export default async function AdminPage() {
             )}
           </div>
         </section>
-        <section className="rounded-2xl border bg-card p-6">
+        <section className="rounded-[1.25rem] border bg-card p-6 shadow-soft">
           <h2 className="text-lg font-semibold">Recent email activity</h2>
           <div className="mt-4 flex flex-col gap-2">
             {!logs || logs.length === 0 ? (
@@ -301,7 +301,7 @@ export default async function AdminPage() {
             )}
           </div>
         </section>
-        <section className="rounded-2xl border bg-card p-6">
+        <section className="rounded-[1.25rem] border bg-card p-6 shadow-soft">
           <h2 className="text-lg font-semibold">Failed payment callbacks</h2>
           <div className="mt-4 flex flex-col gap-2">
             {!callbacks || callbacks.length === 0 ? (

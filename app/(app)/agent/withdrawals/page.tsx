@@ -57,13 +57,13 @@ export default async function AgentWithdrawalsPage() {
         </section>
 
         {/* Withdrawal form */}
-        <section className="mt-5 rounded-3xl border border-border bg-card p-6 shadow-card sm:p-8">
+        <section className="mt-5 rounded-[1.5rem] border border-border bg-card p-6 shadow-soft sm:p-8">
           <h2 className="text-lg font-semibold">Request a withdrawal</h2>
           <WithdrawalForm />
         </section>
 
         {/* History */}
-        <section className="mt-5 rounded-3xl border border-border bg-card p-6 shadow-card sm:p-8">
+        <section className="mt-5 rounded-[1.5rem] border border-border bg-card p-6 shadow-soft sm:p-8">
           <h2 className="text-lg font-semibold">Withdrawal history</h2>
           <div className="mt-4">
             {withdrawals.length === 0 ? (

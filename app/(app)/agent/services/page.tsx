@@ -51,7 +51,7 @@ export default async function AgentServicesPage() {
             />
           ) : (
             (services as ServiceRow[]).map((svc) => (
-              <div key={svc.id} className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-card p-5 shadow-card">
+              <div key={svc.id} className="flex flex-wrap items-center justify-between gap-3 rounded-[1.25rem] border border-border bg-card p-5 shadow-soft">
                 <div>
                   <p className="font-semibold">{svc.title}</p>
                   <p className="text-sm text-muted-foreground">

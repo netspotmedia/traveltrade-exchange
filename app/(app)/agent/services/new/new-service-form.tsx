@@ -50,7 +50,7 @@ export function NewServiceForm() {
   }
 
   return (
-    <form onSubmit={submit} className="mx-auto flex max-w-2xl flex-col gap-5 rounded-3xl border border-border bg-card p-6 shadow-card sm:p-8">
+    <form onSubmit={submit} className="mx-auto flex max-w-2xl flex-col gap-5 rounded-3xl border border-border bg-card p-6 shadow-soft sm:p-8">
       <div>
         <p className="text-sm font-semibold text-primary">Sell a service</p>
         <h1 className="mt-1 text-3xl font-semibold tracking-tight">Create a new service</h1>

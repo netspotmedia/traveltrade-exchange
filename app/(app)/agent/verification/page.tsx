@@ -53,7 +53,7 @@ export default async function AgentVerificationPage() {
         </div>
 
         {/* Current status */}
-        <section className="mt-6 rounded-3xl border border-border bg-card p-6 shadow-card sm:p-8">
+        <section className="mt-6 rounded-[1.5rem] border border-border bg-card p-6 shadow-soft sm:p-8">
           <h2 className="text-lg font-semibold">Current status</h2>
           <div className="mt-4 grid gap-3 sm:grid-cols-3">
             {Object.entries(TYPE_LABELS).map(([type, label]) => (
@@ -66,7 +66,7 @@ export default async function AgentVerificationPage() {
         </section>
 
         {/* Submit */}
-        <section className="mt-5 rounded-3xl border border-border bg-card p-6 shadow-card sm:p-8">
+        <section className="mt-5 rounded-[1.5rem] border border-border bg-card p-6 shadow-soft sm:p-8">
           <h2 className="text-lg font-semibold">Submit verification</h2>
           <p className="mt-1 text-sm text-muted-foreground">One submission at a time per type. Choose a type and attach a supporting document.</p>
           <div className="mt-4">
@@ -76,7 +76,7 @@ export default async function AgentVerificationPage() {
 
         {/* History */}
         {list.length > 0 && (
-          <section className="mt-5 rounded-3xl border border-border bg-card p-6 shadow-card sm:p-8">
+<section className="mt-5 rounded-[1.5rem] border border-border bg-card p-6 shadow-soft sm:p-8">
             <h2 className="text-lg font-semibold">Submission history</h2>
             <div className="mt-4 flex flex-col gap-3">
               {list.map((sub) => (

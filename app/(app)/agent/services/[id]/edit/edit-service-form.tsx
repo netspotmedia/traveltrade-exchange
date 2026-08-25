@@ -84,7 +84,7 @@ export function EditServiceForm({ service }: EditServiceFormProps) {
   const firstImage = service.images[0] ? publicImageUrl(service.images[0]) : null
 
   return (
-    <form onSubmit={save} className="flex flex-col gap-5 rounded-3xl border border-border bg-card p-6 shadow-card sm:p-8">
+    <form onSubmit={save} className="flex flex-col gap-5 rounded-3xl border border-border bg-card p-6 shadow-soft sm:p-8">
       <div>
         <p className="text-sm font-semibold text-primary">Sell a service</p>
         <h1 className="mt-1 text-3xl font-semibold tracking-tight">Edit service</h1>

@@ -45,7 +45,7 @@ export function ProposeForm({ orderId }: { orderId: string }) {
   }
 
   return (
-    <form onSubmit={submit} className="flex flex-col gap-5 rounded-3xl border border-border bg-card p-6 shadow-card sm:p-8">
+    <form onSubmit={submit} className="flex flex-col gap-5 rounded-3xl border border-border bg-card p-6 shadow-soft sm:p-8">
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="flex flex-col gap-1.5 text-sm font-medium">
           Fee (NGN)
