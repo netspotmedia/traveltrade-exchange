@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { ArrowRight } from 'lucide-react'
 import { MobileMenu } from '@/components/layout/mobile-menu'
 import { cn } from '@/lib/utils'
 
@@ -48,7 +49,7 @@ export function HeaderBar({
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 lg:px-8">
         {logo}
 
-        <nav className="hidden items-center gap-1 md:flex" aria-label="Main">
+        <nav className="hidden items-center md:flex" aria-label="Main">
           {NAV_LINKS.map((l) => {
             const active = pathname === l.href || (l.href !== '/' && pathname.startsWith(l.href))
             return (
@@ -57,11 +58,20 @@ export function HeaderBar({
                 href={l.href}
                 aria-current={active ? 'page' : undefined}
                 className={cn(
-                  'rounded-lg px-3.5 py-2 text-sm font-medium transition hover:bg-muted hover:text-foreground',
-                  active ? 'bg-muted text-foreground' : 'text-muted-foreground',
+                  'group px-3.5 py-2 text-sm font-medium transition-colors duration-200',
+                  active ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',
                 )}
               >
-                {l.label}
+                <span className="relative">
+                  {l.label}
+                  <span
+                    aria-hidden="true"
+                    className={cn(
+                      'absolute inset-x-0 -bottom-1 h-px origin-left bg-primary transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]',
+                      active ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100',
+                    )}
+                  />
+                </span>
               </Link>
             )
           })}
@@ -71,9 +81,10 @@ export function HeaderBar({
           {signedIn ? (
             <Link
               href="/dashboard"
-              className="rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-card transition-all duration-200 hover:shadow-soft hover:opacity-95 active:scale-[0.98]"
+              className="group inline-flex items-center gap-1.5 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-card transition-all duration-200 hover:shadow-soft hover:opacity-95 active:scale-[0.98]"
             >
               Open workspace
+              <ArrowRight className="size-4 transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true" />
             </Link>
           ) : (
             <>
@@ -85,9 +96,10 @@ export function HeaderBar({
               </Link>
               <Link
                 href="/auth/sign-up"
-                className="rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-card transition-all duration-200 hover:shadow-soft hover:opacity-95 active:scale-[0.98]"
+                className="group inline-flex items-center gap-1.5 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-card transition-all duration-200 hover:shadow-soft hover:opacity-95 active:scale-[0.98]"
               >
                 Get started
+                <ArrowRight className="size-4 transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true" />
               </Link>
             </>
           )}
