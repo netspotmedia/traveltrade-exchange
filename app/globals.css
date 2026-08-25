@@ -55,13 +55,24 @@
   --shadow-lift: 0 6px 16px -4px rgb(11 22 30 / 0.1), 0 2px 6px -2px rgb(11 22 30 / 0.06);
   --shadow-float: 0 12px 32px -8px rgb(11 22 30 / 0.18), 0 4px 12px -4px rgb(11 22 30 / 0.08);
 
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
+  /* ------------------------------------------------------------
+     Controlled radius scale (TTX design language)
+     - sm/md/lg: small controls, chips, buttons, inputs
+     - xl:       standard cards
+     - 2xl:      featured cards, list panels
+     - 3xl:      large surfaces, forms, modals
+     - 4xl:      hero-scale containers only (never scattered)
+     ------------------------------------------------------------ */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.625rem;
   --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
+  --radius-3xl: 1.5rem;
+  --radius-4xl: 2rem;
+
+  /* Alternating section surface (quiet tone change, no borders) */
+  --color-surface-alt: var(--surface-alt);
 }
 
 :root {
@@ -101,7 +112,8 @@
   --chart-3: #e8a33d;
   --chart-4: #2563eb;
   --chart-5: #7c3aed;
-  --radius: 0.7rem;
+  --radius: 0.75rem;
+  --surface-alt: #eef1f4;
 
   /* Semantic status */
   --success: #e2f4ef;
@@ -151,6 +163,7 @@
   --border: #334155;
   --input: #475569;
   --ring: #e8a33d;
+  --surface-alt: #141d33;
   --success: #14302a;
   --success-foreground: #34d399;
   --warning: #3a2d16;
@@ -203,6 +216,7 @@
     --border: #334155;
     --input: #475569;
     --ring: #e8a33d;
+    --surface-alt: #141d33;
     --success: #14302a;
     --success-foreground: #34d399;
     --warning: #3a2d16;
@@ -222,6 +236,50 @@
     --sidebar-accent-foreground: #e2e8f0;
     --sidebar-border: #334155;
     --sidebar-ring: #e8a33d;
+  }
+}
+
+/* ------------------------------------------------------------
+   Motion system (TTX design language)
+   - Micro interactions: 120-180ms (transition utilities)
+   - Reveals: 400-700ms (hero-in / reveal)
+   - Ambient: gentle float, never continuous spinning
+   All animations are neutralised by the prefers-reduced-motion
+   guard in the base layer below.
+   ------------------------------------------------------------ */
+@theme {
+  --animate-hero-in: hero-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-float-delayed: float 7s ease-in-out 2.2s infinite;
+  --animate-pulse-soft: pulse-soft 3.5s ease-in-out infinite;
+
+  @keyframes hero-in {
+    from {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+  @keyframes pulse-soft {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.55;
+    }
   }
 }
 
@@ -300,6 +358,25 @@
       0 2px 4px 0 rgb(11 22 30 / 0.05),
       0 20px 48px -12px rgb(11 22 30 / 0.16),
       0 6px 14px -6px rgb(11 22 30 / 0.08);
+  }
+  /* Faint architectural grid for the hero — masked toward the edges so it
+     reads as depth, never as a screenshot of a spreadsheet. */
+  .hero-grid {
+    background-image:
+      linear-gradient(to right, rgb(11 61 92 / 0.045) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(11 61 92 / 0.045) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse 70% 62% at 50% 0%, black 20%, transparent 72%);
+    -webkit-mask-image: radial-gradient(ellipse 70% 62% at 50% 0%, black 20%, transparent 72%);
+  }
+  .dark .hero-grid {
+    background-image:
+      linear-gradient(to right, rgb(226 232 240 / 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(226 232 240 / 0.05) 1px, transparent 1px);
+  }
+  /* Fine grain to stop flat color fields from feeling sterile. */
+  .bg-noise {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
   }
 }
 

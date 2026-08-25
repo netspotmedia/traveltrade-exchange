@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { Menu, X } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 const LINKS = [
   { href: '/marketplace', label: 'Find services' },
@@ -33,28 +34,39 @@ export function MobileMenu({ signedIn }: { signedIn: boolean }) {
         type="button"
         aria-label={open ? 'Close menu' : 'Open menu'}
         aria-expanded={open}
+        aria-controls="mobile-nav"
         onClick={() => setOpen((v) => !v)}
-        className="grid size-10 place-items-center rounded-xl border border-border bg-background text-foreground transition hover:bg-muted"
+        className="grid size-10 place-items-center rounded-xl border border-border bg-background text-foreground transition hover:bg-muted active:scale-[0.97]"
       >
         {open ? <X className="size-5" /> : <Menu className="size-5" />}
       </button>
       {open && (
-        <div className="absolute inset-x-0 top-full z-50 border-b border-border bg-card px-4 py-3 shadow-lift md:hidden">
-          <nav className="flex flex-col" aria-label="Mobile">
-            {LINKS.map((l) => (
-              <button
-                key={l.href}
-                type="button"
-                onClick={() => go(l.href)}
-                className="rounded-xl px-3 py-3 text-left text-sm font-medium text-foreground transition hover:bg-muted"
-              >
-                {l.label}
-              </button>
-            ))}
+        <div
+          id="mobile-nav"
+          className="absolute inset-x-0 top-full z-50 border-b border-border bg-card/95 px-4 py-3 shadow-lift backdrop-blur-md"
+        >
+          <nav className="flex flex-col gap-0.5" aria-label="Mobile">
+            {LINKS.map((l) => {
+              const active = pathname === l.href || (l.href !== '/' && pathname.startsWith(l.href))
+              return (
+                <button
+                  key={l.href}
+                  type="button"
+                  onClick={() => go(l.href)}
+                  aria-current={active ? 'page' : undefined}
+                  className={cn(
+                    'min-h-11 rounded-xl px-3 text-left text-sm font-medium transition hover:bg-muted',
+                    active ? 'bg-muted text-foreground' : 'text-foreground',
+                  )}
+                >
+                  {l.label}
+                </button>
+              )
+            })}
             <button
               type="button"
               onClick={() => go(signedIn ? '/dashboard' : '/auth/sign-up')}
-              className="mt-1 rounded-xl bg-primary px-3 py-3 text-sm font-semibold text-primary-foreground"
+              className="mt-1.5 min-h-11 rounded-xl bg-primary px-3 text-sm font-semibold text-primary-foreground transition hover:opacity-95 active:scale-[0.98]"
             >
               {signedIn ? 'Open workspace' : 'Get started'}
             </button>
