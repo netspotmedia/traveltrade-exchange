@@ -64,9 +64,9 @@ export default async function AgentsPage({ searchParams }: { searchParams: Promi
     <div className="min-h-screen bg-background">
       <main id="main" className="mx-auto max-w-7xl px-4 py-12 lg:px-8">
         <div className="max-w-2xl">
-          <p className="font-mono text-xs font-bold uppercase tracking-widest text-primary">Verified Agents</p>
-          <h1 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">Trusted travel professionals</h1>
-          <p className="mt-2 text-muted-foreground">
+          <p className="font-eyebrow text-primary">Verified Agents</p>
+          <h1 className="font-display mt-4 text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">Trusted travel professionals</h1>
+          <p className="mt-3 text-pretty text-muted-foreground">
             {total} verified {total === 1 ? 'agent' : 'agents'} ready to serve you — every one completes business verification before trading.
           </p>
         </div>

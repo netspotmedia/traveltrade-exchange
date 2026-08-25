@@ -30,7 +30,7 @@ export default async function AgentWithdrawalsPage() {
     <div className="min-h-screen bg-background">
       <main id="main" className="mx-auto max-w-4xl px-4 py-8 pb-24 lg:px-8">
         <div>
-          <p className="text-sm font-semibold text-primary">Withdrawals</p>
+          <p className="font-eyebrow text-primary">Withdrawals</p>
           <h1 className="mt-1 text-3xl font-semibold tracking-tight">Request a withdrawal</h1>
           <p className="mt-1 text-muted-foreground">Move your available balance to your bank account.</p>
         </div>

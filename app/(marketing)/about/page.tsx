@@ -37,9 +37,9 @@ export default async function AboutPage() {
     <div className="min-h-screen bg-background">
       <main id="main" className="mx-auto max-w-7xl px-4 py-12 lg:px-8">
         <div className="max-w-2xl">
-          <p className="font-mono text-xs font-bold uppercase tracking-widest text-primary">About</p>
-          <h1 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">{title}</h1>
-          <p className="mt-3 text-muted-foreground">{description}</p>
+          <p className="font-eyebrow text-primary">About</p>
+          <h1 className="font-display mt-4 text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">{title}</h1>
+          <p className="mt-4 text-pretty leading-7 text-muted-foreground">{description}</p>
         </div>
 
         <section className="mt-12 grid gap-5 md:grid-cols-2">

@@ -48,7 +48,7 @@ export default async function ProposePage({ params }: { params: Promise<{ id: st
         <div className="mt-5">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <p className="text-sm font-semibold text-primary">Submit a proposal</p>
+              <p className="font-eyebrow text-primary">Submit a proposal</p>
               <h1 className="mt-1 text-3xl font-semibold tracking-tight">{order.title}</h1>
               <p className="mt-2 text-muted-foreground">
                 {buyer?.email || 'Customer'} · {formatMoney(order.total_amount, order.currency)}

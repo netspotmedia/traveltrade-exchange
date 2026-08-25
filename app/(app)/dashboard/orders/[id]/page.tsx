@@ -123,10 +123,10 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
     <div className="min-h-screen bg-background">
       <main id="main" className="mx-auto max-w-4xl px-4 py-8 pb-24 lg:px-8">
         {/* Header */}
-        <div className="flex flex-col gap-3 rounded-3xl border border-border bg-card p-6 shadow-card sm:flex-row sm:items-start sm:justify-between sm:p-8">
+        <div className="flex flex-col gap-3 rounded-[1.5rem] border border-border bg-card p-6 shadow-soft sm:flex-row sm:items-start sm:justify-between sm:p-8">
           <div>
-            <p className="text-sm font-semibold text-primary">Order</p>
-            <h1 className="mt-1 text-2xl font-semibold tracking-tight sm:text-3xl">{order.title}</h1>
+            <p className="font-eyebrow text-primary">Order</p>
+            <h1 className="font-display mt-3 text-2xl font-semibold leading-tight tracking-tight sm:text-3xl">{order.title}</h1>
             <p className="mt-2 text-sm text-muted-foreground">
               {agency?.name || 'Travel partner'} · {formatMoney(order.total_amount, order.currency)} · Started {formatDate(order.created_at)}
             </p>
@@ -135,7 +135,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
         </div>
 
         {/* Progress timeline */}
-        <section className="mt-5 rounded-3xl border border-border bg-card p-6 shadow-card">
+        <section className="mt-5 rounded-[1.5rem] border border-border bg-card p-6 shadow-soft">
           <div className="flex items-start gap-2 text-sm">
             {order.status === 'disputed' ? (
               <AlertTriangle className="mt-0.5 size-4 shrink-0 text-warning-foreground" />
@@ -180,7 +180,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
 
         {/* Agreement & signatures */}
         {agreement && (
-          <section className="mt-5 rounded-3xl border border-border bg-card p-6 shadow-card sm:p-8">
+          <section className="mt-5 rounded-[1.5rem] border border-border bg-card p-6 shadow-soft sm:p-8">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <h2 className="text-lg font-semibold">Agreement & signatures</h2>
               <StatusBadge domain="agreement" status={agreement.status as string} />
@@ -217,7 +217,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
         )}
 
         {/* Milestones */}
-        <section className="mt-5 rounded-3xl border border-border bg-card p-6 shadow-card sm:p-8">
+        <section className="mt-5 rounded-[1.5rem] border border-border bg-card p-6 shadow-soft sm:p-8">
           <h2 className="text-lg font-semibold">Payment plan</h2>
           <div className="mt-4 flex flex-col gap-3">
             {milestones.length === 0 && <p className="text-sm text-muted-foreground">The payment plan is agreed with the agent before anything is funded.</p>}

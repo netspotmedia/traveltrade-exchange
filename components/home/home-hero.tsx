@@ -1,4 +1,4 @@
-import { ShieldCheck, CheckCircle2 } from 'lucide-react'
+import { CheckCircle2, ShieldCheck } from 'lucide-react'
 import { HeroSearch } from '@/components/home/hero-search'
 import { HeroTracker } from '@/components/home/hero-tracker'
 import { formatNumber } from '@/lib/format'
@@ -19,7 +19,7 @@ interface HomeHeroProps {
 const DEFAULT_COPY = {
   a: {
     badge: 'Trusted travel professionals, verified',
-    title: 'Find trusted travel professionals for your next trip',
+    title: 'Find the right travel professional for your journey.',
     description:
       'Compare verified travel agents, agree on clear milestones, and keep every naira protected until the work is delivered.',
   },
@@ -42,36 +42,48 @@ export function HomeHero({ variant, serviceCount, verifiedAgents, completedOrder
 
   return (
     <section className="relative overflow-hidden">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_50%_at_50%_-10%,var(--brand-soft),transparent)]" aria-hidden="true" />
-      <div className="relative mx-auto max-w-7xl px-4 pb-16 pt-16 text-center lg:px-8 lg:pb-24 lg:pt-24">
-        <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-semibold text-primary shadow-card">
-          <ShieldCheck className="size-3.5" aria-hidden="true" />
-          {text.badge}
-        </span>
-        <h1 className="mx-auto mt-6 max-w-3xl text-balance text-4xl font-semibold tracking-[-0.03em] text-foreground sm:text-6xl">
-          {text.title}
-        </h1>
-        <p className="mx-auto mt-5 max-w-xl text-pretty text-lg leading-8 text-muted-foreground">
-          {text.description}
-        </p>
+      {/* Layered ambient depth — brand-derived color fields, never fake photography */}
+      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+        <div className="absolute -top-32 left-1/2 h-[34rem] w-[64rem] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,var(--brand-soft),transparent)] opacity-90" />
+        <div className="absolute right-[-10%] top-24 h-72 w-72 rounded-full bg-[radial-gradient(closest-side,rgb(232_163_61_/0.10),transparent)]" />
+        <div className="absolute bottom-[-6%] left-[-6%] h-80 w-80 rounded-full bg-[radial-gradient(closest-side,rgb(14_124_102_/0.10),transparent)]" />
+      </div>
 
-        <div className="mt-9">
-          <HeroSearch variant={variant} />
+      <div className="relative mx-auto max-w-7xl px-4 pb-20 pt-20 lg:px-8 lg:pb-28 lg:pt-28">
+        <div className="mx-auto max-w-3xl text-center">
+          <span className="font-eyebrow inline-flex items-center gap-2 rounded-full border border-border bg-card/80 px-3 py-1.5 text-primary shadow-soft backdrop-blur-sm">
+            <ShieldCheck className="size-3.5" aria-hidden="true" />
+            {text.badge}
+          </span>
+
+          <h1 className="font-display mt-7 text-balance text-[2.6rem] font-semibold leading-[1.05] tracking-[-0.02em] text-foreground sm:text-6xl lg:text-[4.25rem]">
+            {text.title}
+          </h1>
+
+          <p className="mx-auto mt-5 max-w-xl text-pretty text-lg leading-8 text-muted-foreground">
+            {text.description}
+          </p>
+
+          {/* Search is the dominant interaction */}
+          <div className="mt-10">
+            <HeroSearch variant={variant} />
+          </div>
         </div>
 
-        <div className="mx-auto mt-12 flex max-w-xl flex-wrap items-center justify-center gap-x-10 gap-y-4 text-sm text-muted-foreground">
-          <span>
-            <strong className="block text-2xl font-semibold text-foreground">{formatNumber(serviceCount)}</strong>
-            Travel services live
-          </span>
-          <span>
-            <strong className="block text-2xl font-semibold text-foreground">{formatNumber(verifiedAgents)}</strong>
-            Verified agents
-          </span>
-          <span className={isB ? 'flex items-center gap-1.5' : ''}>
-            <strong className="block text-2xl font-semibold text-foreground">{formatNumber(completedOrders)}</strong>
-            {isB ? 'Orders delivered' : 'Orders completed'}
-          </span>
+        {/* Trust statistics */}
+        <div className="mx-auto mt-16 grid max-w-3xl grid-cols-3 gap-4 border-t border-border/70 pt-8 text-center sm:gap-8">
+          <div>
+            <p className="font-mono text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">{formatNumber(serviceCount)}</p>
+            <p className="mt-1 text-xs text-muted-foreground sm:text-sm">Travel services live</p>
+          </div>
+          <div>
+            <p className="font-mono text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">{formatNumber(verifiedAgents)}</p>
+            <p className="mt-1 text-xs text-muted-foreground sm:text-sm">Verified agents</p>
+          </div>
+          <div>
+            <p className="font-mono text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">{formatNumber(completedOrders)}</p>
+            <p className="mt-1 text-xs text-muted-foreground sm:text-sm">{isB ? 'Orders delivered' : 'Orders completed'}</p>
+          </div>
         </div>
 
         {isB && (

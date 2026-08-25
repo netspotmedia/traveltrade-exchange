@@ -37,22 +37,24 @@ export default async function HowItWorksPage() {
     <div className="min-h-screen bg-background">
       <main id="main" className="mx-auto max-w-7xl px-4 py-12 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
-          <p className="font-mono text-xs font-bold uppercase tracking-widest text-primary">One clear workflow</p>
-          <h1 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">{title}</h1>
-          <p className="mt-3 text-muted-foreground">{description}</p>
+          <p className="font-eyebrow text-primary">One clear workflow</p>
+          <h1 className="font-display mt-4 text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">{title}</h1>
+          <p className="mt-4 text-pretty text-muted-foreground">{description}</p>
         </div>
 
-        <div className="mt-14 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {STEPS.map((s) => (
-            <div key={s.n} className="rounded-2xl border border-border bg-card p-6 shadow-card">
+            <div key={s.n} className="group flex flex-col gap-5 rounded-2xl border border-border bg-card p-7 shadow-card transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1 hover:shadow-soft">
               <div className="flex items-center justify-between">
-                <span className="grid size-11 place-items-center rounded-xl bg-brand-soft text-brand">
+                <span className="grid size-11 place-items-center rounded-full bg-brand-soft text-brand transition-colors duration-300 group-hover:bg-brand group-hover:text-primary-foreground">
                   <s.icon className="size-5" />
                 </span>
-                <span className="font-mono text-sm text-primary">{s.n}</span>
+                <span className="font-display text-sm italic text-primary/70">{s.n}</span>
               </div>
-              <h3 className="mt-4 text-lg font-semibold">{s.title}</h3>
-              <p className="mt-2 text-sm leading-6 text-muted-foreground">{s.body}</p>
+              <div>
+                <h3 className="text-lg font-semibold tracking-tight">{s.title}</h3>
+                <p className="mt-2 text-sm leading-6 text-muted-foreground">{s.body}</p>
+              </div>
             </div>
           ))}
         </div>

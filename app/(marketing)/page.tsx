@@ -15,6 +15,8 @@ import { getCmsPage } from '@/lib/cms'
 import { ServiceCard } from '@/components/service-card'
 import { EmptyState } from '@/components/ui/empty-state'
 import { Button } from '@/components/ui/button'
+import { Reveal } from '@/components/ui/reveal'
+import { SectionHeader } from '@/components/ui/section-header'
 import { HomeHero } from '@/components/home/home-hero'
 import { categoryIcon, FALLBACK_CATEGORIES } from '@/lib/categories'
 import { publicImageUrl } from '@/lib/images'
@@ -92,17 +94,19 @@ export default async function HomePage() {
         <HomeHero variant={heroVariant} serviceCount={serviceCount} verifiedAgents={verifiedAgents} completedOrders={completedOrders} copy={heroCopy} />
 
       {/* Popular services */}
-      <section id="popular" className="mx-auto max-w-7xl px-4 py-14 lg:px-8">
-        <div className="flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <p className="font-mono text-xs font-bold uppercase tracking-widest text-primary">Marketplace</p>
-            <h2 className="mt-2 text-3xl font-semibold tracking-tight">Popular travel services</h2>
-            <p className="mt-2 text-muted-foreground">Start with a verified travel professional.</p>
+      <section id="popular" className="mx-auto max-w-7xl px-4 py-20 lg:px-8">
+        <Reveal>
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <SectionHeader
+              eyebrow="Marketplace"
+              title="Popular travel services"
+              description="Start with a verified travel professional."
+            />
+            <Link href="/marketplace" className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline">
+              Browse all services <ArrowRight className="size-4" />
+            </Link>
           </div>
-          <Link href="/marketplace" className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline">
-            Browse all services <ArrowRight className="size-4" />
-          </Link>
-        </div>
+        </Reveal>
 
         <div className="mt-8">
           {services.length === 0 ? (
@@ -136,23 +140,28 @@ export default async function HomePage() {
 
       {/* Categories */}
       <section className="border-y border-border bg-muted/35">
-        <div className="mx-auto max-w-7xl px-4 py-14 lg:px-8">
-          <h2 className="text-3xl font-semibold tracking-tight">Browse by category</h2>
-          <p className="mt-2 text-muted-foreground">Whatever the trip, there's a specialist for it.</p>
-          <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
-            {categories.map((cat) => {
+        <div className="mx-auto max-w-7xl px-4 py-20 lg:px-8">
+          <Reveal>
+            <SectionHeader
+              eyebrow="Browse by category"
+              title="Whatever the trip, there's a specialist for it."
+            />
+          </Reveal>
+          <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+            {categories.map((cat, i) => {
               const Icon = categoryIcon(cat)
               return (
-                <Link
-                  key={cat}
-                  href={`/marketplace?category=${encodeURIComponent(cat)}`}
-                  className="group flex flex-col gap-3 rounded-2xl border border-border bg-card p-5 shadow-card transition hover:-translate-y-0.5 hover:shadow-lift"
-                >
-                  <span className="grid size-11 place-items-center rounded-xl bg-brand-soft text-brand transition group-hover:bg-brand group-hover:text-primary-foreground">
-                    <Icon className="size-5" />
-                  </span>
-                  <span className="text-sm font-semibold">{cat}</span>
-                </Link>
+                <Reveal key={cat} delay={i * 60}>
+                  <Link
+                    href={`/marketplace?category=${encodeURIComponent(cat)}`}
+                    className="group flex flex-col gap-3 rounded-2xl border border-border bg-card p-5 shadow-card transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1 hover:shadow-soft"
+                  >
+                    <span className="grid size-11 place-items-center rounded-xl bg-brand-soft text-brand transition-colors duration-300 group-hover:bg-brand group-hover:text-primary-foreground">
+                      <Icon className="size-5" />
+                    </span>
+                    <span className="text-sm font-semibold">{cat}</span>
+                  </Link>
+                </Reveal>
               )
             })}
           </div>
@@ -160,85 +169,124 @@ export default async function HomePage() {
       </section>
 
       {/* How it works */}
-      <section id="how-it-works" className="mx-auto max-w-7xl px-4 py-16 lg:px-8">
-        <div className="mx-auto max-w-2xl text-center">
-          <p className="font-mono text-xs font-bold uppercase tracking-widest text-primary">One clear workflow</p>
-          <h2 className="mt-3 text-3xl font-semibold tracking-tight">From brief to boarding pass</h2>
-          <p className="mt-3 text-muted-foreground">No complicated contracts. Just a clear, protected agreement with a trusted professional.</p>
-        </div>
-        <div className="mt-12 grid gap-8 md:grid-cols-3">
+      <section id="how-it-works" className="mx-auto max-w-7xl px-4 py-24 lg:px-8">
+        <Reveal>
+          <SectionHeader
+            align="center"
+            eyebrow="One clear workflow"
+            title={
+              <span className="font-display font-semibold tracking-tight">
+                From brief to boarding pass
+              </span>
+            }
+            description="No complicated contracts. Just a clear, protected agreement with a trusted professional."
+          />
+        </Reveal>
+        <div className="mt-16 grid gap-10 md:grid-cols-3 md:gap-8">
           {[
             { n: '01', icon: Search, title: 'Find your specialist', body: 'Search verified travel professionals and compare services, ratings and prices in one place.' },
             { n: '02', icon: Handshake, title: 'Agree on the plan', body: 'Request a quote or book instantly. You and the agent agree on clear milestones before anything starts.' },
             { n: '03', icon: WalletCards, title: 'Pay securely, delivered with confidence', body: 'Your payment is protected in escrow and only released when you approve the delivered work.' },
-          ].map((s) => (
-            <div key={s.n} className="rounded-2xl border border-border bg-card p-6 shadow-card">
-              <span className="font-mono text-sm text-primary">{s.n}</span>
-              <s.icon className="mt-4 size-6 text-primary" />
-              <h3 className="mt-3 text-lg font-semibold">{s.title}</h3>
-              <p className="mt-2 text-sm leading-6 text-muted-foreground">{s.body}</p>
-            </div>
+          ].map((s, i) => (
+            <Reveal key={s.n} delay={i * 100}>
+              <div className="group relative flex flex-col gap-5 rounded-2xl border border-border bg-card p-7 shadow-card transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1 hover:shadow-soft">
+                <div className="flex items-center justify-between">
+                  <span className="font-display text-sm italic text-primary/70">{s.n}</span>
+                  <span className="grid size-11 place-items-center rounded-full bg-brand-soft text-brand transition-colors duration-300 group-hover:bg-brand group-hover:text-primary-foreground">
+                    <s.icon className="size-5" />
+                  </span>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold tracking-tight">{s.title}</h3>
+                  <p className="mt-2 text-sm leading-6 text-muted-foreground">{s.body}</p>
+                </div>
+              </div>
+            </Reveal>
           ))}
         </div>
       </section>
 
       {/* Trust & safety */}
       <section className="border-y border-border bg-muted/35">
-        <div className="mx-auto max-w-7xl px-4 py-16 lg:px-8">
-          <div className="mx-auto max-w-2xl text-center">
-            <h2 className="text-3xl font-semibold tracking-tight">Why travel with TTX</h2>
-            <p className="mt-3 text-muted-foreground">We built the trust layer into every step of the journey.</p>
-          </div>
-          <div className="mt-12 grid gap-5 md:grid-cols-3">
-            <div className="rounded-2xl border border-border bg-card p-6 shadow-card">
-              <span className="grid size-11 place-items-center rounded-xl bg-brand-soft text-brand">
-                <BadgeCheck className="size-5" />
-              </span>
-              <h3 className="mt-4 text-lg font-semibold">Verified agents</h3>
-              <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                Every agent completes business verification before their services go live on the marketplace.
-              </p>
-            </div>
-            <div className="rounded-2xl border border-border bg-card p-6 shadow-card">
-              <span className="grid size-11 place-items-center rounded-xl bg-brand-soft text-brand">
-                <Lock className="size-5" />
-              </span>
-              <h3 className="mt-4 text-lg font-semibold">Payment protected</h3>
-              <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                Your payment is held securely and only released when you approve the delivered work. Disputes are handled fairly.
-              </p>
-            </div>
-            <div className="rounded-2xl border border-border bg-card p-6 shadow-card">
-              <span className="grid size-11 place-items-center rounded-xl bg-brand-soft text-brand">
-                <FileText className="size-5" />
-              </span>
-              <h3 className="mt-4 text-lg font-semibold">One clear record</h3>
-              <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                Briefs, proposals, milestones, delivery and messages — all tracked in one shared timeline.
-              </p>
-            </div>
+        <div className="mx-auto max-w-7xl px-4 py-24 lg:px-8">
+          <Reveal>
+            <SectionHeader
+              align="center"
+              eyebrow="Why travel with TTX"
+              title={
+                <span className="font-display font-semibold tracking-tight">
+                  The trust layer is built into every step.
+                </span>
+              }
+              description="We built the trust layer into every step of the journey — so you can book with confidence, not hope."
+            />
+          </Reveal>
+          <div className="mt-14 grid gap-5 md:grid-cols-3">
+            <Reveal delay={0}>
+              <div className="flex h-full flex-col justify-between gap-6 rounded-2xl bg-primary p-7 text-primary-foreground shadow-soft">
+                <span className="grid size-11 place-items-center rounded-full bg-primary-foreground/15 text-primary-foreground">
+                  <BadgeCheck className="size-5" />
+                </span>
+                <div>
+                  <h3 className="text-xl font-semibold tracking-tight">Verified agents</h3>
+                  <p className="mt-2 text-sm leading-6 text-primary-foreground/80">
+                    Every agent completes business verification before their services go live on the marketplace.
+                  </p>
+                </div>
+              </div>
+            </Reveal>
+            <Reveal delay={100}>
+              <div className="flex h-full flex-col justify-between gap-6 rounded-2xl border border-border bg-card p-7 shadow-card">
+                <span className="grid size-11 place-items-center rounded-full bg-brand-soft text-brand">
+                  <Lock className="size-5" />
+                </span>
+                <div>
+                  <h3 className="text-lg font-semibold tracking-tight">Payment protected</h3>
+                  <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                    Your payment is held securely and only released when you approve the delivered work. Disputes are handled fairly.
+                  </p>
+                </div>
+              </div>
+            </Reveal>
+            <Reveal delay={200}>
+              <div className="flex h-full flex-col justify-between gap-6 rounded-2xl border border-border bg-card p-7 shadow-card">
+                <span className="grid size-11 place-items-center rounded-full bg-brand-soft text-brand">
+                  <FileText className="size-5" />
+                </span>
+                <div>
+                  <h3 className="text-lg font-semibold tracking-tight">One clear record</h3>
+                  <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                    Briefs, proposals, milestones, delivery and messages — all tracked in one shared timeline.
+                  </p>
+                </div>
+              </div>
+            </Reveal>
           </div>
         </div>
       </section>
 
       {/* Final CTA */}
-      <section className="mx-auto max-w-7xl px-4 py-16 lg:px-8">
-        <div className="flex flex-col items-center justify-between gap-8 rounded-3xl bg-primary px-8 py-12 text-primary-foreground lg:flex-row lg:px-14">
-          <div className="max-w-xl text-center lg:text-left">
-            <h2 className="text-3xl font-semibold tracking-tight">Ready to move your travel work forward?</h2>
-            <p className="mt-3 text-primary-foreground/80">
-              Find a verified professional or sell your own travel services — all with protected payments.
-            </p>
+      <section className="mx-auto max-w-7xl px-4 py-24 lg:px-8">
+        <Reveal>
+          <div className="flex flex-col items-center justify-between gap-8 rounded-[2rem] bg-primary px-8 py-14 text-primary-foreground shadow-soft-lg lg:flex-row lg:px-16">
+            <div className="max-w-xl text-center lg:text-left">
+              <h2 className="font-display text-3xl font-semibold tracking-tight sm:text-4xl">
+                Ready to move your travel work forward?
+              </h2>
+              <p className="mt-3 text-pretty text-primary-foreground/80">
+                Find a verified professional or sell your own travel services — all with protected payments.
+              </p>
+            </div>
+            <div className="flex flex-wrap justify-center gap-3">
+              <Link href="/marketplace" className="inline-flex h-12 items-center rounded-full bg-white px-7 text-base font-semibold text-primary shadow-sm transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:opacity-90 active:scale-[0.98]">
+                Explore services
+              </Link>
+              <Link href="/onboarding" className="inline-flex h-12 items-center rounded-full border border-primary-foreground/30 px-7 text-base font-semibold text-primary-foreground transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:bg-primary-foreground/10 active:scale-[0.98]">
+                Sell your services
+              </Link>
+            </div>
           </div>
-          <div className="flex flex-wrap justify-center gap-3">
-            <Link href="/marketplace" className="rounded-xl bg-white px-5 py-3 text-sm font-semibold text-primary shadow-card transition hover:opacity-90">
-              Explore services
-            </Link>
-            <Link href="/onboarding" className="rounded-xl border border-primary-foreground/30 px-5 py-3 text-sm font-semibold text-primary-foreground transition hover:bg-primary-foreground/10">
-              Sell your services
-            </Link>
-          </div>
-        </div>
+        </Reveal>
       </section>
 
       </main>

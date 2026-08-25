@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { ServiceCard } from '@/components/service-card'
 import { EmptyState } from '@/components/ui/empty-state'
 import { Button } from '@/components/ui/button'
+import { Reveal } from '@/components/ui/reveal'
 import { MarketplaceControls, SORT_OPTIONS } from '@/components/marketplace/marketplace-controls'
 import { formatNumber } from '@/lib/format'
 import { publicImageUrl } from '@/lib/images'
@@ -131,14 +132,20 @@ export default async function MarketplacePage({ searchParams }: { searchParams: 
 
   return (
     <div className="min-h-screen bg-background">
-      <main id="main" className="mx-auto max-w-7xl px-4 py-8 lg:px-8">
-        <div className="max-w-2xl">
-          <p className="font-mono text-xs font-bold uppercase tracking-widest text-primary">Marketplace</p>
-          <h1 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">Find the right partner for the journey</h1>
-          <p className="mt-2 text-muted-foreground">Compare verified travel services, then move into a protected agreement.</p>
-        </div>
+      <main id="main" className="mx-auto max-w-7xl px-4 py-10 lg:px-8">
+        <Reveal>
+          <div className="max-w-2xl">
+            <p className="font-eyebrow text-primary">Marketplace</p>
+            <h1 className="font-display mt-3 text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">
+              Find the right partner for the journey
+            </h1>
+            <p className="mt-3 text-pretty text-muted-foreground">
+              Compare verified travel services, then move into a protected agreement.
+            </p>
+          </div>
+        </Reveal>
 
-        <div className="mt-6 rounded-2xl border border-border bg-card p-4 shadow-card">
+        <div className="mt-8 rounded-2xl border border-border bg-card p-4 shadow-soft">
           <MarketplaceControls initial={controls} categories={categories} />
         </div>
 

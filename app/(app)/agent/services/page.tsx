@@ -30,7 +30,7 @@ export default async function AgentServicesPage() {
       <main id="main" className="mx-auto max-w-4xl px-4 py-8 pb-24 lg:px-8">
         <div className="flex items-end justify-between">
           <div>
-            <p className="text-sm font-semibold text-primary">Your services</p>
+            <p className="font-eyebrow text-primary">Your services</p>
             <h1 className="mt-1 text-3xl font-semibold tracking-tight">Manage your services</h1>
           </div>
           <Link href="/agent/services/new" className="rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground shadow-card transition hover:opacity-90">

@@ -1,5 +1,7 @@
 import Link from 'next/link'
 import {
+  ArrowRight,
+  Clock3,
   MapPin,
   ShieldCheck,
   Star,
@@ -48,17 +50,21 @@ export function ServiceCard({ service, responseStats, imageUrl, reviewCount, cla
     <Link
       href={`/marketplace/${service.slug}`}
       className={cn(
-        'group flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-card transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lift focus-visible:ring-2 focus-visible:ring-ring/50',
+        'group flex flex-col overflow-hidden rounded-2xl border border-border bg-card transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1 hover:border-input/70 hover:shadow-soft-lg focus-visible:ring-2 focus-visible:ring-ring/50',
         className,
       )}
     >
       {/* Visual header — service image when available, else honest category tile */}
-      <div className="relative flex h-36 items-center justify-center overflow-hidden bg-gradient-to-br from-brand/12 via-brand-soft to-secondary">
+      <div className="relative flex aspect-[16/10] items-center justify-center overflow-hidden bg-gradient-to-br from-brand/12 via-brand-soft to-secondary">
         {imageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={imageUrl} alt={service.title} className="absolute inset-0 h-full w-full object-cover" />
+          <img
+            src={imageUrl}
+            alt={service.title}
+            className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.04]"
+          />
         ) : (
-          <span className="grid size-14 place-items-center rounded-2xl bg-card text-brand shadow-card transition-transform duration-200 group-hover:scale-105" aria-hidden="true">
+          <span className="grid size-14 place-items-center rounded-2xl bg-card text-brand shadow-card transition-transform duration-300 group-hover:scale-105" aria-hidden="true">
             <Icon className="size-7" />
           </span>
         )}
@@ -76,23 +82,23 @@ export function ServiceCard({ service, responseStats, imageUrl, reviewCount, cla
         )}
       </div>
 
-      <div className="flex flex-1 flex-col gap-3 p-4">
+      <div className="flex flex-1 flex-col gap-3 p-5">
         <div>
-          <h3 className="line-clamp-2 text-[15px] font-semibold leading-snug tracking-tight">{service.title}</h3>
-          <div className="mt-1.5 flex items-center gap-1.5 text-sm text-muted-foreground">
+          <h3 className="line-clamp-2 text-base font-semibold leading-snug tracking-tight text-foreground">{service.title}</h3>
+          <div className="mt-2 flex items-center gap-1.5 text-sm text-muted-foreground">
             {verified ? (
-              <Badge variant="success" className="gap-1 px-1.5 py-0 text-[11px]">
-                <ShieldCheck className="size-3" /> Verified agent
-              </Badge>
+              <span className="inline-flex items-center gap-1.5 font-medium text-success-foreground">
+                <ShieldCheck className="size-3.5" /> {agency?.name || 'Verified agent'}
+              </span>
             ) : (
-              <span>{agency?.name || 'Travel professional'}</span>
+              <span className="truncate">{agency?.name || 'Travel professional'}</span>
             )}
-            {verified && agency?.name && <span className="truncate">· {agency.name}</span>}
           </div>
         </div>
 
         {service.description && <p className="line-clamp-2 text-sm leading-6 text-muted-foreground">{service.description}</p>}
 
+        {/* Meta row */}
         <div className="mt-auto flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-muted-foreground">
           {rating > 0 && (
             <span className="flex items-center gap-1 font-medium text-foreground">
@@ -107,17 +113,23 @@ export function ServiceCard({ service, responseStats, imageUrl, reviewCount, cla
               {location}
             </span>
           )}
+          {responseLabel && (
+            <span className="flex items-center gap-1">
+              <Clock3 className="size-3.5" />
+              {responseLabel}
+            </span>
+          )}
         </div>
 
-        {responseLabel && <p className="text-xs text-muted-foreground">{responseLabel}</p>}
-
-        <div className="flex items-end justify-between border-t border-border pt-3">
+        {/* Price + CTA */}
+        <div className="flex items-end justify-between border-t border-border/70 pt-4">
           <div>
             <p className="text-[11px] text-muted-foreground">Starting from</p>
-            <p className="font-mono text-lg font-semibold text-foreground">{formatMoney(service.base_price, service.currency)}</p>
+            <p className="font-mono text-lg font-semibold tracking-tight text-foreground">{formatMoney(service.base_price, service.currency)}</p>
           </div>
-          <span className="rounded-lg bg-brand-soft px-3 py-1.5 text-sm font-medium text-brand transition-colors group-hover:bg-brand group-hover:text-primary-foreground">
-            View service
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-soft px-3.5 py-1.5 text-sm font-medium text-brand transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:bg-brand group-hover:text-primary-foreground">
+            View
+            <ArrowRight className="size-3.5 transition-transform duration-300 group-hover:translate-x-0.5" />
           </span>
         </div>
       </div>

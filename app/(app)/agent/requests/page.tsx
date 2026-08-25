@@ -34,7 +34,7 @@ export default async function AgentRequestsPage() {
     <div className="min-h-screen bg-background">
       <main id="main" className="mx-auto max-w-4xl px-4 py-8 pb-24 lg:px-8">
         <div>
-          <p className="text-sm font-semibold text-primary">Quote requests</p>
+          <p className="font-eyebrow text-primary">Quote requests</p>
           <h1 className="mt-1 text-3xl font-semibold tracking-tight">Incoming requests</h1>
           <p className="mt-2 text-muted-foreground">Respond with a proposal and milestone breakdown.</p>
         </div>

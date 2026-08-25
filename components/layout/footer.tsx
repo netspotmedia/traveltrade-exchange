@@ -14,7 +14,7 @@ export function Footer() {
         </div>
 
         <div className="space-y-2">
-          <p className="font-mono text-xs font-bold uppercase tracking-widest text-muted-foreground">Marketplace</p>
+          <p className="font-eyebrow text-muted-foreground">Marketplace</p>
           <Link href="/marketplace" className="block text-sm text-muted-foreground transition hover:text-foreground">
             Browse Services
           </Link>
@@ -30,7 +30,7 @@ export function Footer() {
         </div>
 
         <div className="space-y-2">
-          <p className="font-mono text-xs font-bold uppercase tracking-widest text-muted-foreground">Company</p>
+          <p className="font-eyebrow text-muted-foreground">Company</p>
           <Link href="/about" className="block text-sm text-muted-foreground transition hover:text-foreground">
             About
           </Link>
@@ -43,7 +43,7 @@ export function Footer() {
         </div>
 
         <div className="space-y-2">
-          <p className="font-mono text-xs font-bold uppercase tracking-widest text-muted-foreground">Account</p>
+          <p className="font-eyebrow text-muted-foreground">Account</p>
           <Link href="/auth/login" className="block text-sm text-muted-foreground transition hover:text-foreground">
             Sign in
           </Link>
@@ -56,7 +56,7 @@ export function Footer() {
         </div>
 
         <div className="space-y-2">
-          <p className="font-mono text-xs font-bold uppercase tracking-widest text-muted-foreground">Legal</p>
+          <p className="font-eyebrow text-muted-foreground">Legal</p>
           <Link href="/terms" className="block text-sm text-muted-foreground transition hover:text-foreground">
             Terms of Service
           </Link>

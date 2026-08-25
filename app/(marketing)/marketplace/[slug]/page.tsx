@@ -106,7 +106,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
             <section className="rounded-3xl border border-border bg-card p-6 shadow-card sm:p-8">
               {mainImage && (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={mainImage} alt={service.title} className="mb-6 aspect-[16/9] w-full rounded-2xl border border-border object-cover" />
+                <img src={mainImage} alt={service.title} className="mb-7 aspect-[16/9] w-full rounded-[1.5rem] border border-border object-cover" />
               )}
               <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
                 <div className="flex flex-col gap-4">
@@ -118,7 +118,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                       <Badge variant="secondary">{service.category}</Badge>
                       {isInstant && <Badge variant="brand" className="bg-primary text-primary-foreground">Instant order</Badge>}
                     </div>
-                    <h1 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">{service.title}</h1>
+                    <h1 className="font-display mt-4 text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">{service.title}</h1>
                   </div>
                 </div>
               </div>

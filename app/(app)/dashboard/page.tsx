@@ -139,17 +139,17 @@ export default async function DashboardPage() {
       <main id="main" className="mx-auto max-w-5xl px-4 py-8 pb-24 lg:px-8">
         <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end">
           <div>
-            <p className="text-sm font-semibold text-primary">Dashboard</p>
-            <h1 className="mt-1 text-3xl font-semibold tracking-tight">
+            <p className="font-eyebrow text-primary">Dashboard</p>
+            <h1 className="font-display mt-3 text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
               {firstName ? `Welcome back, ${firstName}.` : 'Welcome back.'}
             </h1>
-            <p className="mt-1 text-muted-foreground">
+            <p className="mt-2 text-muted-foreground">
               {isSeller ? "Here's what needs your attention today." : "Here's where your travel work stands."}
             </p>
           </div>
           <Link
             href={isSeller ? '/agent/services/new' : '/marketplace'}
-            className="inline-flex w-fit items-center gap-1.5 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground shadow-card transition hover:opacity-90"
+            className="inline-flex w-fit items-center gap-1.5 rounded-full bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:opacity-90 active:scale-[0.98]"
           >
             {isSeller ? 'New service' : 'Find a service'} <ArrowRight className="size-4" />
           </Link>
@@ -337,7 +337,7 @@ export default async function DashboardPage() {
 
 function StatCard({ label, value, hint, icon: Icon }: { label: string; value: string; hint: string; icon?: LucideIcon }) {
   return (
-    <div className="rounded-2xl border border-border bg-card p-5 shadow-card">
+    <div className="rounded-[1.25rem] border border-border bg-card p-5 shadow-soft transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:shadow-soft-lg">
       <div className="flex items-center justify-between">
         <p className="text-sm text-muted-foreground">{label}</p>
         {Icon && <Icon className="size-4 text-primary" aria-hidden="true" />}
@@ -350,8 +350,8 @@ function StatCard({ label, value, hint, icon: Icon }: { label: string; value: st
 
 function TaskCard({ href, icon: Icon, title, value, hint }: { href: string; icon: LucideIcon; title: string; value: string | number; hint: string }) {
   return (
-    <Link href={href} className="flex flex-col gap-3 rounded-2xl border border-border bg-card p-5 shadow-card transition hover:-translate-y-0.5 hover:shadow-lift">
-      <span className="grid size-10 place-items-center rounded-xl bg-brand-soft text-brand" aria-hidden="true">
+    <Link href={href} className="group flex flex-col gap-3 rounded-[1.25rem] border border-border bg-card p-5 shadow-soft transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:shadow-soft-lg">
+      <span className="grid size-10 place-items-center rounded-full bg-brand-soft text-brand transition-colors duration-300 group-hover:bg-brand group-hover:text-primary-foreground" aria-hidden="true">
         <Icon className="size-5" />
       </span>
       <div>

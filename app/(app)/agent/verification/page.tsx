@@ -45,7 +45,7 @@ export default async function AgentVerificationPage() {
     <div className="min-h-screen bg-background">
       <main id="main" className="mx-auto max-w-4xl px-4 py-8 pb-24 lg:px-8">
         <div>
-          <p className="text-sm font-semibold text-primary">Verification</p>
+          <p className="font-eyebrow text-primary">Verification</p>
           <h1 className="mt-1 text-3xl font-semibold tracking-tight">Agency verification</h1>
           <p className="mt-1 text-muted-foreground">
             Submit documents for KYB, NANTA and IATA. Each is reviewed by our team before it appears on your profile.

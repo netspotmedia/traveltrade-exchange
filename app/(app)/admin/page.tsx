@@ -103,8 +103,8 @@ export default async function AdminPage() {
     <main className="min-h-screen bg-background px-6 py-10">
       <div className="mx-auto flex max-w-6xl flex-col gap-8">
         <div>
-          <p className="text-sm font-semibold text-primary">Operations console</p>
-          <h1 className="mt-2 text-4xl font-semibold">Overview</h1>
+          <p className="font-eyebrow text-primary">Operations console</p>
+          <h1 className="font-display mt-3 text-4xl font-semibold leading-tight tracking-tight">Overview</h1>
         </div>
 
         <div className="grid gap-5 md:grid-cols-3 lg:grid-cols-6">
@@ -116,9 +116,9 @@ export default async function AdminPage() {
             ['Published services', kpi?.published_services ?? 0, ''],
             ['Total users', kpi?.total_users ?? 0, ''],
           ].map(([title, value, prefix]) => (
-            <section key={title as string} className="rounded-2xl border bg-card p-5">
+            <section key={title as string} className="rounded-[1.25rem] border bg-card p-5 shadow-soft">
               <h2 className="text-sm font-medium text-muted-foreground">{title as string}</h2>
-              <p className="mt-3 text-2xl font-semibold">{prefix}{Number(value).toLocaleString()}</p>
+              <p className="mt-3 font-mono text-2xl font-semibold">{prefix}{Number(value).toLocaleString()}</p>
             </section>
           ))}
         </div>
@@ -129,9 +129,9 @@ export default async function AdminPage() {
             ['Service approvals', pendingServices?.length ?? 0],
             ['Withdrawals', pendingWithdrawals?.length ?? 0],
           ].map(([title, count]) => (
-            <section key={title as string} className="rounded-2xl border bg-card p-5">
+            <section key={title as string} className="rounded-[1.25rem] border bg-card p-5 shadow-soft">
               <h2 className="font-semibold">{title as string}</h2>
-              <p className="mt-4 text-3xl font-semibold">{count}</p>
+              <p className="mt-4 font-mono text-3xl font-semibold">{count}</p>
               <p className="text-sm text-muted-foreground">Awaiting review</p>
             </section>
           ))}
