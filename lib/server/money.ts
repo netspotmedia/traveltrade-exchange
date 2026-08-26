@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createServiceClient } from '@/lib/supabase/server'
 
 type RpcResult = {
   ok: boolean
@@ -14,13 +14,27 @@ async function callRpc(name: string, params: Record<string, unknown>): Promise<R
   return (data ?? { ok: false, error: 'No response from settlement engine' }) as RpcResult
 }
 
+// These two RPCs are restricted to the service role: they credit money only
+// after Paystack confirms a charge (webhook/callback have no user session),
+// so they must run under the service-role client, never a browser session.
+async function callServiceRpc(name: string, params: Record<string, unknown>): Promise<RpcResult> {
+  try {
+    const supabase = createServiceClient()
+    const { data, error } = await supabase.rpc(name, params)
+    if (error) return { ok: false, error: error.message }
+    return (data ?? { ok: false, error: 'No response from settlement engine' }) as RpcResult
+  } catch (err) {
+    return { ok: false, error: err instanceof Error ? err.message : 'Service role unavailable' }
+  }
+}
+
 export function creditWalletFromTopup(params: {
   userId: string
   amount: number
   currency?: string
   providerReference: string
 }) {
-  return callRpc('credit_wallet_from_topup', {
+  return callServiceRpc('credit_wallet_from_topup', {
     p_user_id: params.userId,
     p_amount: params.amount,
     p_currency: params.currency ?? 'NGN',
@@ -33,7 +47,7 @@ export function completeCustomerEscrow(params: {
   amount: number
   currency?: string
 }) {
-  return callRpc('complete_customer_escrow', {
+  return callServiceRpc('complete_customer_escrow', {
     p_reference: params.reference,
     p_amount: params.amount,
     p_currency: params.currency ?? 'NGN',

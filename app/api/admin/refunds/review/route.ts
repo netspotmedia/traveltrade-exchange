@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { requireAdmin } from '@/lib/server/workflows'
 import { rateLimit, rateLimitError } from '@/lib/server/rate-limit'
 import { mfaGate } from '@/lib/server/mfa'
 import { refundOrderEscrow } from '@/lib/server/money'
@@ -9,12 +9,8 @@ import { logAudit } from '@/lib/server/audit'
 export async function POST(request: Request) {
   const mfa = await mfaGate()
   if (mfa) return mfa
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Authentication required' }, { status: 401 })
-
-  const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).maybeSingle()
-  if (profile?.role !== 'admin') return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
+  const { supabase, user, response } = await requireAdmin()
+  if (response || !user) return response ?? NextResponse.json({ error: 'Authentication required' }, { status: 401 })
 
   const allowed = await rateLimit(`admin_refund:${user.id}`, 30, 60)
   if (!allowed.allowed) return rateLimitError()

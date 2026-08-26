@@ -93,6 +93,22 @@ Additional audit findings fixed:
 
 ---
 
+## 6. Security hardening — RPC identity (audit)
+
+Critical external audit finding: the `security definer` RPCs (which bypass RLS) were granted `EXECUTE` to the `authenticated` role yet derived identity from **caller-supplied UUID arguments** instead of `auth.uid()`. Any logged-in session could call them directly from the client SDK and impersonate another user or an admin — mint wallet funds, self-approve payouts, approve/reject KYB/services, resolve disputes, or refund escrow.
+
+- **RPC identity hardening** — every money- and admin-mutating RPC now derives the caller from `auth.uid()`:
+  - Buyer/seller RPCs (`fund_escrow_from_wallet`, `release_milestone`, `submit_milestone`, `approve_milestone`, `request_withdrawal`) reject when `auth.uid() <>` the supplied actor.
+  - Admin RPCs (`process_withdrawal`, `resolve_dispute`, `escalate_dispute`, `refund_order_escrow`, `review_verification_submission`, `admin_set_agency_credentials`, `admin_resolve_failed_callback`) check the admin role against `auth.uid()`.
+  - `review_agency_kyb` / `review_service` gained an admin check they previously lacked entirely.
+  - `supabase/migrations/20260826030000_rpc_identity_hardening.sql` **(must be applied)**
+- **Webhook-only settlement RPCs → service role** — `credit_wallet_from_topup`, `complete_customer_escrow`, and `record_failed_callback` are revoked from `authenticated` and granted to `service_role` only (unreachable from the browser). The webhook/callback now run them via a new `createServiceClient()` (service-role client) in `lib/supabase/server.ts` — which also fixes the settlement path that previously ran as `anon` and would have failed the grants.
+  - `lib/server/money.ts`, `app/api/payments/webhook/route.ts`
+- **Admin routes consolidated** — all 9 `app/api/admin/**` routes now use the existing `requireAdmin()` helper instead of duplicating the inline role check.
+- **Static regression test** — `lib/server/rpc-security.test.ts` parses the migrations and fails if any mutating RPC loses its `auth.uid()` guard or a webhook-only RPC is re-granted to `authenticated`.
+
+---
+
 ## Pending migrations
 
 Apply these to the Supabase database in order before relying on the affected features:
@@ -100,6 +116,7 @@ Apply these to the Supabase database in order before relying on the affected fea
 1. `supabase/migrations/20260826000000_escrow_funding_guards.sql` — card escrow single-pending-payment guard + defensive funding check.
 2. `supabase/migrations/20260826010000_buyer_counters.sql` — `proposals.created_by` + buyer insert RLS (required for buyer counter-offers).
 3. `supabase/migrations/20260826020000_money_state_consistency.sql` — milestone `funded` state removal + `refund_order_escrow` soft-delete filter.
+4. `supabase/migrations/20260826030000_rpc_identity_hardening.sql` — `auth.uid()` guards on all money/admin RPCs + service-role-only settlement grants. **Requires `SUPABASE_SERVICE_ROLE_KEY` to be set on the deployed environment** (needed by the Paystack webhook/callback for settlement).
 
 ---
 
@@ -118,5 +135,5 @@ These were confirmed in code but left for a larger design pass (not bug fixes):
 ## Verification
 
 - `npm run build` — passes (TypeScript clean, all routes build).
-- `npm test` — passes (`lib/server/workflows.test.ts`, 7 tests).
+- `npm test` — passes (`lib/server/workflows.test.ts` + `lib/server/rpc-security.test.ts`, 10 tests).
 - Production build was also run successfully for the marketing/landing changes.

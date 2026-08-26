@@ -2,11 +2,11 @@ import { NextResponse } from 'next/server'
 import { verifyPaystackSignature } from '@/lib/paystack'
 import { creditWalletFromTopup, completeCustomerEscrow } from '@/lib/server/money'
 import { rateLimit } from '@/lib/server/rate-limit'
-import { createClient } from '@/lib/supabase/server'
+import { createServiceClient } from '@/lib/supabase/server'
 
 async function recordFailure(reference: string, reason: string, payload: unknown, amountNaira?: number, currency?: string) {
   try {
-    const supabase = await createClient()
+    const supabase = createServiceClient()
     await supabase.rpc('record_failed_callback', {
       p_reference: reference,
       p_payload: payload,
