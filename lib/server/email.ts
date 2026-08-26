@@ -1,4 +1,5 @@
-import { createClient } from '@/lib/supabase/server'
+import { createServiceClient } from '@/lib/supabase/server'
+import type { SupabaseClient } from '@supabase/supabase-js'
 
 export type EmailProvider = 'resend' | 'smtp'
 
@@ -65,7 +66,7 @@ async function sendViaSmtp(to: string, subject: string, body: string): Promise<v
 // Shared delivery loop for fresh dispatches and cron retries. Tracks the
 // cumulative attempt count on the log row so re-runs keep escalating.
 async function deliver(
-  supabase: Awaited<ReturnType<typeof createClient>>,
+  supabase: SupabaseClient,
   emailLogId: string,
   to: string,
   subject: string,
@@ -103,7 +104,7 @@ async function deliver(
 }
 
 export async function dispatchEmail(input: DispatchOptions): Promise<DispatchResult> {
-  const supabase = await createClient()
+  const supabase = createServiceClient()
 
   const dedupeKey = input.dedupeKey ?? `email:${input.to}:${input.subject}`
 
@@ -139,7 +140,7 @@ export async function dispatchEmail(input: DispatchOptions): Promise<DispatchRes
 // Explicit retry of a persisted email log row, used by the cron worker.
 // Skips the dedupe window because this is an intentional re-send.
 export async function retryEmail(emailLogId: string): Promise<DispatchResult> {
-  const supabase = await createClient()
+  const supabase = createServiceClient()
   const { data: log, error } = await supabase
     .from('email_logs')
     .select('recipient, subject, body, provider')

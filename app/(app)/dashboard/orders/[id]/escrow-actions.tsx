@@ -128,6 +128,12 @@ export function EscrowActions({
         </Button>
       )}
 
+      {orderStatus === 'proposed' && (isBuyer || isSeller) && (
+        <Button variant="ghost" disabled={busy !== null} onClick={() => act('cancel')}>
+          Cancel order
+        </Button>
+      )}
+
       {message && <Alert variant={message.startsWith('Done') || message.startsWith('Net') ? 'success' : 'error'}>{message}</Alert>}
     </div>
   )

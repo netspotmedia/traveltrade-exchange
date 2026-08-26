@@ -18,6 +18,10 @@ import {
 // doesn't move money and applies at the order level.
 const orderTransitions = {
   dispute: { from: ['proposed', 'funded', 'in_progress', 'delivered'], to: 'disputed' },
+  // Unfunded orders have no money path: a proposed order that never gets
+  // funded (quote not accepted, instant order never paid) can be cancelled
+  // by either party instead of lingering forever.
+  cancel: { from: ['proposed'], to: 'cancelled' },
 } as const
 
 export async function POST(request: Request) {
@@ -92,5 +96,6 @@ export async function POST(request: Request) {
   const { error } = await supabase.from('orders').update({ status: transition.to, updated_at: new Date().toISOString() }).eq('id', orderId).eq('status', order.status)
   if (error) return jsonError('Unable to update escrow state', 409)
   if (action === 'dispute') await supabase.from('disputes').insert({ order_id: orderId, opened_by: user.id, reason: cleanText(body.reason, 2000) || 'Order dispute opened' })
+  if (action === 'cancel') await supabase.from('agreements').update({ status: 'cancelled', updated_at: new Date().toISOString() }).eq('order_id', orderId)
   return NextResponse.json({ status: transition.to })
 }

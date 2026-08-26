@@ -48,6 +48,8 @@ function finalExecuteRole(sql: string, name: string): string {
 
 // Every RPC that mutates money or admin state must derive the caller's
 // identity from auth.uid() — never trust a caller-supplied actor UUID.
+// (review_agency_kyb / admin_set_agency_credentials were removed in favour
+// of review_verification_submission, so they are no longer guarded here.)
 const MUST_GUARD = [
   'fund_escrow_from_wallet',
   'release_milestone',
@@ -58,10 +60,8 @@ const MUST_GUARD = [
   'resolve_dispute',
   'escalate_dispute',
   'refund_order_escrow',
-  'review_agency_kyb',
   'review_service',
   'review_verification_submission',
-  'admin_set_agency_credentials',
   'admin_resolve_failed_callback',
 ]
 

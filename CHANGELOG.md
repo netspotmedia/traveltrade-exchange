@@ -109,6 +109,21 @@ Critical external audit finding: the `security definer` RPCs (which bypass RLS) 
 
 ---
 
+## 7. Workflow gaps — email pipeline, order cancellation, verification consolidation, admin audit-log
+
+Follow-up audit findings addressed:
+
+- **Notification/email pipeline was silently broken** — `sendNotification()` used the **anon/publishable** client for `auth.admin.getUserById()` (service-role only), so the email lookup always failed silently, and the notification insert was RLS-blocked when notifying *other* users (e.g. an admin → agency owner). `dispatchEmail()`/`retryEmail()` also wrote to `email_logs` (RLS: no client write policies) under the anon client, so no email was ever logged or sent.
+  - Fixed by routing all notification/email writes through the **service-role client**: `lib/server/notify.ts`, `lib/server/email.ts`, and the cron worker (`app/api/cron/emails/route.ts` now reuses the shared `createServiceClient()`).
+- **Order-cancellation path for unfunded orders** — `proposed` orders that never get funded (quote not accepted, instant order never paid) had no close-out path and lingered forever. Added a `cancel` transition (`proposed → cancelled`) to the escrow API (marks any agreement `cancelled`) and a "Cancel order" button for either party on a `proposed` order.
+  - `app/api/escrow/route.ts`, `app/(app)/dashboard/orders/[id]/escrow-actions.tsx`
+- **Verification systems consolidated** — agency verification now goes through a single system (`verification_submissions` + `review_verification_submission`, used by the agent verification page and admin Verification page). Removed the legacy `review_agency_kyb` / `admin_set_agency_credentials` RPCs (dropped by migration), the `/api/admin/kyb/review` route, `KybReviewActions`, and the admin dashboard "Pending agency KYB" panel. `kyc_documents` remains in the schema (onboarding still uploads document evidence) but is no longer reviewed through the legacy RPCs.
+  - `supabase/migrations/20260826040000_drop_legacy_kyb_rpcs.sql` **(must be applied)**
+  - `lib/server/rpc-security.test.ts` updated (removed the two dropped RPCs from the guarded list).
+- **Admin content edits are now audited** — added `logAudit()` to the CMS and branding routes (`app/api/admin/cms/route.ts`, `app/api/admin/branding/route.ts`), matching the existing pattern on verification/service/dispute review routes.
+
+---
+
 ## Pending migrations
 
 Apply these to the Supabase database in order before relying on the affected features:
@@ -117,6 +132,7 @@ Apply these to the Supabase database in order before relying on the affected fea
 2. `supabase/migrations/20260826010000_buyer_counters.sql` — `proposals.created_by` + buyer insert RLS (required for buyer counter-offers).
 3. `supabase/migrations/20260826020000_money_state_consistency.sql` — milestone `funded` state removal + `refund_order_escrow` soft-delete filter.
 4. `supabase/migrations/20260826030000_rpc_identity_hardening.sql` — `auth.uid()` guards on all money/admin RPCs + service-role-only settlement grants. **Requires `SUPABASE_SERVICE_ROLE_KEY` to be set on the deployed environment** (needed by the Paystack webhook/callback for settlement).
+5. `supabase/migrations/20260826040000_drop_legacy_kyb_rpcs.sql` — drops the legacy `review_agency_kyb` / `admin_set_agency_credentials` RPCs.
 
 ---
 

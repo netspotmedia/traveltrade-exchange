@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { requireAdmin } from '@/lib/server/workflows'
 import { rateLimit, rateLimitError } from '@/lib/server/rate-limit'
 import { mfaGate } from '@/lib/server/mfa'
+import { logAudit } from '@/lib/server/audit'
 
 const ALLOWED_SLUGS = ['landing', 'how-it-works', 'about', 'contact', 'help', 'privacy', 'terms']
 
@@ -44,6 +45,8 @@ export async function POST(request: Request) {
     })
     if (error) return NextResponse.json({ error: error.message }, { status: 400 })
   }
+
+  void logAudit('cms_update', 'cms_page', slug, { title, isPublished, keys: Object.keys(cleanHero) })
 
   return NextResponse.json({ ok: true })
 }

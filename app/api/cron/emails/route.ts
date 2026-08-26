@@ -1,13 +1,6 @@
 import { NextResponse } from 'next/server'
-import { createClient as createServiceClient, SupabaseClient } from '@supabase/supabase-js'
+import { createServiceClient } from '@/lib/supabase/server'
 import { retryEmail } from '@/lib/server/email'
-
-async function getServiceClient(): Promise<SupabaseClient> {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
-  if (!url || !key) throw new Error('Service role credentials not configured')
-  return createServiceClient(url, key, { auth: { persistSession: false } })
-}
 
 export async function GET(request: Request) {
   const secret = request.headers.get('authorization')?.replace('Bearer ', '')
@@ -15,7 +8,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const supabase = await getServiceClient()
+  const supabase = createServiceClient()
   const now = new Date().toISOString()
 
   // Pick up emails that are retrying and due, or failed (allow one final inline retry).

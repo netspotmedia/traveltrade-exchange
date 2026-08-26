@@ -1,6 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import { KybReviewActions } from './kyb-review-actions'
 import { ServiceReviewActions } from './service-review-actions'
 import { WithdrawalReviewActions } from './withdrawal-review-actions'
 import { DisputeReviewActions } from './dispute-review-actions'
@@ -9,18 +8,6 @@ import { RefundReviewActions } from './refund-review-actions'
 import { StatusBadge } from '@/components/ui/status-badge'
 import { PageHeader } from '@/components/dashboard/page-header'
 import { Panel, SectionTitle } from '@/components/dashboard/panel'
-
-type AgencyRow = {
-  id: string
-  name: string
-  slug: string
-  country: string
-  city: string | null
-  verification_status: string
-  created_at: string
-  owner: { email?: string } | null
-  kyc_documents: { id: string; document_type: string; status: string; created_at: string }[]
-}
 
 type ServiceRow = {
   id: string
@@ -71,7 +58,6 @@ export default async function AdminPage() {
   if (profile?.role !== 'admin') redirect('/dashboard')
 
   const [
-    { data: pendingAgencies },
     { data: pendingServices },
     { data: pendingWithdrawals },
     { data: openDisputes },
@@ -81,11 +67,6 @@ export default async function AdminPage() {
     { data: failedCallbacks },
     { data: pendingRefunds },
   ] = await Promise.all([
-    s.from('agencies')
-      .select('*, owner:profiles(email), kyc_documents(*)')
-      .eq('verification_status', 'pending')
-      .is('deleted_at', null)
-      .order('created_at', { ascending: true }),
     s.from('services').select('*, agencies(name)').eq('status', 'pending').is('deleted_at', null).order('created_at', { ascending: true }),
     s.from('withdrawals').select('*, seller:profiles(email)').eq('status', 'pending').is('deleted_at', null).order('created_at', { ascending: true }),
     s.from('disputes').select('*, order:orders(title)').in('status', ['open', 'under_review']).is('deleted_at', null).order('created_at', { ascending: true }),
@@ -125,7 +106,6 @@ export default async function AdminPage() {
 
           <div className="grid gap-5 md:grid-cols-3">
             {[
-              ['Agency KYB', pendingAgencies?.length ?? 0],
               ['Service approvals', pendingServices?.length ?? 0],
               ['Withdrawals', pendingWithdrawals?.length ?? 0],
             ].map(([title, count]) => (
@@ -152,37 +132,6 @@ export default async function AdminPage() {
             </Panel>
           </div>
 
-        <Panel className="p-6">
-          <SectionTitle>Pending agency KYB</SectionTitle>
-          <div className="mt-4 flex flex-col gap-4">
-            {!pendingAgencies || pendingAgencies.length === 0 ? (
-              <p className="text-sm text-muted-foreground">No agencies awaiting verification.</p>
-            ) : (
-              (pendingAgencies as AgencyRow[]).map((a) => (
-                <div key={a.id} className="rounded-2xl border p-4">
-                  <div className="flex flex-wrap items-start justify-between gap-3">
-                    <div>
-                      <p className="font-semibold">{a.name}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {a.city || '—'}, {a.country} · {a.owner?.email || 'no email'}
-                      </p>
-                    </div>
-                    <StatusBadge domain="agency" status={a.verification_status} />
-                  </div>
-                  <div className="mt-3 flex flex-col gap-1 text-sm text-muted-foreground">
-                    {(a.kyc_documents ?? []).length === 0 && <p>No documents submitted.</p>}
-                    {a.kyc_documents.map((d) => (
-                      <span key={d.id}>
-                        {d.document_type} · {d.status}
-                      </span>
-                    ))}
-                  </div>
-                  <KybReviewActions agencyId={a.id} />
-                </div>
-              ))
-            )}
-          </div>
-        </Panel>
         <Panel className="p-6">
           <SectionTitle>Pending service approvals</SectionTitle>
           <div className="mt-4 flex flex-col gap-4">

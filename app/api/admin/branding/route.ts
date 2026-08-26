@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { requireAdmin } from '@/lib/server/workflows'
 import { rateLimit, rateLimitError } from '@/lib/server/rate-limit'
 import { mfaGate } from '@/lib/server/mfa'
+import { logAudit } from '@/lib/server/audit'
 
 const ALLOWED_KEYS = ['logo', 'favicon', 'og_image']
 
@@ -32,6 +33,8 @@ export async function POST(request: Request) {
     const { error } = await supabase.from('site_assets').insert({ key, url, alt: alt || null })
     if (error) return NextResponse.json({ error: error.message }, { status: 400 })
   }
+
+  void logAudit('branding_update', 'site_asset', key, { url, alt })
 
   return NextResponse.json({ ok: true })
 }
