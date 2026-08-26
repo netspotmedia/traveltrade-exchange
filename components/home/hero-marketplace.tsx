@@ -36,6 +36,11 @@ export function HeroMarketplace({ services }: HeroMarketplaceProps) {
         <div className="absolute bottom-[-12%] left-[6%] h-72 w-72 rounded-full bg-[radial-gradient(closest-side,rgb(232_163_61/0.10),transparent)]" />
       </div>
 
+      {/* Signature visual — a single drawn flight-route line connecting the
+          two featured services, animated on entry. This is the hero's one
+          unmistakable focal element rather than relying on the cards alone. */}
+      <RouteLine />
+
       <HeroParallax delay={180} speed={0.05}>
         <div className="relative flex min-h-[24rem] flex-col items-center justify-center py-6 lg:min-h-[30rem]">
           {featured ? (
@@ -55,6 +60,37 @@ export function HeroMarketplace({ services }: HeroMarketplaceProps) {
         </div>
       </HeroParallax>
     </div>
+  )
+}
+
+/** The hero's signature visual: a single hand-drawn flight-route arc behind
+ *  the floating cards, with a departure and destination mark. Purely
+ *  decorative (aria-hidden) — gives the hero a focal moment that isn't just
+ *  a UI-preview card, echoing the travel domain without a stock photo. */
+function RouteLine() {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 400 420"
+      className="pointer-events-none absolute inset-0 hidden h-full w-full lg:block"
+      fill="none"
+    >
+      <path
+        d="M 60 340 C 140 300, 160 140, 300 70"
+        stroke="var(--brand)"
+        strokeWidth="1.5"
+        strokeDasharray="6 8"
+        strokeLinecap="round"
+        opacity="0.28"
+        className="route-line-draw"
+      />
+      <circle cx="60" cy="340" r="4.5" fill="var(--secondary)" />
+      <circle cx="60" cy="340" r="9" stroke="var(--secondary)" strokeWidth="1" opacity="0.4" />
+      <g className="route-line-plane">
+        <circle cx="300" cy="70" r="5" fill="var(--accent)" />
+        <circle cx="300" cy="70" r="10" stroke="var(--accent)" strokeWidth="1" opacity="0.5" />
+      </g>
+    </svg>
   )
 }
 

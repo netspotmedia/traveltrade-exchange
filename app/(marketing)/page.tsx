@@ -219,37 +219,56 @@ export default async function HomePage() {
                 description="We built the trust layer into every step of the journey — so you can book with confidence, not hope."
               />
             </Reveal>
-            <div className="mt-14 grid gap-5 md:grid-cols-3">
-              <Reveal delay={0}>
-                <div className="flex h-full flex-col justify-between gap-6 rounded-2xl bg-primary p-7 text-primary-foreground shadow-soft transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1">
-                  <span className="grid size-11 place-items-center rounded-full bg-primary-foreground/15 text-primary-foreground">
-                    <BadgeCheck className="size-5" />
-                  </span>
-                  <div>
-                    <h3 className="text-xl font-semibold tracking-tight">Verified agents</h3>
-                    <p className="mt-2 text-sm leading-6 text-primary-foreground/80">
-                      Every agent completes business verification before their services go live on the marketplace.
-                    </p>
+            {/* Asymmetric bento — one dominant card carries the primary trust
+                claim; two stacked cards + one wide strip round it out. Breaks
+                the repeated 3-equal-column rhythm used elsewhere on the page. */}
+            <div className="mt-14 grid gap-5 lg:grid-cols-[1.15fr_0.85fr]">
+              {/* Dominant card — double-bezel nested surface */}
+              <Reveal delay={0} className="lg:row-span-2">
+                <div className="group relative h-full overflow-hidden rounded-3xl bg-primary p-2 shadow-soft-lg transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1">
+                  {/* Ambient amber field — the accent gets real presence here */}
+                  <div
+                    aria-hidden="true"
+                    className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-[radial-gradient(closest-side,rgb(232_163_61/0.22),transparent)] transition-opacity duration-500 group-hover:opacity-80"
+                  />
+                  <div className="relative flex h-full flex-col justify-between gap-10 rounded-[calc(1.5rem-0.5rem)] bg-primary p-7 text-primary-foreground lg:p-9">
+                    <span className="grid size-12 place-items-center rounded-full bg-accent text-accent-foreground shadow-soft">
+                      <BadgeCheck className="size-6" aria-hidden="true" />
+                    </span>
+                    <div>
+                      <p className="font-eyebrow text-accent">Every agent, checked</p>
+                      <h3 className="font-display mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
+                        Verified agents, before they ever list a service.
+                      </h3>
+                      <p className="mt-3 max-w-md text-sm leading-6 text-primary-foreground/75">
+                        Every agent completes business verification before their services go live on the
+                        marketplace — no exceptions, no self-certified badges.
+                      </p>
+                    </div>
                   </div>
                 </div>
               </Reveal>
+
+              {/* Stacked secondary card */}
               <Reveal delay={100}>
-                <div className="flex h-full flex-col justify-between gap-6 rounded-2xl border border-border bg-card p-7 shadow-card transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1 hover:shadow-soft">
-                  <span className="grid size-11 place-items-center rounded-full bg-brand-soft text-brand">
-                    <Lock className="size-5" />
+                <div className="flex h-full flex-col justify-between gap-6 rounded-2xl border border-border bg-card p-7 shadow-card transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1 hover:border-secondary/25 hover:shadow-soft">
+                  <span className="grid size-11 place-items-center rounded-full bg-secondary-soft text-secondary">
+                    <Lock className="size-5" aria-hidden="true" />
                   </span>
                   <div>
                     <h3 className="text-lg font-semibold tracking-tight">Payment protected</h3>
                     <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                      Your payment is held securely and only released when you approve the delivered work. Disputes are handled fairly.
+                      Held securely, released only when you approve the delivered work. Disputes are handled fairly.
                     </p>
                   </div>
                 </div>
               </Reveal>
+
+              {/* Wide strip — amber-accented, breaks the card-height rhythm */}
               <Reveal delay={200}>
-                <div className="flex h-full flex-col justify-between gap-6 rounded-2xl border border-border bg-card p-7 shadow-card transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1 hover:shadow-soft">
-                  <span className="grid size-11 place-items-center rounded-full bg-brand-soft text-brand">
-                    <FileText className="size-5" />
+                <div className="flex h-full flex-col justify-between gap-6 rounded-2xl border border-accent/25 bg-accent-soft p-7 shadow-card transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1 hover:border-accent/40 hover:shadow-soft">
+                  <span className="grid size-11 place-items-center rounded-full bg-accent text-accent-foreground">
+                    <FileText className="size-5" aria-hidden="true" />
                   </span>
                   <div>
                     <h3 className="text-lg font-semibold tracking-tight">One clear record</h3>
