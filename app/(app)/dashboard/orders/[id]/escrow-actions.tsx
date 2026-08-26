@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { Lock } from 'lucide-react'
 import { Alert } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
+import { statusInfo } from '@/lib/status'
 
 type MilestoneRow = { id: string; title: string; amount: number; status: string }
 
@@ -92,7 +93,7 @@ export function EscrowActions({
 
       {milestones.map((m) => {
         const isReleased = m.status === 'released'
-        const canSubmit = isSeller && (m.status === 'pending' || m.status === 'funded')
+        const canSubmit = isSeller && m.status === 'pending'
         const canApprove = isBuyer && m.status === 'submitted'
         const canRelease = isBuyer && m.status === 'approved'
         if (isReleased) return null
@@ -100,7 +101,7 @@ export function EscrowActions({
           <div key={m.id} className="flex flex-wrap items-center gap-3 rounded-2xl border p-4">
             <div className="min-w-0 flex-1">
               <p className="font-medium">{m.title}</p>
-              <p className="text-sm text-muted-foreground">₦{Number(m.amount).toLocaleString()} · {m.status}</p>
+              <p className="text-sm text-muted-foreground">₦{Number(m.amount).toLocaleString()} · {statusInfo('milestone', m.status).label}</p>
             </div>
             {canSubmit && (
               <Button size="sm" disabled={busy !== null} onClick={() => act('submitMilestone', { milestoneId: m.id })}>

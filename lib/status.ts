@@ -34,7 +34,6 @@ const MAP: Record<StatusDomain, Record<string, StatusInfo>> = {
     submitted: { label: 'Submitted for review', tone: 'info' },
     approved: { label: 'Approved', tone: 'success' },
     released: { label: 'Paid out', tone: 'success' },
-    funded: { label: 'Payment secured', tone: 'info' },
   },
   service: {
     draft: { label: 'Draft', tone: 'neutral' },

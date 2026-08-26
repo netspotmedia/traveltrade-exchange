@@ -14,7 +14,7 @@ import { formatMoney, formatDate } from '@/lib/format'
 import { cn } from '@/lib/utils'
 
 type MilestoneRow = { id: string; title: string; amount: number; status: string }
-type ProposalRow = { id: string; fee_amount: number; timeline_days: number | null; note: string | null; status: string; created_at: string }
+type ProposalRow = { id: string; fee_amount: number; timeline_days: number | null; note: string | null; status: string; created_at: string; created_by: string | null }
 
 const TIMELINE = [
   { key: 'agreed', label: 'Agreement' },
@@ -76,7 +76,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
 
   const { data: proposals } = await s
     .from('proposals')
-    .select('id, fee_amount, timeline_days, note, status, created_at')
+    .select('id, fee_amount, timeline_days, note, status, created_at, created_by')
     .eq('order_id', id)
     .is('deleted_at', null)
     .order('created_at', { ascending: false })
@@ -247,7 +247,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
         </Panel>
 
         <div className="mt-5">
-          <ProposalPanel orderId={id} isBuyer={isBuyer} isSeller={isSeller} proposals={proposalList} />
+          <ProposalPanel orderId={id} currentUserId={user.id} isBuyer={isBuyer} isSeller={isSeller} proposals={proposalList} />
         </div>
 
         {/* Refund request (buyer, while escrow holds funds) */}
