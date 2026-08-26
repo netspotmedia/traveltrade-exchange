@@ -46,6 +46,19 @@ export async function POST(request: Request) {
     return jsonError('Invalid order details')
   }
 
+  // If this exact request already went through (retry, resubmit), hand back
+  // the order that was already created instead of failing on the unique
+  // constraint or creating a duplicate.
+  const { data: existing } = await supabase
+    .from('orders')
+    .select('id, title')
+    .eq('idempotency_key', idempotencyKey)
+    .eq('buyer_id', user.id)
+    .maybeSingle()
+  if (existing) {
+    return NextResponse.json({ order: existing }, { status: 200 })
+  }
+
   // Create the order (status proposed). For instant orders, create a single
   // milestone for the full amount so the funded escrow can be released.
   const { data: order, error } = await supabase

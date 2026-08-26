@@ -121,7 +121,7 @@ export function EscrowActions({
         )
       })}
 
-      {!terminal && isBuyer && (
+      {!terminal && (isBuyer || isSeller) && (
         <Button variant="outline" disabled={busy !== null} onClick={() => act('dispute')}>
           Open dispute
         </Button>

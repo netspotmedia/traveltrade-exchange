@@ -8,9 +8,15 @@ import {
   releaseMilestone,
 } from '@/lib/server/money'
 
+// NOTE: 'submit' and 'approve' order-level transitions were removed. They
+// used to flip orders.status directly (funded/in_progress -> delivered ->
+// completed) without touching the escrow/milestone ledger, which could mark
+// an order "completed" while the buyer's money was still sitting in escrow
+// and the seller was never paid. Delivery and payout now only happen through
+// submitMilestone / approveMilestone / releaseMilestone below, which move
+// real money via the security-definer RPCs. 'dispute' is kept here since it
+// doesn't move money and applies at the order level.
 const orderTransitions = {
-  submit: { from: ['in_progress', 'funded'], to: 'delivered' },
-  approve: { from: ['delivered'], to: 'completed' },
   dispute: { from: ['proposed', 'funded', 'in_progress', 'delivered'], to: 'disputed' },
 } as const
 
@@ -72,7 +78,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true, status: 'funded' })
   }
 
-  // ---- Legacy order-level status transitions (backward compatible) ----
+  // ---- Order-level dispute (the only remaining transition here) ----
   const orderId = cleanText(body.orderId, 80)
   if (!orderId || !(action in orderTransitions)) return jsonError('Invalid escrow action')
   const { data: order, error: readError } = await supabase.from('orders').select('id,status,buyer_id,agency_id,agencies(owner_id)').eq('id', orderId).maybeSingle()
@@ -81,8 +87,6 @@ export async function POST(request: Request) {
   const isBuyer = user.id === order.buyer_id
   const isSeller = user.id === agency?.owner_id
   if (!isBuyer && !isSeller) return jsonError('Not authorized for this order', 403)
-  if (action === 'submit' && !isSeller) return jsonError('Only the seller can submit delivery', 403)
-  if (action === 'approve' && !isBuyer) return jsonError('Only the buyer can approve delivery', 403)
   const transition = orderTransitions[action as keyof typeof orderTransitions]
   if (!(transition.from as readonly string[]).includes(order.status)) return jsonError(`Order cannot transition from ${order.status}`)
   const { error } = await supabase.from('orders').update({ status: transition.to, updated_at: new Date().toISOString() }).eq('id', orderId).eq('status', order.status)
