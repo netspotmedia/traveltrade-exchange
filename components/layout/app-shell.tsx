@@ -1,7 +1,8 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import { Logo } from '@/components/layout/logo'
+import { GlobalHeader } from '@/components/layout/global-header'
+import { Footer } from '@/components/layout/footer'
 import type { NavRole } from '@/lib/nav'
 import { MobileNav } from '@/components/layout/mobile-nav'
 import { SidebarNav } from '@/components/layout/sidebar-nav'
@@ -57,7 +58,7 @@ export default async function AppShell({ children }: { children: React.ReactNode
   const name = (user.user_metadata?.full_name as string | undefined) ?? profileRes.data?.full_name ?? 'User'
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="flex min-h-screen flex-col bg-background">
       <a
         href="#main"
         className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-xl focus:bg-primary focus:px-4 focus:py-2.5 focus:text-sm focus:font-semibold focus:text-primary-foreground"
@@ -65,38 +66,12 @@ export default async function AppShell({ children }: { children: React.ReactNode
         Skip to main content
       </a>
 
-      {/* Mobile top bar */}
-      <header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-border bg-card px-4 lg:hidden">
-        <Logo />
-        <div className="flex items-center gap-2">
-          <Link
-            href="/dashboard/notifications"
-            className="relative inline-flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground transition hover:bg-muted hover:text-foreground"
-            aria-label={`Notifications${unreadNotifications > 0 ? `, ${unreadNotifications} unread` : ''}`}
-          >
-            <BellIcon />
-            {unreadNotifications > 0 && (
-              <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-danger text-[9px] font-bold text-white">
-                {unreadNotifications > 9 ? '9+' : unreadNotifications}
-              </span>
-            )}
-          </Link>
-          <Link
-            href="/settings/security"
-            className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-primary-soft text-sm font-semibold text-primary"
-            aria-label={`${name}'s account`}
-          >
-            {name.charAt(0).toUpperCase()}
-          </Link>
-        </div>
-      </header>
+      {/* Global header on every dashboard */}
+      <GlobalHeader name={name} unreadNotifications={unreadNotifications} />
 
-      <div className="flex w-full">
+      <div className="flex flex-1 w-full">
         {/* Desktop sidebar */}
-        <aside className="sticky top-0 hidden h-screen w-64 shrink-0 border-r border-border bg-card lg:flex lg:flex-col">
-          <div className="flex h-16 items-center border-b border-border px-4">
-            <Logo />
-          </div>
+        <aside className="sticky top-16 hidden h-[calc(100dvh-4rem)] w-64 shrink-0 border-r border-border bg-card lg:flex lg:flex-col">
           <div className="flex-1 space-y-1 overflow-y-auto p-4">
             <SidebarNav role={role} />
           </div>
@@ -120,17 +95,13 @@ export default async function AppShell({ children }: { children: React.ReactNode
         <div className="min-w-0 flex-1">{children}</div>
       </div>
 
+      {/* Footer — every dashboard closes with the global footer */}
+      <div className="pb-14 lg:pb-0">
+        <Footer />
+      </div>
+
       <MobileNav role={role} unreadCount={unreadMessages} />
     </div>
-  )
-}
-
-function BellIcon() {
-  return (
-    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden="true">
-      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-      <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-    </svg>
   )
 }
 

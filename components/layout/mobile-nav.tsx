@@ -34,7 +34,7 @@ export function MobileNav({ role, unreadCount = 0 }: { role: NavRole; unreadCoun
               <span className="relative">
                 <item.icon className="size-5" />
                 {item.href === '/messages' && unreadCount > 0 && (
-                  <span className="absolute -right-1.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-danger text-[9px] font-bold text-white">
+                  <span className="absolute -right-1.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-destructive text-[9px] font-bold text-white">
                     {unreadCount > 9 ? '9+' : unreadCount}
                   </span>
                 )}

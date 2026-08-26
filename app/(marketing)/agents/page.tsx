@@ -63,10 +63,10 @@ export default async function AgentsPage({ searchParams }: { searchParams: Promi
   return (
     <div className="min-h-screen bg-background">
       <main id="main" className="mx-auto max-w-7xl px-4 py-12 lg:px-8">
-        <div className="max-w-2xl">
-          <p className="font-eyebrow text-primary">Verified Agents</p>
-          <h1 className="font-display mt-4 text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">Trusted travel professionals</h1>
-          <p className="mt-3 text-pretty text-muted-foreground">
+        <div className="relative max-w-2xl">
+          <div className="pointer-events-none absolute -inset-x-10 -top-24 -z-10 h-64 bg-[radial-gradient(60%_100%_at_50%_0%,var(--brand-soft),transparent)]" aria-hidden="true" />
+          <h1 className="font-display text-4xl font-semibold leading-tight tracking-tight text-balance sm:text-5xl">Trusted travel professionals</h1>
+          <p className="mt-4 text-pretty text-lg leading-8 text-muted-foreground">
             {total} verified {total === 1 ? 'agent' : 'agents'} ready to serve you — every one completes business verification before trading.
           </p>
         </div>
@@ -107,7 +107,7 @@ export default async function AgentsPage({ searchParams }: { searchParams: Promi
                   <Link
                     key={a.id}
                     href={`/agencies/${a.slug}`}
-                    className="group flex flex-col gap-4 rounded-2xl border border-border bg-card p-6 shadow-card transition hover:-translate-y-0.5 hover:shadow-lift"
+                    className="group flex flex-col gap-4 rounded-2xl border border-border bg-card p-6 surface-soft transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:border-primary/15 hover:shadow-soft-lg active:scale-[0.995]"
                   >
                     <div className="flex items-center gap-3">
                       <Avatar name={a.name} size="lg" />

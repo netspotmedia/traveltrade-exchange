@@ -16,9 +16,9 @@ export function SectionHeader({ eyebrow, title, description, align = 'left', cla
       {eyebrow && (
         <p className="font-eyebrow text-primary">{eyebrow}</p>
       )}
-      <h2 className="mt-3 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">{title}</h2>
+      <h2 className="mt-3 text-balance text-3xl font-semibold leading-tight tracking-tight text-foreground sm:text-4xl">{title}</h2>
       {description && (
-        <p className={cn('mt-3 text-pretty leading-7 text-muted-foreground', align === 'center' && 'mx-auto max-w-xl')}>
+        <p className={cn('mt-3 text-pretty leading-relaxed text-muted-foreground sm:text-lg', align === 'center' && 'mx-auto max-w-xl')}>
           {description}
         </p>
       )}

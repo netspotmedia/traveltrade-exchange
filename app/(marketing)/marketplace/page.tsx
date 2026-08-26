@@ -134,12 +134,12 @@ export default async function MarketplacePage({ searchParams }: { searchParams: 
     <div className="min-h-screen bg-background">
       <main id="main" className="mx-auto max-w-7xl px-4 py-10 lg:px-8">
         <Reveal>
-          <div className="max-w-2xl">
-            <p className="font-eyebrow text-primary">Marketplace</p>
-            <h1 className="font-display mt-3 text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">
+          <div className="relative max-w-2xl">
+            <div className="pointer-events-none absolute -inset-x-10 -top-24 -z-10 h-64 bg-[radial-gradient(60%_100%_at_50%_0%,var(--brand-soft),transparent)]" aria-hidden="true" />
+            <h1 className="font-display text-4xl font-semibold leading-tight tracking-tight text-balance sm:text-5xl">
               Find the right partner for the journey
             </h1>
-            <p className="mt-3 text-pretty text-muted-foreground">
+            <p className="mt-4 text-pretty text-lg leading-8 text-muted-foreground">
               Compare verified travel services, then move into a protected agreement.
             </p>
           </div>
