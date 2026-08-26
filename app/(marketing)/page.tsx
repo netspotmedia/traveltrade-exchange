@@ -9,6 +9,7 @@ import {
 import { createClient } from '@/lib/supabase/server'
 import { getCmsPage } from '@/lib/cms'
 import { ServiceCard } from '@/components/service-card'
+import { FeaturedServiceCard } from '@/components/featured-service-card'
 import { MarketplaceEmpty } from '@/components/marketing/marketplace-empty'
 import { Reveal } from '@/components/ui/reveal'
 import { SectionHeader } from '@/components/ui/section-header'
@@ -136,18 +137,33 @@ export default async function HomePage() {
             {services.length === 0 ? (
               <MarketplaceEmpty />
             ) : (
-              <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                {services.map((s) => {
-                  const agency = Array.isArray(s.agencies) ? s.agencies[0] : s.agencies
-                  return (
-                    <ServiceCard
-                      key={s.id}
-                      service={{ ...s, agencies: agency as ServiceRow['agencies'] }}
-                      imageUrl={s.images?.[0] ? publicImageUrl(s.images[0]) : null}
-                      reviewCount={reviewCounts.get(s.id) ?? null}
-                    />
-                  )
-                })}
+              <div className="flex flex-col gap-5">
+                {/* Spotlight — the first service gets a horizontal featured
+                    treatment so the section isn't just N identical tiles. */}
+                <Reveal>
+                  <FeaturedServiceCard
+                    service={{ ...services[0], agencies: (Array.isArray(services[0].agencies) ? services[0].agencies[0] : services[0].agencies) as ServiceRow['agencies'] }}
+                    imageUrl={services[0].images?.[0] ? publicImageUrl(services[0].images[0]) : null}
+                    reviewCount={reviewCounts.get(services[0].id) ?? null}
+                  />
+                </Reveal>
+
+                {services.length > 1 && (
+                  <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                    {services.slice(1).map((s, i) => {
+                      const agency = Array.isArray(s.agencies) ? s.agencies[0] : s.agencies
+                      return (
+                        <Reveal key={s.id} delay={i * 60}>
+                          <ServiceCard
+                            service={{ ...s, agencies: agency as ServiceRow['agencies'] }}
+                            imageUrl={s.images?.[0] ? publicImageUrl(s.images[0]) : null}
+                            reviewCount={reviewCounts.get(s.id) ?? null}
+                          />
+                        </Reveal>
+                      )
+                    })}
+                  </div>
+                )}
               </div>
             )}
           </div>

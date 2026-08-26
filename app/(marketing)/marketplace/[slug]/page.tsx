@@ -126,7 +126,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
               <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-border pt-5 text-sm text-muted-foreground">
                 {rating > 0 && (
                   <span className="flex items-center gap-1.5 font-medium text-foreground">
-                    <Star className="size-4 fill-amber-400 text-amber-400" />
+                    <Star className="size-4 fill-accent text-accent" />
                     {rating.toFixed(1)} rating
                     {reviewCount > 0 && <span className="font-normal text-muted-foreground">({reviewCount} reviews)</span>}
                   </span>
@@ -258,7 +258,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                 <h2 className="text-lg font-semibold">Reviews</h2>
                 {reviewAvg != null && (
                   <span className="flex items-center gap-1.5 font-medium">
-                    <Star className="size-4 fill-amber-400 text-amber-400" />
+                    <Star className="size-4 fill-accent text-accent" />
                     {reviewAvg.toFixed(1)}
                     <span className="font-normal text-muted-foreground">· {reviewCount} review{reviewCount === 1 ? '' : 's'}</span>
                   </span>
@@ -274,7 +274,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                         <p className="text-sm font-semibold">{r.author?.full_name || 'Verified buyer'}</p>
                         <span className="flex items-center gap-1 text-sm text-amber-500">
                           {Array.from({ length: 5 }).map((_, i) => (
-                            <Star key={i} className={`size-3.5 ${i < Number(r.rating) ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground/30'}`} aria-hidden="true" />
+                            <Star key={i} className={`size-3.5 ${i < Number(r.rating) ? 'fill-accent text-accent' : 'text-muted-foreground/30'}`} aria-hidden="true" />
                           ))}
                         </span>
                       </div>

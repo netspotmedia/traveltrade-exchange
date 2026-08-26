@@ -96,7 +96,7 @@ export default async function AgentProfilePage({ params }: { params: Promise<{ s
               {rating > 0 && (
                 <div>
                   <p className="flex items-center gap-1 font-mono text-2xl font-semibold">
-                    <Star className="size-5 fill-amber-400 text-amber-400" />
+                    <Star className="size-5 fill-accent text-accent" />
                     {rating.toFixed(1)}
                   </p>
                   <p className="text-xs text-muted-foreground">Rating</p>

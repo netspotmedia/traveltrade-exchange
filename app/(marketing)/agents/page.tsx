@@ -126,7 +126,7 @@ export default async function AgentsPage({ searchParams }: { searchParams: Promi
                     <div className="mt-auto flex items-center gap-x-6 gap-y-1 border-t border-border pt-4 text-sm text-muted-foreground">
                       {rating > 0 && (
                         <span className="flex items-center gap-1 font-medium text-foreground">
-                          <Star className="size-4 fill-amber-400 text-amber-400" /> {rating.toFixed(1)}
+                          <Star className="size-4 fill-accent text-accent" /> {rating.toFixed(1)}
                         </span>
                       )}
                       <span>{Number(a.completed_orders ?? 0)} orders completed</span>

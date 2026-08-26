@@ -13,7 +13,7 @@ export function GlobalHeader({ name, unreadNotifications }: { name: string; unre
         <div className="flex items-center gap-2">
           <Link
             href="/dashboard/notifications"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full text-muted-foreground transition hover:bg-muted hover:text-foreground"
+            className="relative inline-flex h-10 w-10 items-center justify-center rounded-full text-muted-foreground transition hover:bg-muted hover:text-foreground"
             aria-label={`Notifications${unreadNotifications > 0 ? `, ${unreadNotifications} unread` : ''}`}
           >
             <Bell className="size-5" aria-hidden="true" />

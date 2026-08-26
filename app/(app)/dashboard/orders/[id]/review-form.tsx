@@ -66,7 +66,7 @@ export function ReviewForm({ orderId, hasReview }: { orderId: string; hasReview:
                   onMouseEnter={() => setHover(value)}
                   className="p-1"
                 >
-                  <Star className={cn('size-7 transition', active ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground/30')} aria-hidden="true" />
+                  <Star className={cn('size-7 transition', active ? 'fill-accent text-accent' : 'text-muted-foreground/30')} aria-hidden="true" />
                 </button>
               )
             })}

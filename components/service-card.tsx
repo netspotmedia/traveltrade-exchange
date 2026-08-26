@@ -102,7 +102,7 @@ export function ServiceCard({ service, responseStats, imageUrl, reviewCount, cla
         <div className="mt-auto flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-muted-foreground">
           {rating > 0 && (
             <span className="flex items-center gap-1 font-medium text-foreground">
-              <Star className="size-4 fill-amber-400 text-amber-400" />
+              <Star className="size-4 fill-accent text-accent" />
               {rating.toFixed(1)}
               {reviewCount ? <span className="font-normal text-muted-foreground">({reviewCount})</span> : null}
             </span>

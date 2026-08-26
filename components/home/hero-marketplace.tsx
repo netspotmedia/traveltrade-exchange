@@ -123,7 +123,7 @@ function ServiceCard({ service, className }: { service: HeroService; className?:
 
       {rating > 0 && (
         <p className="mt-1.5 flex items-center gap-1 text-xs text-muted-foreground">
-          <Star className="size-3.5 fill-amber-400 text-amber-400" aria-hidden="true" />
+          <Star className="size-3.5 fill-accent text-accent" aria-hidden="true" />
           <span className="font-semibold text-foreground">{rating.toFixed(1)}</span>
           <span className="text-muted-foreground/70">{service.agency?.name ? `· ${service.agency.name}` : ''}</span>
         </p>
