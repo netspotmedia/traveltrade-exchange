@@ -31,6 +31,17 @@ export async function POST(request: Request) {
     return jsonError('Amount must match the order total')
   }
 
+  // Mirror the wallet funding gate: if this order has an agreement, both
+  // parties must have signed before escrow can be funded by card.
+  const { data: agreement } = await supabase
+    .from('agreements')
+    .select('signed_by_buyer_at, signed_by_seller_at')
+    .eq('order_id', orderId)
+    .maybeSingle()
+  if (agreement && (!agreement.signed_by_buyer_at || !agreement.signed_by_seller_at)) {
+    return jsonError('Both parties must sign the agreement before funding', 400)
+  }
+
   const reference = `ttx_customer_escrow_${user.id}_${crypto.randomUUID()}`
   const { error: insertError } = await supabase.from('customer_escrow_payments').insert({
     order_id: orderId,

@@ -29,6 +29,9 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   if (!order || order.buyer_id !== user.id) return jsonError('Not authorized for this proposal', 403)
   if (order.status !== 'proposed') return jsonError('Order is no longer open')
   if (proposal.status === 'accepted') return jsonError('Proposal already accepted')
+  if (proposal.status === 'rejected' || proposal.status === 'declined') {
+    return jsonError('This proposal has already been decided and can no longer be acted on')
+  }
 
   const next = decision === 'accept' ? 'accepted' : 'rejected'
   const { error } = await supabase.from('proposals').update({ status: next, updated_at: new Date().toISOString() }).eq('id', id)

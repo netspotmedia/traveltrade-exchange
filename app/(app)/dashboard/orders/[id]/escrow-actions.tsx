@@ -92,7 +92,7 @@ export function EscrowActions({
 
       {milestones.map((m) => {
         const isReleased = m.status === 'released'
-        const canSubmit = isSeller && (m.status === 'pending' || m.status === 'funded' || m.status === 'submitted')
+        const canSubmit = isSeller && (m.status === 'pending' || m.status === 'funded')
         const canApprove = isBuyer && m.status === 'submitted'
         const canRelease = isBuyer && m.status === 'approved'
         if (isReleased) return null
@@ -104,7 +104,7 @@ export function EscrowActions({
             </div>
             {canSubmit && (
               <Button size="sm" disabled={busy !== null} onClick={() => act('submitMilestone', { milestoneId: m.id })}>
-                {m.status === 'submitted' ? 'Re-submit' : 'Submit delivery'}
+                Submit delivery
               </Button>
             )}
             {canApprove && (

@@ -75,7 +75,7 @@ export function ProposalPanel({ orderId, isBuyer, isSeller, proposals }: { order
           </div>
         )}
 
-        {isBuyer && latest && latest.status !== 'accepted' && (
+        {isBuyer && latest && !['accepted', 'rejected', 'declined'].includes(latest.status) && (
           <div className="mt-4 flex flex-wrap gap-3">
             <Button size="sm" disabled={busy !== null} onClick={() => respond('accept')}>
               Accept proposal
@@ -144,7 +144,7 @@ export function ProposalPanel({ orderId, isBuyer, isSeller, proposals }: { order
               <Button size="sm" disabled={busy !== null} onClick={() => submitProposal()}>
                 Submit proposal
               </Button>
-              {latest && latest.status !== 'accepted' && (
+              {latest && !['accepted', 'rejected', 'declined'].includes(latest.status) && (
                 <Button size="sm" variant="outline" disabled={busy !== null} onClick={() => submitProposal(latest.id)}>
                   Counter offer
                 </Button>
