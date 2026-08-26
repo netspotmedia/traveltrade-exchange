@@ -3,72 +3,77 @@ import { cn } from '@/lib/utils'
 
 interface KpiCardProps {
   label: string
-  value: string
-  hint?: string
+  value: React.ReactNode
+  hint?: React.ReactNode
   icon?: LucideIcon
-  /** Semantic tone — maps the KPI to the brand language.
-   *  default: navy on neutral · teal: security/escrow · amber: attention ·
-   *  solid: navy emphasis panel. */
-  accent?: 'default' | 'teal' | 'amber' | 'solid'
+  /** Bento tone — solid (deep green emphasis), mint, gold, or neutral surface. */
+  accent?: 'solid' | 'mint' | 'gold' | 'surface'
+  /** Optional right-side visual (sparkline, gauge, chips…). */
+  children?: React.ReactNode
   className?: string
 }
 
 const TONES = {
-  default: {
-    surface: 'border-border bg-card',
-    chip: 'bg-brand-soft text-brand',
-    label: 'text-muted-foreground',
-    hint: 'text-muted-foreground',
-    value: 'text-foreground',
-  },
-  teal: {
-    surface: 'border-secondary/15 bg-secondary-soft',
-    chip: 'bg-secondary text-secondary-foreground',
-    label: 'text-secondary dark:text-success-foreground',
-    hint: 'text-secondary dark:text-success-foreground',
-    value: 'text-foreground',
-  },
-  amber: {
-    surface: 'border-accent/20 bg-accent-soft',
-    chip: 'bg-accent text-accent-foreground dark:text-primary-foreground',
-    label: 'text-foreground dark:text-warning-foreground',
-    hint: 'text-muted-foreground',
-    value: 'text-foreground',
-  },
   solid: {
     surface: 'border-transparent bg-primary',
-    chip: 'bg-primary-foreground/15 text-primary-foreground',
-    label: 'text-primary-foreground/75',
-    hint: 'text-primary-foreground/70',
-    value: 'text-primary-foreground',
+    chip: 'bg-white/15 text-on-primary',
+    label: 'text-on-primary/70',
+    hint: 'text-on-primary/75',
+    value: 'text-on-primary',
+    glow: 'bg-white/10',
+  },
+  mint: {
+    surface: 'border-white/40',
+    chip: 'bg-primary-container/10 text-primary',
+    label: 'text-on-surface-variant',
+    hint: 'text-on-surface-variant',
+    value: 'text-primary',
+    glow: 'bg-primary-fixed',
+  },
+  gold: {
+    surface: 'border-white/40',
+    chip: 'bg-secondary-container/30 text-secondary',
+    label: 'text-on-surface-variant',
+    hint: 'text-on-surface-variant',
+    value: 'text-primary',
+    glow: 'bg-secondary-fixed',
+  },
+  surface: {
+    surface: 'border-white/40',
+    chip: 'bg-surface-container-high text-primary',
+    label: 'text-on-surface-variant',
+    hint: 'text-on-surface-variant',
+    value: 'text-primary',
+    glow: 'bg-surface-variant',
   },
 } as const
 
-/** Modern KPI card — icon chip, mono value, contextual hint, semantic tone. */
-export function KpiCard({ label, value, hint, icon: Icon, accent = 'default', className }: KpiCardProps) {
+/** Glass bento KPI — caps label, icon chip, display value and a soft
+ *  corner glow that blooms on hover. Follows the glass-panel world. */
+export function KpiCard({ label, value, hint, icon: Icon, accent = 'mint', children, className }: KpiCardProps) {
   const t = TONES[accent]
 
   return (
-    <div
-      className={cn(
-        'rounded-2xl border p-5 surface-soft transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]',
-        t.surface,
-        className,
-      )}
-    >
-      <div className="flex items-center justify-between">
-        <p className={cn('text-sm', t.label)}>{label}</p>
+    <div className={cn('glass-card group relative flex flex-col overflow-hidden rounded-2xl p-6', t.surface, className)}>
+      <span
+        aria-hidden="true"
+        className={cn('pointer-events-none absolute -right-6 -top-6 size-28 rounded-full opacity-20 blur-2xl transition-transform duration-700 group-hover:scale-150', t.glow)}
+      />
+      <div className="relative z-10 flex items-start justify-between gap-3">
+        <p className={cn('font-eyebrow pt-1', t.label)}>{label}</p>
         {Icon && (
-          <span
-            className={cn('grid size-9 place-items-center rounded-xl transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]', t.chip)}
-            aria-hidden="true"
-          >
-            <Icon className="size-4" />
+          <span className={cn('grid size-9 shrink-0 place-items-center rounded-full', t.chip)} aria-hidden="true">
+            <Icon className="size-[18px]" />
           </span>
         )}
       </div>
-      <p className={cn('mt-3 font-mono text-2xl font-semibold tracking-tight', t.value)}>{value}</p>
-      {hint && <p className={cn('mt-1 text-xs', t.hint)}>{hint}</p>}
+      <div className={cn('relative z-10 mt-auto flex items-end justify-between gap-4 pt-4')}>
+        <div className="min-w-0">
+          <p className={cn('font-display text-[28px] font-semibold leading-tight tracking-tight md:text-[32px]', t.value)}>{value}</p>
+          {hint && <div className={cn('mt-1 text-sm', t.hint)}>{hint}</div>}
+        </div>
+        {children}
+      </div>
     </div>
   )
 }

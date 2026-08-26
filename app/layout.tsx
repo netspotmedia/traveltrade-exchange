@@ -1,6 +1,6 @@
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
-import { Plus_Jakarta_Sans, Fraunces } from 'next/font/google'
+import { Plus_Jakarta_Sans, Fraunces, Noto_Serif, Hanken_Grotesk } from 'next/font/google'
 import './globals.css'
 
 const jakarta = Plus_Jakarta_Sans({
@@ -11,6 +11,20 @@ const jakarta = Plus_Jakarta_Sans({
 
 const fraunces = Fraunces({
   variable: '--font-display',
+  subsets: ['latin'],
+  display: 'swap',
+  style: ['normal', 'italic'],
+})
+
+// Material 3 dashboard fonts (used inside the scoped `.m3` app shell).
+const hanken = Hanken_Grotesk({
+  variable: '--font-hanken',
+  subsets: ['latin'],
+  display: 'swap',
+})
+
+const notoSerif = Noto_Serif({
+  variable: '--font-noto',
   subsets: ['latin'],
   display: 'swap',
   style: ['normal', 'italic'],
@@ -31,7 +45,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className="bg-background">
-      <body className={`${jakarta.variable} ${fraunces.variable} antialiased`}>
+      <body className={`${jakarta.variable} ${fraunces.variable} ${hanken.variable} ${notoSerif.variable} antialiased`}>
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-xl focus:bg-primary focus:px-4 focus:py-2.5 focus:text-sm focus:font-semibold focus:text-primary-foreground"

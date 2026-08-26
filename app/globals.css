@@ -77,6 +77,28 @@
   /* Tinted semantic surfaces (KPI accents, status chips) */
   --color-secondary-soft: var(--secondary-soft);
   --color-accent-soft: var(--accent-soft);
+
+  /* Material 3 dashboard tokens (used inside the scoped `.m3` app shell) */
+  --color-secondary-container: var(--secondary-container);
+  --color-on-secondary-container: var(--on-secondary-container);
+  --color-primary-container: var(--primary-container);
+  --color-on-primary-container: var(--on-primary-container);
+  --color-primary-fixed: var(--primary-fixed);
+  --color-primary-fixed-dim: var(--primary-fixed-dim);
+  --color-surface-container-low: var(--surface-container-low);
+  --color-surface-container-high: var(--surface-container-high);
+  --color-surface-container-highest: var(--surface-container-highest);
+  --color-on-surface: var(--on-surface);
+  --color-on-surface-variant: var(--on-surface-variant);
+  --color-surface-dim: var(--surface-dim);
+  --color-surface-bright: var(--surface-bright);
+  --color-secondary-fixed: var(--secondary-fixed);
+  --color-secondary-fixed-dim: var(--secondary-fixed-dim);
+  --color-tertiary: var(--tertiary);
+  --color-tertiary-container: var(--tertiary-container);
+  --color-outline: var(--outline);
+  --color-outline-variant: var(--outline-variant);
+  --color-surface-variant: var(--surface-variant);
 }
 
 :root {
@@ -135,6 +157,28 @@
   --sidebar-accent-foreground: #0b3d5c;
   --sidebar-border: #dde2e7;
   --sidebar-ring: #0b3d5c;
+
+  /* Material 3 dashboard tokens (defaults; overridden inside `.m3`) */
+  --secondary-container: #e2f4ef;
+  --on-secondary-container: #0e7c66;
+  --primary-container: #0b3d5c;
+  --on-primary-container: #ffffff;
+  --primary-fixed: #0b3d5c;
+  --primary-fixed-dim: #b8d4e4;
+  --surface-container-low: #ffffff;
+  --surface-container-high: #f0f2f5;
+  --surface-container-highest: #e7f0f6;
+  --on-surface: #16222c;
+  --on-surface-variant: #5a6b78;
+  --surface-dim: #eef1f4;
+  --surface-bright: #f7f8fa;
+  --secondary-fixed: #e2f4ef;
+  --secondary-fixed-dim: #0e7c66;
+  --tertiary: #16222c;
+  --tertiary-container: #f0f2f5;
+  --outline: #c6cfd7;
+  --outline-variant: #dde2e7;
+  --surface-variant: #e7f0f6;
 }
 
 /* ------------------------------------------------------------
@@ -352,5 +396,131 @@
   }
   to {
     transform: translateY(0);
+  }
+}
+
+/* ============================================================
+   Material 3 dashboard theme — scoped to the authenticated
+   `.m3` app shell so the marketing site keeps its own look.
+   Overrides the semantic tokens with the M3 reference palette
+   (deep-green primary, gold secondary, blue-tinted surfaces),
+   swaps to Noto Serif + Hanken Grotesk, and adds the glass
+   surface + canvas-grid utilities used by the dashboard.
+   ============================================================ */
+.m3 {
+  --brand: #2b6954;
+  --brand-soft: #e7eeff;
+  --primary: #003527;
+  --primary-hover: #064e3b;
+  --primary-active: #002117;
+  --primary-soft: #b0f0d6;
+  --primary-foreground: #ffffff;
+  --secondary: #735c00;
+  --secondary-hover: #574500;
+  --secondary-soft: #ffe088;
+  --secondary-foreground: #241a00;
+  --accent: #e9c349;
+  --accent-hover: #d6af2e;
+  --accent-soft: #fed65b;
+  --accent-foreground: #241a00;
+
+  --background: #f9f9ff;
+  --foreground: #111c2d;
+  --card: #ffffff;
+  --card-foreground: #111c2d;
+  --popover: #ffffff;
+  --popover-foreground: #111c2d;
+  --muted: #f0f3ff;
+  --muted-foreground: #404944;
+  --border: #d8e3fb;
+  --input: #bfc9c3;
+  --ring: #2b6954;
+  --surface-alt: #e7eeff;
+
+  --success: #e2f4ef;
+  --success-foreground: #0b513d;
+  --warning: #fed65b;
+  --warning-foreground: #574500;
+  --info: #e8f0fe;
+  --info-foreground: #2b6954;
+  --destructive: #ba1a1a;
+  --destructive-foreground: #ffffff;
+
+  --sidebar: #ffffff;
+  --sidebar-foreground: #111c2d;
+  --sidebar-primary: #003527;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #fed65b;
+  --sidebar-accent-foreground: #241a00;
+  --sidebar-border: #d8e3fb;
+  --sidebar-ring: #2b6954;
+
+  /* Material 3 dashboard tokens (reference palette) */
+  --secondary-container: #fed65b;
+  --on-secondary-container: #241a00;
+  --primary-container: #064e3b;
+  --on-primary-container: #80bea6;
+  --primary-fixed: #b0f0d6;
+  --primary-fixed-dim: #95d3ba;
+  --surface-container-low: #f0f3ff;
+  --surface-container-high: #dee8ff;
+  --surface-container-highest: #d8e3fb;
+  --on-surface: #111c2d;
+  --on-surface-variant: #404944;
+  --surface-dim: #cfdaf2;
+  --surface-bright: #f9f9ff;
+  --secondary-fixed: #ffe088;
+  --secondary-fixed-dim: #e9c349;
+  --tertiary: #2b2f30;
+  --tertiary-container: #424547;
+  --outline: #707974;
+  --outline-variant: #bfc9c3;
+  --surface-variant: #d8e3fb;
+
+  /* Fonts: Noto Serif for display, Hanken Grotesk for body/interactive */
+  --font-sans: var(--font-hanken), ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: var(--font-noto), Georgia, 'Times New Roman', serif;
+  font-family: var(--font-sans);
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+}
+
+.m3 .bg-canvas {
+  background-color: #f8fafc;
+  background-image:
+    linear-gradient(to right, rgb(6 78 59 / 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(6 78 59 / 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.m3 .glass-panel {
+  background-color: rgb(255 255 255 / 0.7);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgb(255 255 255 / 0.2);
+  box-shadow: 0 30px 60px -15px rgb(6 78 59 / 0.1);
+}
+
+.m3 .glass-card {
+  background-color: rgb(255 255 255 / 0.8);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+  border: 1px solid rgb(255 255 255 / 0.2);
+  box-shadow: 0 10px 30px -10px rgb(6 78 59 / 0.05);
+  transition: box-shadow 0.3s ease, transform 0.3s ease, backdrop-filter 0.3s ease;
+}
+
+.m3 .glass-card:hover {
+  box-shadow: 0 20px 40px -15px rgb(6 78 59 / 0.15);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  transform: translateY(-2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .m3 .glass-card {
+    transition: none;
+  }
+  .m3 .glass-card:hover {
+    transform: none;
   }
 }

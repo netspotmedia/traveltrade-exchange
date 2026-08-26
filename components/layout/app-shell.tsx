@@ -1,16 +1,24 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
+import { Globe, Plus } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
-import { GlobalHeader } from '@/components/layout/global-header'
 import { Footer } from '@/components/layout/footer'
-import type { NavRole } from '@/lib/nav'
+import { MobileHeader } from '@/components/layout/mobile-header'
 import { MobileNav } from '@/components/layout/mobile-nav'
 import { SidebarNav } from '@/components/layout/sidebar-nav'
+import { SignOutButton } from '@/components/layout/sign-out-button'
+import { initials } from '@/lib/format'
+import type { NavRole } from '@/lib/nav'
 
 function resolveRole(profileRole: string | null, hasAgency: boolean): NavRole {
   if (profileRole === 'admin') return 'admin'
   if (hasAgency) return 'seller'
   return 'buyer'
+}
+
+function primaryCta(role: NavRole): { href: string; label: string } {
+  if (role === 'seller') return { href: '/agent/services/new', label: 'New trade request' }
+  return { href: '/requests/new', label: 'New trade request' }
 }
 
 export default async function AppShell({ children }: { children: React.ReactNode }) {
@@ -33,8 +41,6 @@ export default async function AppShell({ children }: { children: React.ReactNode
   const role = resolveRole(profileRole, hasAgency)
   const unreadNotifications = notifRes.count ?? 0
 
-  // Unread message count scoped to the user's own orders. For agents, also
-  // fetch the orders they sell for — both batches run in parallel.
   const agencyId = (agencyRes.data?.id as string | null) ?? null
   const soldOrdersRes = agencyId
     ? await supabase.from('orders').select('id').eq('agency_id', agencyId).is('deleted_at', null)
@@ -56,9 +62,55 @@ export default async function AppShell({ children }: { children: React.ReactNode
   }
 
   const name = (user.user_metadata?.full_name as string | undefined) ?? profileRes.data?.full_name ?? 'User'
+  const cta = primaryCta(role)
+
+  const sidebar = (
+    <>
+      {/* Brand */}
+      <div className="mb-8">
+        <div className="flex items-center gap-2">
+          <span className="grid size-9 place-items-center rounded-xl bg-primary text-on-primary shadow-lg shadow-primary-container/20" aria-hidden="true">
+            <Globe className="size-5" />
+          </span>
+          <div>
+            <p className="font-display text-lg font-bold leading-none tracking-tight text-primary">TravelTrade</p>
+            <p className="mt-1 text-xs text-on-surface-variant">Premium Exchange</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Navigation */}
+      <div className="flex-1 overflow-y-auto pb-4">
+        <SidebarNav role={role} />
+      </div>
+
+      {/* CTA */}
+      <div className="mt-auto space-y-4 border-t border-white/10 pt-5">
+        <Link
+          href={cta.href}
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-3 text-sm font-semibold text-on-primary shadow-lg shadow-primary-container/20 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:brightness-110 active:scale-[0.98]"
+        >
+          <Plus className="size-[18px]" aria-hidden="true" />
+          {cta.label}
+        </Link>
+
+        {/* Profile */}
+        <div className="flex items-center gap-3 rounded-xl bg-white/40 p-2.5">
+          <span className="grid size-10 shrink-0 place-items-center rounded-full bg-primary-fixed text-sm font-bold text-primary" aria-hidden="true">
+            {initials(name)}
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-sm font-bold text-primary">{name}</p>
+            <p className="text-xs capitalize text-on-surface-variant">{role}</p>
+          </div>
+          <SignOutButton />
+        </div>
+      </div>
+    </>
+  )
 
   return (
-    <div className="flex min-h-screen flex-col bg-background">
+    <div className="m3 bg-canvas flex min-h-screen flex-col text-on-surface">
       <a
         href="#main"
         className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-xl focus:bg-primary focus:px-4 focus:py-2.5 focus:text-sm focus:font-semibold focus:text-primary-foreground"
@@ -66,61 +118,24 @@ export default async function AppShell({ children }: { children: React.ReactNode
         Skip to main content
       </a>
 
-      {/* Global header on every dashboard */}
-      <GlobalHeader name={name} unreadNotifications={unreadNotifications} />
+      <MobileHeader name={name} unreadNotifications={unreadNotifications} menu={sidebar} />
 
-      <div className="flex flex-1 w-full">
-        {/* Desktop sidebar */}
-        <aside className="sticky top-16 hidden h-[calc(100dvh-4rem)] w-64 shrink-0 border-r border-border bg-card lg:flex lg:flex-col">
-          <div className="flex-1 space-y-1 overflow-y-auto p-4">
-            <SidebarNav role={role} />
-          </div>
-          <div className="border-t border-border p-4">
-            <div className="flex items-center gap-3">
-              <span className="grid h-9 w-9 place-items-center rounded-full bg-primary-soft text-sm font-semibold text-primary">
-                {name.charAt(0).toUpperCase()}
-              </span>
-              <div className="min-w-0">
-                <p className="truncate text-sm font-medium text-foreground">{name}</p>
-                <p className="text-xs capitalize text-muted-foreground">{role}</p>
-              </div>
-            </div>
-            <div className="mt-3">
-              <SignOutButton />
-            </div>
-          </div>
+      <div className="flex w-full flex-1 lg:pl-64">
+        {/* Docked desktop sidebar — glass rail */}
+        <aside className="fixed inset-y-0 left-0 z-50 hidden w-64 flex-col border-r border-white/10 bg-surface-container-low/80 p-6 backdrop-blur-2xl lg:flex">
+          {sidebar}
         </aside>
 
         {/* Page content — pages render their own <main id="main"> */}
-        <div className="min-w-0 flex-1">{children}</div>
-      </div>
-
-      {/* Footer — every dashboard closes with the global footer */}
-      <div className="pb-14 lg:pb-0">
-        <Footer />
+        <div className="flex min-w-0 flex-1 flex-col">
+          <div className="flex-1">{children}</div>
+          <div className="pb-14 lg:pb-0">
+            <Footer />
+          </div>
+        </div>
       </div>
 
       <MobileNav role={role} unreadCount={unreadMessages} />
     </div>
-  )
-}
-
-async function SignOutButton() {
-  return (
-    <form
-      action={async () => {
-        'use server'
-        const s = await createClient()
-        await s.auth.signOut()
-        redirect('/')
-      }}
-    >
-      <button
-        type="submit"
-        className="inline-flex w-full items-center justify-center rounded-xl border border-border px-3 py-2 text-sm font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground"
-      >
-        Sign out
-      </button>
-    </form>
   )
 }

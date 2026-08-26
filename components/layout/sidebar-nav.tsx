@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation'
 import { appNav, isNavActive, type NavRole } from '@/lib/nav'
 import { cn } from '@/lib/utils'
 
-/** Role-aware sidebar navigation with client-side active state. */
+/** Role-aware sidebar navigation — glass pills with a gold active state. */
 export function SidebarNav({ role }: { role: NavRole }) {
   const pathname = usePathname()
   const visible = appNav.filter((item) => !item.roles || item.roles.includes(role))
@@ -13,7 +13,7 @@ export function SidebarNav({ role }: { role: NavRole }) {
   if (visible.length === 0) return null
 
   return (
-    <nav className="space-y-1" aria-label="Sidebar">
+    <nav className="flex flex-col gap-1.5" aria-label="Sidebar">
       {visible.map((item) => {
         const active = isNavActive(item, pathname)
         return (
@@ -22,12 +22,15 @@ export function SidebarNav({ role }: { role: NavRole }) {
             href={item.href}
             aria-current={active ? 'page' : undefined}
             className={cn(
-              'flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition-colors',
-              active ? 'bg-primary-soft text-primary' : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+              'group flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]',
+              active
+                ? 'bg-secondary-container text-on-secondary-container shadow-sm'
+                : 'text-on-surface-variant hover:bg-white/10 hover:text-primary',
             )}
           >
-            <item.icon className="size-4 shrink-0" aria-hidden="true" />
+            <item.icon className="size-[18px] shrink-0" aria-hidden="true" />
             {item.label}
+            {active && <span aria-hidden="true" className="ml-auto size-1.5 rounded-full bg-on-secondary-container/40" />}
           </Link>
         )
       })}
