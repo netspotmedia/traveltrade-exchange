@@ -203,23 +203,29 @@ export default async function DashboardPage() {
     <main id="main" className="relative w-full px-4 pb-24 pt-8 md:px-8 md:pt-10 lg:pb-12">
       {/* Ambient depth behind the header */}
       <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-80 bg-[radial-gradient(55%_100%_at_50%_-10%,var(--brand-soft),transparent)]" aria-hidden="true" />
+      <div className="pointer-events-none absolute -right-24 top-40 -z-10 h-72 w-72 rounded-full bg-[radial-gradient(closest-side,color-mix(in_oklch,var(--secondary-fixed) 45%,transparent),transparent)] blur-2xl" aria-hidden="true" />
 
       <div className="mx-auto flex w-full max-w-[1280px] flex-col gap-8">
         {/* Page header */}
         <Reveal>
           <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
             <div>
-              <h1 className="font-display text-3xl font-bold leading-tight tracking-tight text-primary sm:text-4xl md:text-5xl">Trade Overview</h1>
+              <h1 className="font-display text-3xl font-bold leading-tight tracking-tight text-primary text-balance sm:text-4xl md:text-5xl">Trade Overview</h1>
               <p className="mt-2 max-w-2xl text-pretty text-lg text-on-surface-variant">
                 Monitor your active escrow trades and market performance{firstName ? `, ${firstName}` : ''}.
               </p>
             </div>
             <Link
               href={createHref}
-              className="group inline-flex w-fit items-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-on-primary shadow-lg shadow-primary-container/20 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:brightness-110 active:scale-[0.98]"
+              className="group inline-flex w-fit items-center gap-3 rounded-full bg-primary py-2.5 pl-6 pr-2.5 text-sm font-semibold text-on-primary shadow-lg shadow-primary-container/25 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:brightness-110 active:scale-[0.98]"
             >
-              <Plus className="size-[18px]" aria-hidden="true" />
-              New Trade Request
+              <span>New Trade Request</span>
+              <span
+                className="grid size-8 shrink-0 place-items-center rounded-full bg-white/15 text-on-primary transition-transform duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-0.5 group-hover:scale-105"
+                aria-hidden="true"
+              >
+                <Plus className="size-4" />
+              </span>
             </Link>
           </div>
         </Reveal>
@@ -262,7 +268,7 @@ export default async function DashboardPage() {
 
         {/* Market performance */}
         <Reveal delay={140}>
-          <section className="glass-panel rounded-2xl p-6 md:p-7" aria-label="Market performance">
+          <section className="glass-panel rounded-3xl p-6 md:p-8" aria-label="Market performance">
             <PerformanceChart data={buckets} currency={currency} />
           </section>
         </Reveal>
@@ -272,7 +278,7 @@ export default async function DashboardPage() {
           <div className="lg:col-span-2">
             <TradesPanel trades={trades} viewAllHref="/orders" createHref={createHref} />
           </div>
-          <section className="glass-panel flex h-full flex-col rounded-2xl p-6" aria-label="Recent activity">
+          <section className="glass-panel flex h-full flex-col rounded-3xl p-6 md:p-7" aria-label="Recent activity">
             <h3 className="font-display text-xl font-semibold tracking-tight text-primary">Recent Activity</h3>
             <div className="mt-5 flex-grow">
               <ActivityTimeline entries={timeline} viewAllHref="/dashboard/notifications" />

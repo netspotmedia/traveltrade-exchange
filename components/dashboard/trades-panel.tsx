@@ -57,7 +57,7 @@ export function TradesPanel({ trades, viewAllHref, createHref }: TradesPanelProp
   }, [trades, filter, query])
 
   return (
-    <div className="glass-panel rounded-2xl flex flex-col p-6">
+    <div className="glass-panel flex flex-col rounded-3xl p-6 md:p-7">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h3 className="font-display text-xl font-semibold tracking-tight text-primary">Active Trades</h3>
         <Link href={viewAllHref} className="group inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline">
@@ -128,7 +128,11 @@ export function TradesPanel({ trades, viewAllHref, createHref }: TradesPanelProp
             )}
           </div>
         ) : (
-          visible.map((t) => <TradeRowView key={t.id} trade={t} expanded={expanded === t.id} onToggle={() => setExpanded(expanded === t.id ? null : t.id)} />)
+          visible.map((t, i) => (
+            <div key={t.id} className="row-in" style={{ animationDelay: `${Math.min(i * 45, 225)}ms` }}>
+              <TradeRowView trade={t} expanded={expanded === t.id} onToggle={() => setExpanded(expanded === t.id ? null : t.id)} />
+            </div>
+          ))
         )}
       </div>
     </div>

@@ -56,7 +56,7 @@ export function NavDrawer({ label, children }: NavDrawerProps) {
           aria-modal="true"
           aria-label="Navigation"
           className={cn(
-            'absolute left-0 top-0 flex h-full w-80 max-w-[86vw] flex-col border-r border-white/10 bg-surface-container-low/95 shadow-2xl backdrop-blur-2xl transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]',
+            'absolute left-0 top-0 flex h-full w-80 max-w-[86vw] flex-col border-r border-white/10 bg-surface-container-low/95 shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] backdrop-blur-2xl transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]',
             open ? 'translate-x-0' : '-translate-x-full',
           )}
         >

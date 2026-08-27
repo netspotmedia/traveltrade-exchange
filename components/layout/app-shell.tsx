@@ -88,10 +88,15 @@ export default async function AppShell({ children }: { children: React.ReactNode
       <div className="mt-auto space-y-4 border-t border-white/10 pt-5">
         <Link
           href={cta.href}
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-3 text-sm font-semibold text-on-primary shadow-lg shadow-primary-container/20 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:brightness-110 active:scale-[0.98]"
+          className="group flex w-full items-center justify-between rounded-full bg-primary py-2.5 pl-5 pr-2.5 text-sm font-semibold text-on-primary shadow-lg shadow-primary-container/25 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:brightness-110 active:scale-[0.98]"
         >
-          <Plus className="size-[18px]" aria-hidden="true" />
-          {cta.label}
+          <span>{cta.label}</span>
+          <span
+            className="grid size-8 shrink-0 place-items-center rounded-full bg-white/15 text-on-primary transition-transform duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-0.5 group-hover:scale-105"
+            aria-hidden="true"
+          >
+            <Plus className="size-4" />
+          </span>
         </Link>
 
         {/* Profile */}
@@ -111,6 +116,8 @@ export default async function AppShell({ children }: { children: React.ReactNode
 
   return (
     <div className="m3 bg-canvas flex min-h-screen flex-col text-on-surface">
+      <div className="app-grain" aria-hidden="true" />
+
       <a
         href="#main"
         className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-xl focus:bg-primary focus:px-4 focus:py-2.5 focus:text-sm focus:font-semibold focus:text-primary-foreground"
@@ -122,7 +129,7 @@ export default async function AppShell({ children }: { children: React.ReactNode
 
       <div className="flex w-full flex-1 lg:pl-64">
         {/* Docked desktop sidebar — glass rail */}
-        <aside className="fixed inset-y-0 left-0 z-50 hidden w-64 flex-col border-r border-white/10 bg-surface-container-low/80 p-6 backdrop-blur-2xl lg:flex">
+        <aside className="fixed inset-y-0 left-0 z-50 hidden w-64 flex-col border-r border-white/10 bg-surface-container-low/80 p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] backdrop-blur-2xl lg:flex">
           {sidebar}
         </aside>
 

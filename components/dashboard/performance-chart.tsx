@@ -128,6 +128,9 @@ export function PerformanceChart({ data, currency }: PerformanceChartProps) {
               <stop offset="0%" stopColor="#003527" />
               <stop offset="100%" stopColor="#80bea6" />
             </linearGradient>
+            <clipPath id="plot-clip">
+              <rect x={PAD.left} y={PAD.top} width={W - PAD.left - PAD.right} height={H - PAD.top - PAD.bottom} rx="14" />
+            </clipPath>
           </defs>
 
           {/* Grid + axis labels */}
@@ -140,72 +143,74 @@ export function PerformanceChart({ data, currency }: PerformanceChartProps) {
             </g>
           ))}
 
-          {/* Area */}
-          <path d={chart.area} fill="url(#vol-fill)" className={cn('transition-opacity duration-700', mounted ? 'opacity-100' : 'opacity-0')} />
+          <g clipPath="url(#plot-clip)">
+            {/* Area */}
+            <path d={chart.area} fill="url(#vol-fill)" className={cn('transition-opacity duration-700', mounted ? 'opacity-100' : 'opacity-0')} />
 
-          {/* Drawn-in line */}
-          <path
-            d={chart.line}
-            fill="none"
-            stroke="url(#vol-line)"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            pathLength={1}
-            style={{
-              strokeDasharray: 1,
-              strokeDashoffset: mounted ? 0 : 1,
-              transition: 'stroke-dashoffset 1.1s cubic-bezier(0.16,1,0.3,1)',
-            }}
-          />
-
-          {/* Points */}
-          {chart.points.map((p, i) => (
-            <circle
-              key={i}
-              cx={p.x}
-              cy={p.y}
-              r={active === i ? 5.5 : 3}
-              fill="#fff"
-              stroke={active === i ? '#003527' : '#95d3ba'}
+            {/* Drawn-in line */}
+            <path
+              d={chart.line}
+              fill="none"
+              stroke="url(#vol-line)"
               strokeWidth="2.5"
-              className="transition-all duration-200"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              pathLength={1}
+              style={{
+                strokeDasharray: 1,
+                strokeDashoffset: mounted ? 0 : 1,
+                transition: 'stroke-dashoffset 1.1s cubic-bezier(0.16,1,0.3,1)',
+              }}
             />
-          ))}
 
-          {/* Hover guide + readout */}
-          {active !== null && chart.points[active] && (
-            <g>
-              <line
-                x1={chart.points[active].x}
-                x2={chart.points[active].x}
-                y1={PAD.top}
-                y2={H - PAD.bottom}
-                stroke="#003527"
-                strokeOpacity="0.25"
-                strokeDasharray="2 3"
+            {/* Points */}
+            {chart.points.map((p, i) => (
+              <circle
+                key={i}
+                cx={p.x}
+                cy={p.y}
+                r={active === i ? 5.5 : 3}
+                fill="#fff"
+                stroke={active === i ? '#003527' : '#95d3ba'}
+                strokeWidth="2.5"
+                className="transition-all duration-200"
               />
-              {(() => {
-                const p = chart.points[active]
-                const isRight = p.x > W - 130
-                const bw = 118
-                const bh = 40
-                const bx = isRight ? p.x - bw - 14 : p.x + 14
-                const by = Math.max(PAD.top, p.y - bh / 2)
-                return (
-                  <g>
-                    <rect x={bx} y={by} width={bw} height={bh} rx={10} fill="#ffffff" fillOpacity="0.95" stroke="#d8e3fb" />
-                    <text x={bx + 12} y={by + 16} fontSize="10" fontWeight="600" className="fill-on-surface-variant">
-                      {p.label}
-                    </text>
-                    <text x={bx + 12} y={by + 31} fontSize="13" fontWeight="700" className="fill-primary">
-                      {compactMoney(p.value, currency)}
-                    </text>
-                  </g>
-                )
-              })()}
-            </g>
-          )}
+            ))}
+
+            {/* Hover guide + readout */}
+            {active !== null && chart.points[active] && (
+              <g>
+                <line
+                  x1={chart.points[active].x}
+                  x2={chart.points[active].x}
+                  y1={PAD.top}
+                  y2={H - PAD.bottom}
+                  stroke="#003527"
+                  strokeOpacity="0.25"
+                  strokeDasharray="2 3"
+                />
+                {(() => {
+                  const p = chart.points[active]
+                  const isRight = p.x > W - 130
+                  const bw = 118
+                  const bh = 40
+                  const bx = isRight ? p.x - bw - 14 : p.x + 14
+                  const by = Math.max(PAD.top, p.y - bh / 2)
+                  return (
+                    <g>
+                      <rect x={bx} y={by} width={bw} height={bh} rx={10} fill="#ffffff" fillOpacity="0.95" stroke="#d8e3fb" />
+                      <text x={bx + 12} y={by + 16} fontSize="10" fontWeight="600" className="fill-on-surface-variant">
+                        {p.label}
+                      </text>
+                      <text x={bx + 12} y={by + 31} fontSize="13" fontWeight="700" className="fill-primary">
+                        {compactMoney(p.value, currency)}
+                      </text>
+                    </g>
+                  )
+                })()}
+              </g>
+            )}
+          </g>
         </svg>
 
         <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-surface-variant to-transparent" />

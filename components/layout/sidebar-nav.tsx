@@ -24,8 +24,8 @@ export function SidebarNav({ role }: { role: NavRole }) {
             className={cn(
               'group flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]',
               active
-                ? 'bg-secondary-container text-on-secondary-container shadow-sm'
-                : 'text-on-surface-variant hover:bg-white/10 hover:text-primary',
+                ? 'bg-secondary-container text-on-secondary-container shadow-[inset_0_1px_0_rgba(255,255,255,0.55)]'
+                : 'text-on-surface-variant hover:bg-white/10 hover:text-primary hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]',
             )}
           >
             <item.icon className="size-[18px] shrink-0" aria-hidden="true" />
