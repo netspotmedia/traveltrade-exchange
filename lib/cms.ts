@@ -29,8 +29,8 @@ export interface SiteAsset {
  * renders even before any row is created.
  */
 export async function getCmsPage(slug: string): Promise<CmsPage | null> {
-  const supabase = await createClient()
   try {
+    const supabase = await createClient()
     const { data } = await supabase
       .from('cms_pages')
       .select('id, slug, title, description, sections, is_published')
@@ -59,8 +59,8 @@ export async function getCmsPage(slug: string): Promise<CmsPage | null> {
 
 /** Load a site asset (logo, favicon, og_image) by key, or null. */
 export async function getSiteAsset(key: string): Promise<SiteAsset | null> {
-  const supabase = await createClient()
   try {
+    const supabase = await createClient()
     const { data } = await supabase
       .from('site_assets')
       .select('id, key, url, alt, width, height')

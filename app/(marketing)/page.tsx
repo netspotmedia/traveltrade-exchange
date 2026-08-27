@@ -40,8 +40,6 @@ export default async function HomePage() {
   const reviewCounts = new Map<string, number>()
   let categories: string[] = FALLBACK_CATEGORIES
 
-  const supabase = await createClient()
-
   // Homepage A/B: variant is assigned sticky by middleware (ttx_hero cookie).
   const cookieStore = await cookies()
   const heroVariant = cookieStore.get('ttx_hero')?.value === 'b' ? 'b' : 'a'
@@ -56,6 +54,8 @@ export default async function HomePage() {
   }
 
   try {
+    const supabase = await createClient()
+
     const [servicesRes, verifiedAgenciesRes, serviceCountRes, categoryRes, completedRes] = await Promise.all([
       supabase
         .from('services')

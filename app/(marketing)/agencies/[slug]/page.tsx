@@ -36,37 +36,51 @@ type ServiceRow = {
 
 export default async function AgentProfilePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const supabase = await createClient()
 
-  // Public RLS policy allows reading verified agencies (and the owner their own).
-  const { data: agency } = await supabase
-    .from('agencies')
-    .select('id, name, slug, city, country, verification_status, rating, completed_orders, verifications')
-    .eq('slug', slug)
-    .is('deleted_at', null)
-    .maybeSingle()
+  let agency: {
+    id: string; name: string; slug: string; city: string | null; country: string | null
+    verification_status: string; rating: number | null; completed_orders: number | null
+    verifications: string[] | null
+  } | null = null
+  let responseStats: { avgResponseHours: number | null; responseRate: number | null } | null = null
+  let list: ServiceRow[] = []
+
+  try {
+    const supabase = await createClient()
+
+    const { data } = await supabase
+      .from('agencies')
+      .select('id, name, slug, city, country, verification_status, rating, completed_orders, verifications')
+      .eq('slug', slug)
+      .is('deleted_at', null)
+      .maybeSingle()
+
+    agency = data
+
+    if (agency) {
+      const { data: stats } = await supabase.rpc('agency_response_stats', { p_agency_id: agency.id })
+      const s = stats as { avg_response_hours?: number | null; response_rate?: number | null } | null
+      responseStats = { avgResponseHours: s?.avg_response_hours ?? null, responseRate: s?.response_rate ?? null }
+
+      const { data: services } = await supabase
+        .from('services')
+        .select('*, agencies(name, slug, verification_status, rating, city)')
+        .eq('agency_id', agency.id)
+        .eq('status', 'published')
+        .is('deleted_at', null)
+        .order('created_at', { ascending: false })
+
+      list = (services ?? []) as ServiceRow[]
+    }
+  } catch {
+    // Supabase unavailable — show empty state
+  }
 
   if (!agency) notFound()
 
   const verified = agency.verification_status === 'verified'
   const rating = Number(agency.rating ?? 0)
-
-  // Real computed response metrics.
-  let responseStats: { avgResponseHours: number | null; responseRate: number | null } | null = null
-  const { data: stats } = await supabase.rpc('agency_response_stats', { p_agency_id: agency.id })
-  const s = stats as { avg_response_hours?: number | null; response_rate?: number | null } | null
-  responseStats = { avgResponseHours: s?.avg_response_hours ?? null, responseRate: s?.response_rate ?? null }
-  const responseLabel = formatResponseTime(responseStats.avgResponseHours ?? null)
-
-  const { data: services } = await supabase
-    .from('services')
-    .select('*, agencies(name, slug, verification_status, rating, city)')
-    .eq('agency_id', agency.id)
-    .eq('status', 'published')
-    .is('deleted_at', null)
-    .order('created_at', { ascending: false })
-
-  const list = (services ?? []) as ServiceRow[]
+  const responseLabel = formatResponseTime(responseStats?.avgResponseHours ?? null)
 
   return (
     <div className="min-h-screen bg-background">
@@ -116,7 +130,7 @@ export default async function AgentProfilePage({ params }: { params: Promise<{ s
                   <p className="font-mono text-2xl font-semibold">{list.length}</p>
                   <p className="text-xs text-muted-foreground">Services</p>
                 </div>
-                {responseStats.responseRate != null && (
+                {responseStats?.responseRate != null && (
                   <div>
                     <p className="font-mono text-2xl font-semibold">{responseStats.responseRate}%</p>
                     <p className="text-xs text-muted-foreground">Response rate</p>
