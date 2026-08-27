@@ -144,7 +144,7 @@ export function MarketplaceControls({
               type="button"
               aria-label="Clear search"
               onClick={() => setQ('')}
-              className="absolute right-3 top-1/2 grid size-7 -translate-y-1/2 place-items-center rounded-full text-outline transition hover:bg-surface-container hover:text-primary"
+              className="absolute right-3 top-1/2 grid size-7 -translate-y-1/2 place-items-center rounded-full text-outline transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:bg-surface-container hover:text-primary"
             >
               <X className="size-4" />
             </button>
@@ -258,7 +258,7 @@ export function MarketplaceControls({
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold">Filters</h3>
               {filterCount > 0 && (
-                <button type="button" onClick={clearFilters} className="text-sm font-medium text-muted-foreground transition hover:text-destructive">
+                <button type="button" onClick={clearFilters} className="text-sm font-medium text-muted-foreground transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:text-destructive">
                   Clear all
                 </button>
               )}

@@ -51,7 +51,7 @@ export function AuthShell({
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(80%_60%_at_85%_-10%,rgb(255_255_255/0.14),transparent)]" aria-hidden="true" />
         <div className="relative">
           <p className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-primary-foreground/70">TravelTrade Exchange</p>
-          <h2 className="mt-4 max-w-md text-4xl font-semibold leading-tight tracking-tight text-primary-foreground">
+          <h2 className="mt-4 max-w-md text-4xl font-semibold leading-tight tracking-tight text-primary-foreground font-display">
             A safer way to move travel work forward.
           </h2>
           <div className="mt-10 flex flex-col gap-6">

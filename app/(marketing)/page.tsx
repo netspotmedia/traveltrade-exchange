@@ -102,7 +102,7 @@ export default async function HomePage() {
   const categories = realCategories.length > 0 ? realCategories.slice(0, 9) : FALLBACK_CATEGORIES
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-[100dvh] bg-background">
       <main id="main">
         {/* Hero — A/B variant chosen by the ttx_hero cookie */}
         <HomeHero

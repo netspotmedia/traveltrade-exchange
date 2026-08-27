@@ -52,7 +52,7 @@ export default async function AgentProposalsPage() {
               description="When a customer requests a quote from your services, your proposals will appear here."
               action={
                 <Link href="/agent/requests">
-                  <button className="rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-on-primary shadow-lg shadow-primary-container/20 transition-all hover:shadow-xl">
+                  <button className="rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-on-primary shadow-lg shadow-primary-container/20 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:shadow-xl">
                     View quote requests
                   </button>
                 </Link>

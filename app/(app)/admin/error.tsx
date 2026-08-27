@@ -14,7 +14,7 @@ export default function AdminError({ error, reset }: { error: Error & { digest?:
         <p className="text-sm leading-6 text-muted-foreground">The admin screen hit an unexpected error. Your data is safe.</p>
         <button
           onClick={reset}
-          className="inline-flex h-11 items-center justify-center rounded-xl bg-primary px-6 text-sm font-semibold text-on-primary shadow-lg shadow-primary-container/20 transition-all hover:shadow-xl"
+          className="inline-flex h-11 items-center justify-center rounded-xl bg-primary px-6 text-sm font-semibold text-on-primary shadow-lg shadow-primary-container/20 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:shadow-xl"
         >
           Try again
         </button>

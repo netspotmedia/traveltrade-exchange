@@ -50,7 +50,7 @@ export default async function AgentWithdrawalsPage() {
             </div>
             <Link
               href="/dashboard/wallet"
-              className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-on-primary shadow-lg shadow-primary-container/20 transition-all hover:shadow-xl"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-on-primary shadow-lg shadow-primary-container/20 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:shadow-xl"
             >
               <WalletCards className="size-4" /> View full wallet
             </Link>

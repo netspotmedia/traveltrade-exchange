@@ -41,7 +41,7 @@ export function MessagesInbox({ conversations, currentUserId, activeOrderId }: I
             <p className="mt-1 text-xs text-muted-foreground">When you message a travel partner inside an order, it appears here.</p>
             <Link
               href="/marketplace"
-              className="mt-4 inline-flex rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary-container/20 transition-all hover:shadow-xl"
+              className="mt-4 inline-flex rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-on-primary shadow-lg shadow-primary-container/20 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:shadow-xl"
             >
               Find a service
             </Link>

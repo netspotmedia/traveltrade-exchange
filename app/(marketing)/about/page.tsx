@@ -36,7 +36,7 @@ export default async function AboutPage() {
       : 'TravelTrade Exchange (TTX) connects verified travel agencies with customers on one trusted platform — where trust is enforced at every step, from verification and protected payments to milestone-based delivery and dispute resolution.'
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-[100dvh] bg-background">
       <main id="main" className="mx-auto max-w-7xl px-4 py-12 lg:px-8">
         <Reveal>
           <div className="relative max-w-2xl">

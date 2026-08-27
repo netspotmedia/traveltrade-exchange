@@ -36,7 +36,7 @@ export function MobileMenu({ signedIn }: { signedIn: boolean }) {
         aria-expanded={open}
         aria-controls="mobile-nav"
         onClick={() => setOpen((v) => !v)}
-        className="grid size-10 place-items-center rounded-xl glass-card text-foreground transition hover:bg-muted active:scale-[0.97]"
+        className="grid size-10 place-items-center rounded-xl glass-card text-foreground transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:bg-muted active:scale-[0.97]"
       >
         {open ? <X className="size-5" /> : <Menu className="size-5" />}
       </button>
@@ -55,7 +55,7 @@ export function MobileMenu({ signedIn }: { signedIn: boolean }) {
                   onClick={() => go(l.href)}
                   aria-current={active ? 'page' : undefined}
                   className={cn(
-                    'min-h-11 rounded-xl px-3 text-left text-sm font-medium transition hover:bg-muted',
+                    'min-h-11 rounded-xl px-3 text-left text-sm font-medium transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:bg-muted',
                     active ? 'bg-muted text-foreground' : 'text-foreground',
                   )}
                 >
@@ -66,7 +66,7 @@ export function MobileMenu({ signedIn }: { signedIn: boolean }) {
             <button
               type="button"
               onClick={() => go(signedIn ? '/dashboard' : '/auth/sign-up')}
-              className="mt-1.5 min-h-11 rounded-xl bg-primary px-3 text-sm font-semibold text-primary-foreground transition hover:shadow-xl active:scale-[0.98]"
+              className="mt-1.5 min-h-11 rounded-xl bg-primary px-3 text-sm font-semibold text-on-primary transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:shadow-xl active:scale-[0.98]"
             >
               {signedIn ? 'Open workspace' : 'Get started'}
             </button>

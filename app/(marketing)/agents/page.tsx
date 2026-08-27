@@ -74,11 +74,11 @@ export default async function AgentsPage({ searchParams }: { searchParams: Promi
         {/* Country filter */}
         {countries.length > 0 && (
           <div className="mt-8 flex flex-wrap gap-2" role="group" aria-label="Filter by country">
-            <Link href={buildHref(null, 1)} className={cn('glass-card rounded-full px-3 py-1 text-sm transition', !country ? 'border-primary bg-primary-soft text-primary' : 'text-muted-foreground hover:bg-muted')}>
+            <Link href={buildHref(null, 1)} className={cn('glass-card rounded-full px-3 py-1 text-sm transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]', !country ? 'border-primary bg-primary-soft text-primary' : 'text-muted-foreground hover:bg-muted')}>
               All Countries
             </Link>
             {countries.map((c) => (
-              <Link key={c} href={buildHref(c, 1)} className={cn('glass-card rounded-full px-3 py-1 text-sm transition', country === c ? 'border-primary bg-primary-soft text-primary' : 'text-muted-foreground hover:bg-muted')}>
+              <Link key={c} href={buildHref(c, 1)} className={cn('glass-card rounded-full px-3 py-1 text-sm transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]', country === c ? 'border-primary bg-primary-soft text-primary' : 'text-muted-foreground hover:bg-muted')}>
                 {c}
               </Link>
             ))}
@@ -93,7 +93,7 @@ export default async function AgentsPage({ searchParams }: { searchParams: Promi
               description={country ? 'Try a different country or browse all agents.' : 'We are onboarding our first verified agents. Check back soon.'}
               action={
                 country ? (
-                  <Link href="/agents" className="glass-panel inline-flex rounded-xl px-4 py-2.5 text-sm font-medium transition hover:bg-muted">
+                  <Link href="/agents" className="glass-panel inline-flex rounded-xl px-4 py-2.5 text-sm font-medium transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:bg-muted">
                     View all agents
                   </Link>
                 ) : undefined
@@ -141,7 +141,7 @@ export default async function AgentsPage({ searchParams }: { searchParams: Promi
         {totalPages > 1 && (
           <nav className="mt-10 flex items-center justify-center gap-3" aria-label="Pagination">
             {page > 1 ? (
-              <Link href={buildHref(country || null, page - 1)} className="glass-card inline-flex h-10 items-center rounded-xl px-4 text-sm font-medium transition hover:bg-muted">
+              <Link href={buildHref(country || null, page - 1)} className="glass-card inline-flex h-10 items-center rounded-xl px-4 text-sm font-medium transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:bg-muted">
                 Previous
               </Link>
             ) : (
@@ -151,7 +151,7 @@ export default async function AgentsPage({ searchParams }: { searchParams: Promi
               Page <strong className="text-foreground">{page}</strong> of {totalPages}
             </span>
             {page < totalPages ? (
-              <Link href={buildHref(country || null, page + 1)} className="glass-card inline-flex h-10 items-center rounded-xl px-4 text-sm font-medium transition hover:bg-muted">
+              <Link href={buildHref(country || null, page + 1)} className="glass-card inline-flex h-10 items-center rounded-xl px-4 text-sm font-medium transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:bg-muted">
                 Next
               </Link>
             ) : (

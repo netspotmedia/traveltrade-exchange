@@ -23,7 +23,7 @@ export default async function ContactPage() {
     typeof hero.description === 'string' ? hero.description : 'Have a question or need assistance? Reach our team and we will get back to you.'
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-[100dvh] bg-background">
       <main id="main" className="mx-auto max-w-6xl px-4 py-12 lg:px-8">
         <div className="max-w-2xl">
           <p className="font-eyebrow text-primary">Contact</p>

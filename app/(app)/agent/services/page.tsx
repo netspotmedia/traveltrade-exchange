@@ -32,7 +32,7 @@ export default async function AgentServicesPage() {
         <PageHeader
           title="Manage your services"
           actions={
-            <Link href="/agent/services/new" className="rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-on-primary shadow-lg shadow-primary-container/20 transition-all hover:shadow-xl">
+            <Link href="/agent/services/new" className="rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-on-primary shadow-lg shadow-primary-container/20 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:shadow-xl">
               New service
             </Link>
           }
@@ -62,7 +62,7 @@ export default async function AgentServicesPage() {
                   <StatusBadge domain="service" status={svc.status} />
                   {svc.status === 'draft' && <SubmitServiceAction serviceId={svc.id} />}
                   {(svc.status === 'draft' || svc.status === 'rejected') && (
-                    <Link href={`/agent/services/${svc.id}/edit`} className="inline-flex h-8 items-center rounded-lg border border-border bg-background px-3 text-sm font-medium transition hover:bg-muted">
+                    <Link href={`/agent/services/${svc.id}/edit`} className="inline-flex h-8 items-center rounded-lg border border-border bg-background px-3 text-sm font-medium transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:bg-muted">
                       Edit
                     </Link>
                   )}

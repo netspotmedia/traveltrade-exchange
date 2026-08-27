@@ -34,7 +34,7 @@ export default async function HowItWorksPage() {
       : 'No complicated contracts. Just a clear, protected agreement with a trusted travel professional.'
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-[100dvh] bg-background">
       <main id="main" className="mx-auto max-w-7xl px-4 py-12 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
           <p className="font-eyebrow text-primary">One clear workflow</p>
@@ -86,7 +86,7 @@ export default async function HowItWorksPage() {
               </p>
             </div>
             <div className="flex flex-wrap justify-center gap-3">
-              <Link href="/marketplace" className="rounded-lg bg-primary px-5 py-3 text-sm font-semibold text-on-primary shadow-lg shadow-primary-container/20 transition-all hover:shadow-xl">
+              <Link href="/marketplace" className="rounded-lg bg-primary px-5 py-3 text-sm font-semibold text-on-primary shadow-lg shadow-primary-container/20 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:shadow-xl">
                 Explore services
               </Link>
               <Link href="/onboarding" className="rounded-xl border border-primary-foreground/30 px-5 py-3 text-sm font-semibold text-primary-foreground transition hover:bg-primary-foreground/10">

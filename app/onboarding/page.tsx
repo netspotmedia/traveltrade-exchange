@@ -58,7 +58,7 @@ export default async function OnboardingPage() {
       <main id="main" className="mx-auto max-w-3xl px-4 py-10 pb-24 lg:px-8">
         <div>
           <p className="font-mono text-xs font-bold uppercase tracking-widest text-primary">Seller onboarding</p>
-          <h1 className="mt-2 text-3xl font-semibold tracking-tight">Verification status</h1>
+          <h1 className="mt-2 text-3xl font-semibold tracking-tight font-display">Verification status</h1>
           <p className="mt-2 text-muted-foreground">
             {fullyVerified
               ? 'Your business is verified — you can now list services and trade.'
@@ -121,14 +121,14 @@ export default async function OnboardingPage() {
             {fullyVerified ? (
               <Link
                 href="/dashboard"
-                className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-on-primary shadow-lg shadow-primary-container/20 transition-all hover:shadow-xl"
+                className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-on-primary shadow-lg shadow-primary-container/20 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:shadow-xl"
               >
                 Go to dashboard <ChevronRight className="size-4" />
               </Link>
             ) : (
               <Link
                 href="/agent/verification"
-                className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-on-primary shadow-lg shadow-primary-container/20 transition-all hover:shadow-xl"
+                className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-on-primary shadow-lg shadow-primary-container/20 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:shadow-xl"
               >
                 {kybRejected ? 'Resubmit verification' : 'Continue verification'} <ChevronRight className="size-4" />
               </Link>

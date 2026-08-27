@@ -98,7 +98,7 @@ export function FeaturedServiceCard({ service, responseStats, imageUrl, reviewCo
               {formatMoney(service.base_price, service.currency)}
             </p>
           </div>
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:shadow-xl">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-on-primary transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:shadow-xl">
             View service
             <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-0.5" />
           </span>

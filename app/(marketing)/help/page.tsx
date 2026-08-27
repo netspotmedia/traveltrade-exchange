@@ -53,7 +53,7 @@ export default async function HelpPage() {
       : 'Find answers about accounts, payments, escrow and orders. Still stuck? Contact our support team.'
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-[100dvh] bg-background">
       <main id="main" className="mx-auto max-w-3xl px-4 py-12 lg:px-8">
         <div className="text-center">
           <p className="font-eyebrow text-primary">Help Center</p>
@@ -91,7 +91,7 @@ export default async function HelpPage() {
           </p>
           <Link
             href="/contact"
-            className="mt-5 inline-flex rounded-lg bg-primary px-5 py-3 text-sm font-semibold text-on-primary shadow-lg shadow-primary-container/20 transition-all hover:shadow-xl"
+            className="mt-5 inline-flex rounded-lg bg-primary px-5 py-3 text-sm font-semibold text-on-primary shadow-lg shadow-primary-container/20 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:shadow-xl"
           >
             Contact Support
           </Link>

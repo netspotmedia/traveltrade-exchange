@@ -56,7 +56,7 @@ export default async function AgentRequestsPage() {
                   <StatusBadge domain="order" status={o.status} />
                   <Link
                     href={`/agent/requests/${o.id}/propose`}
-                    className="inline-flex items-center rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-on-primary shadow-lg shadow-primary-container/20 transition-all hover:shadow-xl"
+                    className="inline-flex items-center rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-on-primary shadow-lg shadow-primary-container/20 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:shadow-xl"
                   >
                     Submit proposal
                   </Link>
