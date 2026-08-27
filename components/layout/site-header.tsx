@@ -7,10 +7,14 @@ import { Logo } from '@/components/layout/logo'
  *  menu) to the client HeaderBar. `overlay` lets the homepage start
  *  transparent. */
 export async function SiteHeader({ overlay = false }: { overlay?: boolean }) {
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  let signedIn = false
+  try {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    signedIn = Boolean(user)
+  } catch {
+    // Supabase unavailable — render header as signed-out
+  }
 
-  return <HeaderBar signedIn={Boolean(user)} overlay={overlay} logo={<Logo />} />
+  return <HeaderBar signedIn={signedIn} overlay={overlay} logo={<Logo />} />
 }
