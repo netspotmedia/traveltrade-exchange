@@ -39,7 +39,7 @@ export function MarketplaceControls({
   const [minPrice, setMinPrice] = useState(initial.minPrice)
   const [maxPrice, setMaxPrice] = useState(initial.maxPrice)
   const [verifiedOnly, setVerifiedOnly] = useState(initial.verifiedOnly)
-  const [filtersOpen, setFiltersOpen] = useState(false)
+  const [filtersOpen, setFiltersOpen] = useState(true)
   // Skip the commit effects on first render so deep-linked URLs (including
   // the page param) are preserved on initial load.
   const mountedRef = useRef(false)
@@ -122,102 +122,125 @@ export function MarketplaceControls({
   const filterCount = [minPrice, maxPrice, verifiedOnly ? '1' : ''].filter(Boolean).length
 
   return (
-    <div className="flex flex-col gap-3">
-      {/* Search */}
-      <div className="relative">
-        <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-        <label htmlFor="marketplace-search" className="sr-only">
-          Search travel services
-        </label>
-        <Input
-          id="marketplace-search"
-          type="search"
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          placeholder="Search destinations, services, or agents…"
-          className="h-12 pl-11 pr-10"
-        />
-        {q && (
-          <button
-            type="button"
-            aria-label="Clear search"
-            onClick={() => setQ('')}
-            className="absolute right-3 top-1/2 grid size-7 -translate-y-1/2 place-items-center rounded-full text-muted-foreground transition hover:bg-muted hover:text-foreground"
-          >
-            <X className="size-4" />
-          </button>
-        )}
-      </div>
+    <div className="flex flex-col gap-6">
+      {/* Main filter row */}
+      <div className="flex flex-col md:flex-row gap-4">
+        {/* Search */}
+        <div className="relative flex-grow">
+          <Search className="pointer-events-none absolute left-4 top-1/2 size-5 -translate-y-1/2 text-outline" />
+          <label htmlFor="marketplace-search" className="sr-only">
+            Search travel services
+          </label>
+          <input
+            id="marketplace-search"
+            type="search"
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="Search destinations, services, or agents…"
+            className="w-full h-12 pl-12 pr-10 rounded-lg border-b border-outline-variant bg-surface-container-lowest/50 focus:bg-surface-container-lowest focus:border-primary focus:ring-0 transition-colors text-on-surface placeholder:text-outline outline-none"
+          />
+          {q && (
+            <button
+              type="button"
+              aria-label="Clear search"
+              onClick={() => setQ('')}
+              className="absolute right-3 top-1/2 grid size-7 -translate-y-1/2 place-items-center rounded-full text-outline transition hover:bg-surface-container hover:text-primary"
+            >
+              <X className="size-4" />
+            </button>
+          )}
+        </div>
 
-      {/* Filter bar */}
-      <div className="flex flex-wrap items-center gap-2">
-        <label className="relative inline-flex items-center">
-          <span className="sr-only">Category</span>
+        {/* Category */}
+        <div className="relative min-w-[200px]">
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="h-10 appearance-none rounded-xl border border-border bg-card pl-3.5 pr-9 text-sm font-medium outline-none transition focus-visible:ring-2 focus-visible:ring-ring/50"
+            className="w-full h-12 appearance-none rounded-lg border border-outline-variant bg-surface-container-lowest/50 pl-4 pr-10 text-sm font-semibold text-on-surface focus:border-primary focus:ring-0 transition-colors cursor-pointer outline-none"
           >
-            <option value="">All categories</option>
+            <option value="">All Categories</option>
             {categories.map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
+              <option key={c} value={c}>{c}</option>
             ))}
           </select>
-          <ChevronDown className="pointer-events-none absolute right-3 size-4 text-muted-foreground" />
-        </label>
+          <ChevronDown className="pointer-events-none absolute right-3 top-1/2 size-5 -translate-y-1/2 text-outline" />
+        </div>
 
-        <label className="relative inline-flex items-center">
-          <span className="sr-only">Sort by</span>
+        {/* Sort */}
+        <div className="relative min-w-[200px]">
           <select
             value={sort}
             onChange={(e) => setSort(e.target.value)}
-            className="h-10 appearance-none rounded-xl border border-border bg-card pl-3.5 pr-9 text-sm font-medium outline-none transition focus-visible:ring-2 focus-visible:ring-ring/50"
+            className="w-full h-12 appearance-none rounded-lg border border-outline-variant bg-surface-container-lowest/50 pl-4 pr-10 text-sm font-semibold text-on-surface focus:border-primary focus:ring-0 transition-colors cursor-pointer outline-none"
           >
             {SORT_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>
-                {o.label}
-              </option>
+              <option key={o.value} value={o.value}>{o.label}</option>
             ))}
           </select>
-          <ChevronDown className="pointer-events-none absolute right-3 size-4 text-muted-foreground" />
-        </label>
+          <ChevronDown className="pointer-events-none absolute right-3 top-1/2 size-5 -translate-y-1/2 text-outline" />
+        </div>
 
+        {/* Filters toggle */}
         <button
           type="button"
           onClick={() => setFiltersOpen((v) => !v)}
           aria-expanded={filtersOpen}
           aria-controls="marketplace-filters"
           className={cn(
-            'inline-flex h-10 items-center gap-1.5 rounded-xl border border-border bg-card px-3.5 text-sm font-medium transition hover:bg-muted',
-            filtersOpen && 'border-primary/40 text-primary',
+            'h-12 px-6 rounded-lg border border-outline-variant bg-surface-container-lowest/50 font-semibold text-sm flex items-center gap-2 transition-colors hover:bg-surface-container',
+            filtersOpen && 'border-primary/40 text-primary bg-surface-container',
           )}
         >
-          <SlidersHorizontal className="size-4" />
+          <SlidersHorizontal className="size-5" />
           Filters
-          {filterCount > 0 && (
-            <span className="inline-flex min-w-5 items-center justify-center rounded-full bg-primary px-1.5 py-0.5 text-[11px] font-semibold text-primary-foreground">
-              {filterCount}
-            </span>
-          )}
         </button>
-
-        {hasFilters && (
-          <button
-            type="button"
-            onClick={clearFilters}
-            className="inline-flex h-10 items-center gap-1.5 rounded-xl px-3 text-sm font-medium text-muted-foreground transition hover:text-destructive"
-          >
-            Clear all
-          </button>
-        )}
       </div>
 
-      {/* Expanded filters — inline on desktop */}
+      {/* Expanded filters */}
       {filtersOpen && (
-        <div id="marketplace-filters" className="hidden flex-wrap items-end gap-4 rounded-2xl border border-border bg-card p-4 sm:flex">
-          <PriceInputs minPrice={minPrice} setMinPrice={setMinPrice} maxPrice={maxPrice} setMaxPrice={setMaxPrice} verifiedOnly={verifiedOnly} setVerifiedOnly={setVerifiedOnly} />
+        <div id="marketplace-filters" className="flex flex-wrap gap-6 items-end pt-4 border-t border-outline-variant/30">
+          <label className="flex flex-col gap-2">
+            <span className="text-xs font-bold uppercase tracking-wider text-on-surface-variant">Min Price (USD)</span>
+            <input
+              type="number"
+              min="0"
+              inputMode="numeric"
+              value={minPrice}
+              onChange={(e) => setMinPrice(e.target.value)}
+              placeholder="0"
+              className="w-32 h-10 rounded-md border-b border-outline-variant bg-surface-container-lowest/50 focus:border-primary focus:ring-0 px-3 text-on-surface outline-none"
+            />
+          </label>
+          <label className="flex flex-col gap-2">
+            <span className="text-xs font-bold uppercase tracking-wider text-on-surface-variant">Max Price (USD)</span>
+            <input
+              type="number"
+              min="0"
+              inputMode="numeric"
+              value={maxPrice}
+              onChange={(e) => setMaxPrice(e.target.value)}
+              placeholder="Any"
+              className="w-32 h-10 rounded-md border-b border-outline-variant bg-surface-container-lowest/50 focus:border-primary focus:ring-0 px-3 text-on-surface outline-none"
+            />
+          </label>
+          <label className="flex items-center gap-3 h-10 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={verifiedOnly}
+              onChange={(e) => setVerifiedOnly(e.target.checked)}
+              className="size-5 rounded border-outline-variant text-primary accent-primary"
+            />
+            <span className="text-sm font-semibold text-on-surface">Verified Agents Only</span>
+          </label>
+          <div className="flex-grow flex justify-end">
+            <button
+              type="button"
+              onClick={clearFilters}
+              className="text-sm font-semibold text-outline hover:text-error transition-colors"
+            >
+              Clear all
+            </button>
+          </div>
         </div>
       )}
 

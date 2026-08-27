@@ -131,98 +131,135 @@ export default async function MarketplacePage({ searchParams }: { searchParams: 
   const controls = { q, category, sort, minPrice: Number.isFinite(min) && min > 0 ? String(min) : '', maxPrice: Number.isFinite(max) && max > 0 ? String(max) : '', verifiedOnly }
 
   return (
-    <div className="min-h-screen bg-background">
-      <main id="main" className="mx-auto max-w-7xl px-4 py-10 lg:px-8">
+    <div className="min-h-screen">
+      <main id="main" className="mx-auto max-w-[1280px] px-4 pb-24 pt-8 md:px-10 md:pt-10 lg:pb-12">
+        {/* Page header */}
         <Reveal>
-          <div className="relative max-w-2xl">
-            <div className="pointer-events-none absolute -inset-x-10 -top-24 -z-10 h-64 bg-[radial-gradient(60%_100%_at_50%_0%,var(--brand-soft),transparent)]" aria-hidden="true" />
-            <h1 className="font-display text-4xl font-semibold leading-tight tracking-tight text-balance sm:text-5xl">
-              Find the right partner for the journey
+          <div className="mb-12">
+            <h1 className="font-display text-4xl font-bold leading-tight tracking-tight text-primary text-balance sm:text-5xl md:text-display-lg">
+              Marketplace
             </h1>
-            <p className="mt-4 text-pretty text-lg leading-8 text-muted-foreground">
-              Compare verified travel services, then move into a protected agreement.
+            <p className="mt-4 max-w-2xl text-pretty text-lg text-on-surface-variant">
+              Discover and book verified travel professionals, exclusive routes, and premium services for your global logistics needs.
             </p>
           </div>
         </Reveal>
 
-        <div className="mt-8 rounded-2xl border border-border bg-card p-4 shadow-soft">
-          <MarketplaceControls initial={controls} categories={categories} />
-        </div>
+        {/* Filter bar */}
+        <Reveal delay={60}>
+          <div className="glass-panel rounded-xl p-6 mb-12">
+            <MarketplaceControls initial={controls} categories={categories} />
+          </div>
+        </Reveal>
 
-        <div className="mt-8 flex flex-wrap items-center justify-between gap-2">
-          <p className="text-sm text-muted-foreground">
-            <strong className="font-semibold text-foreground">{formatNumber(total)}</strong> travel services found
-            {sort !== 'recommended' && <span className="ml-1">· sorted by {sortLabel.toLowerCase()}</span>}
-          </p>
-        </div>
-
-        <div className="mt-4">
-          {!services || services.length === 0 ? (
-            <EmptyState
-              icon={total > 0 ? Search : Compass}
-              title={q || category || min > 0 || max > 0 || verifiedOnly ? 'No services match your search' : 'No services yet'}
-              description={
-                q || category || min > 0 || max > 0 || verifiedOnly
-                  ? 'Try adjusting your search or clearing some filters.'
-                  : 'We are onboarding our first verified travel agents. Check back soon.'
-              }
-              action={
-                q || category || min > 0 || max > 0 || verifiedOnly ? (
-                  <Link href="/marketplace">
-                    <Button variant="outline">Clear filters</Button>
-                  </Link>
-                ) : undefined
-              }
-            />
-          ) : (
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {(services as ServiceRow[]).map((s) => {
-                const agency = Array.isArray(s.agencies) ? s.agencies[0] : s.agencies
-                return (
-                  <ServiceCard
-                    key={s.id}
-                    service={{ ...s, agencies: agency as ServiceRow['agencies'] }}
-                    responseStats={agency?.id ? (statsMap.get(agency.id) ?? null) : null}
-                    imageUrl={s.images?.[0] ? publicImageUrl(s.images[0]) : null}
-                    reviewCount={reviewCounts.get(s.id) ?? null}
-                  />
-                )
-              })}
+        {/* Main content: sidebar + grid */}
+        <div className="flex flex-col lg:flex-row gap-6">
+          {/* Sidebar */}
+          <aside className="hidden lg:flex flex-col gap-6 w-64 shrink-0">
+            {/* Featured Regions */}
+            <div className="glass-panel rounded-xl p-6">
+              <h3 className="font-display text-xl font-semibold text-primary mb-4">Featured Regions</h3>
+              <div className="flex flex-col gap-3">
+                {['Europe & UK', 'North America', 'Asia Pacific', 'Middle East'].map((region) => (
+                  <label key={region} className="flex items-center gap-3 cursor-pointer group">
+                    <input type="checkbox" className="size-4 rounded border-outline-variant text-primary accent-primary" />
+                    <span className="text-sm text-on-surface-variant group-hover:text-primary transition-colors">{region}</span>
+                  </label>
+                ))}
+              </div>
             </div>
-          )}
-        </div>
 
-        {totalPages > 1 && (
-          <nav className="mt-10 flex items-center justify-center gap-3" aria-label="Pagination">
-            {currentPage > 1 ? (
-              <Link
-                href={`/marketplace?${paramsToQs(params, currentPage - 1)}`}
-                className="inline-flex h-10 items-center gap-1.5 rounded-xl border border-border bg-card px-4 text-sm font-medium shadow-card transition hover:bg-muted"
-              >
-                <ChevronLeft className="size-4" /> Previous
-              </Link>
+            {/* Global Coverage */}
+            <div className="glass-panel rounded-xl p-6 relative overflow-hidden">
+              <div className="absolute inset-0 opacity-20 pointer-events-none bg-[url('https://lh3.googleusercontent.com/aida-public/AB6AXuAy5MSx_tnCTPfmZkci_3N8jvJoyrCrvTY7QZqA0GvIcoogWpd-2nD1PIjJn0oRcJQpeYXbC4SibEP-2rjvmCsdviCU1Yqs_3r8Be_kUjEgL8hoT3qPNtYkTJeyiK5txBb9F-3EzN8J2kyf-DcDlpHBllzOKBeOuXbHHzahKMyZiUOikkCzmxHSYy2YtnB6TaytT1KVUxMRJQqh3S2tgxvLStuStkoG4VF1F8GY8jFjtK7_yEenoLZ')] bg-cover bg-center" />
+              <div className="relative z-10">
+                <h3 className="font-display text-xl font-semibold text-primary mb-2">Global Coverage</h3>
+                <p className="text-sm text-on-surface-variant mb-4">Access 150+ verified agents across key trade hubs.</p>
+                <Link href="/agents" className="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:text-primary-container transition-colors">
+                  View Map <span className="text-base">→</span>
+                </Link>
+              </div>
+            </div>
+          </aside>
+
+          {/* Results */}
+          <div className="flex-1">
+            {/* Result count */}
+            <div className="mb-6 flex flex-wrap items-center justify-between gap-2">
+              <p className="text-sm text-on-surface-variant">
+                <strong className="font-semibold text-primary">{formatNumber(total)}</strong> travel services found
+                {sort !== 'recommended' && <span className="ml-1">· sorted by {sortLabel.toLowerCase()}</span>}
+              </p>
+            </div>
+
+            {/* Grid */}
+            {!services || services.length === 0 ? (
+              <EmptyState
+                icon={total > 0 ? Search : Compass}
+                title={q || category || min > 0 || max > 0 || verifiedOnly ? 'No services match your search' : 'No services yet'}
+                description={
+                  q || category || min > 0 || max > 0 || verifiedOnly
+                    ? 'Try adjusting your search or clearing some filters.'
+                    : 'We are onboarding our first verified travel agents. Check back soon.'
+                }
+                action={
+                  q || category || min > 0 || max > 0 || verifiedOnly ? (
+                    <Link href="/marketplace">
+                      <Button variant="outline">Clear filters</Button>
+                    </Link>
+                  ) : undefined
+                }
+              />
             ) : (
-              <span className="inline-flex h-10 cursor-not-allowed items-center gap-1.5 rounded-xl border border-border px-4 text-sm font-medium text-muted-foreground/50">
-                <ChevronLeft className="size-4" /> Previous
-              </span>
+              <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+                {(services as ServiceRow[]).map((s) => {
+                  const agency = Array.isArray(s.agencies) ? s.agencies[0] : s.agencies
+                  return (
+                    <ServiceCard
+                      key={s.id}
+                      service={{ ...s, agencies: agency as ServiceRow['agencies'] }}
+                      imageUrl={s.images?.[0] ? publicImageUrl(s.images[0]) : null}
+                      reviewCount={reviewCounts.get(s.id) ?? null}
+                    />
+                  )
+                })}
+              </div>
             )}
-            <span className="text-sm text-muted-foreground" aria-current="page">
-              Page <strong className="text-foreground">{currentPage}</strong> of {totalPages}
-            </span>
-            {currentPage < totalPages ? (
-              <Link
-                href={`/marketplace?${paramsToQs(params, currentPage + 1)}`}
-                className="inline-flex h-10 items-center gap-1.5 rounded-xl border border-border bg-card px-4 text-sm font-medium shadow-card transition hover:bg-muted"
-              >
-                Next <ChevronRight className="size-4" />
-              </Link>
-            ) : (
-              <span className="inline-flex h-10 cursor-not-allowed items-center gap-1.5 rounded-xl border border-border px-4 text-sm font-medium text-muted-foreground/50">
-                Next <ChevronRight className="size-4" />
-              </span>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <nav className="mt-10 flex items-center justify-center gap-3" aria-label="Pagination">
+                {currentPage > 1 ? (
+                  <Link
+                    href={`/marketplace?${paramsToQs(params, currentPage - 1)}`}
+                    className="inline-flex h-10 items-center gap-1.5 rounded-xl border border-border bg-card px-4 text-sm font-medium shadow-card transition hover:bg-muted"
+                  >
+                    <ChevronLeft className="size-4" /> Previous
+                  </Link>
+                ) : (
+                  <span className="inline-flex h-10 cursor-not-allowed items-center gap-1.5 rounded-xl border border-border px-4 text-sm font-medium text-muted-foreground/50">
+                    <ChevronLeft className="size-4" /> Previous
+                  </span>
+                )}
+                <span className="text-sm text-muted-foreground" aria-current="page">
+                  Page <strong className="text-foreground">{currentPage}</strong> of {totalPages}
+                </span>
+                {currentPage < totalPages ? (
+                  <Link
+                    href={`/marketplace?${paramsToQs(params, currentPage + 1)}`}
+                    className="inline-flex h-10 items-center gap-1.5 rounded-xl border border-border bg-card px-4 text-sm font-medium shadow-card transition hover:bg-muted"
+                  >
+                    Next <ChevronRight className="size-4" />
+                  </Link>
+                ) : (
+                  <span className="inline-flex h-10 cursor-not-allowed items-center gap-1.5 rounded-xl border border-border px-4 text-sm font-medium text-muted-foreground/50">
+                    Next <ChevronRight className="size-4" />
+                  </span>
+                )}
+              </nav>
             )}
-          </nav>
-        )}
+          </div>
+        </div>
       </main>
     </div>
   )
