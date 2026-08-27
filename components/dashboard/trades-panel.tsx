@@ -4,7 +4,6 @@ import { useMemo, useState } from 'react'
 import Link from 'next/link'
 import { ArrowRight, ChevronDown, Search, ShieldAlert, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { statusInfo } from '@/lib/status'
 import { formatMoney } from '@/lib/format'
 import { TRADE_STAGES, stageFor, stageFraction, tradeIcon, type TradeRow } from '@/lib/dashboard'
 
@@ -21,14 +20,6 @@ const FILTERS: Array<{ key: Filter; label: string }> = [
   { key: 'attention', label: 'Needs attention' },
   { key: 'escrow', label: 'In escrow' },
 ]
-
-const STATUS_PILL: Record<string, string> = {
-  warning: 'bg-secondary-container text-on-secondary-container',
-  info: 'bg-primary-fixed/40 text-primary',
-  success: 'bg-primary-fixed text-primary',
-  destructive: 'bg-destructive/10 text-destructive',
-  neutral: 'bg-surface-container-high text-on-surface-variant',
-}
 
 /** Interactive Active Trades panel — role-aware filters, live search and
  *  expandable milestone rows. Server renders the rows; this owns state. */
@@ -143,12 +134,11 @@ function TradeRowView({ trade, expanded, onToggle }: { trade: TradeRow; expanded
   const Icon = tradeIcon(trade.title)
   const stage = stageFor(trade.status)
   const fill = stageFraction(trade.status)
-  const info = statusInfo('order', trade.status)
   const disputed = trade.status === 'disputed'
   const premium = trade.amount >= 250_000
 
   return (
-    <div className={cn('glass-card rounded-xl overflow-hidden transition-all duration-300', expanded && 'ring-1 ring-primary-fixed-dim/60')}>
+    <div className={cn('glass-card rounded-xl overflow-hidden transition-all duration-300 border border-white/40 hover:border-primary-fixed/50', expanded && 'ring-1 ring-primary-fixed-dim/60')}>
       <button
         type="button"
         onClick={onToggle}
@@ -161,20 +151,19 @@ function TradeRowView({ trade, expanded, onToggle }: { trade: TradeRow; expanded
           </span>
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-sm font-bold text-primary">{trade.id}</span>
-              {premium && <span className="rounded-full bg-secondary-fixed px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-on-secondary-fixed">Premium</span>}
-              <span className={cn('rounded-full px-2 py-0.5 text-[10px] font-bold', STATUS_PILL[info.tone])}>{info.label}</span>
+              <span className="font-interactive text-sm font-bold text-primary">{trade.id}</span>
+              {premium && <span className="rounded-full bg-secondary-container px-2 py-0.5 text-[10px] font-bold text-on-secondary-container">Premium</span>}
             </div>
-            <p className="mt-0.5 truncate text-sm text-on-surface-variant">{trade.title}</p>
+            <p className="mt-0.5 truncate text-sm text-on-surface-variant">{trade.partner}</p>
           </div>
         </div>
 
         <div className="flex w-full flex-col gap-1.5 sm:w-auto sm:items-end">
           <div className="flex w-full items-center justify-between gap-4 sm:flex-col sm:items-end sm:gap-0">
-            <span className="font-display text-lg font-semibold tracking-tight text-primary">{formatMoney(trade.amount, trade.currency)}</span>
+            <span className="font-interactive text-lg font-bold text-primary">{formatMoney(trade.amount, trade.currency)}</span>
             <ChevronDown className={cn('size-4 text-on-surface-variant transition-transform duration-300', expanded && 'rotate-180')} aria-hidden="true" />
           </div>
-          <div className="w-full sm:w-56">
+          <div className="w-full sm:w-48">
             <div
               role="progressbar"
               aria-label={`${trade.id} progress`}
@@ -184,16 +173,16 @@ function TradeRowView({ trade, expanded, onToggle }: { trade: TradeRow; expanded
               className="relative h-2 w-full overflow-hidden rounded-full bg-surface-container-low"
             >
               <div
-                className={cn('absolute inset-y-0 left-0 rounded-full transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]', disputed ? 'bg-secondary' : 'bg-gradient-to-r from-primary to-primary-fixed-dim')}
+                className={cn('absolute inset-y-0 left-0 rounded-full transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]', disputed ? 'bg-secondary' : 'bg-primary')}
                 style={{ width: `${Math.max(fill * 100, stage > 0 ? 8 : 0)}%` }}
               />
             </div>
-            <div className="mt-1.5 flex justify-between text-[9px] font-semibold uppercase tracking-wider text-on-surface-variant">
+            <div className="mt-1.5 flex justify-between text-[10px] font-semibold text-on-surface-variant">
               {TRADE_STAGES.map((label, i) => {
                 const reached = i < stage
                 const current = i === stage - 1
                 return (
-                  <span key={label} className={cn(reached || current ? 'text-primary' : '', disputed && current && 'text-secondary')}>
+                  <span key={label} className={cn(reached || current ? 'text-primary font-bold' : '', disputed && current && 'text-secondary')}>
                     {label}
                   </span>
                 )
@@ -212,7 +201,7 @@ function TradeRowView({ trade, expanded, onToggle }: { trade: TradeRow; expanded
             </div>
             <Link
               href={`/dashboard/orders/${trade.id}`}
-              className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-on-primary transition hover:opacity-90 active:scale-[0.98]"
+              className="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-on-primary transition hover:opacity-90 active:scale-[0.98]"
             >
               Open order <ArrowRight className="size-3.5" aria-hidden="true" />
             </Link>

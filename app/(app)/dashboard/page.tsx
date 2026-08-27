@@ -19,8 +19,6 @@ import { ServiceCard } from '@/components/service-card'
 import { Reveal } from '@/components/ui/reveal'
 import { KpiCard } from '@/components/dashboard/kpi-card'
 import { AnimatedCounter } from '@/components/dashboard/animated-counter'
-import { PerformanceChart } from '@/components/dashboard/performance-chart'
-import { SecurityGauge } from '@/components/dashboard/security-gauge'
 import { TradesPanel } from '@/components/dashboard/trades-panel'
 import { ActivityTimeline, type ActivityEntry } from '@/components/dashboard/activity-timeline'
 import { formatMoney, formatNumber } from '@/lib/format'
@@ -217,15 +215,10 @@ export default async function DashboardPage() {
             </div>
             <Link
               href={createHref}
-              className="group inline-flex w-fit items-center gap-3 rounded-full bg-primary py-2.5 pl-6 pr-2.5 text-sm font-semibold text-on-primary shadow-lg shadow-primary-container/25 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:brightness-110 active:scale-[0.98]"
+              className="group inline-flex w-fit items-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-semibold text-on-primary shadow-lg shadow-primary-container/20 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-t-2 hover:border-secondary hover:brightness-110 active:scale-[0.98]"
             >
-              <span>New Trade Request</span>
-              <span
-                className="grid size-8 shrink-0 place-items-center rounded-full bg-white/15 text-on-primary transition-transform duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-0.5 group-hover:scale-105"
-                aria-hidden="true"
-              >
-                <Plus className="size-4" />
-              </span>
+              <Plus className="size-[18px]" aria-hidden="true" />
+              New Trade Request
             </Link>
           </div>
         </Reveal>
@@ -253,9 +246,7 @@ export default async function DashboardPage() {
               label="Security Score"
               value={<AnimatedCounter value={score} mode="percent" />}
               hint={standingLabel(score)}
-            >
-              <SecurityGauge value={score} size="sm" />
-            </KpiCard>
+            />
             <KpiCard
               accent="surface"
               icon={BadgeCheck}
@@ -264,13 +255,6 @@ export default async function DashboardPage() {
               hint="Across your trade network"
             />
           </div>
-        </Reveal>
-
-        {/* Market performance */}
-        <Reveal delay={140}>
-          <section className="glass-panel rounded-3xl p-6 md:p-8" aria-label="Market performance">
-            <PerformanceChart data={buckets} currency={currency} />
-          </section>
         </Reveal>
 
         {/* Trades + activity */}
