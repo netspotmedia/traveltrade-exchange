@@ -89,7 +89,7 @@ export function EditServiceForm({ service }: EditServiceFormProps) {
       <form onSubmit={save} className="flex flex-col gap-5">
       <div>
         <p className="text-sm font-semibold text-primary">Sell a service</p>
-        <h1 className="mt-1 text-3xl font-semibold tracking-tight">Edit service</h1>
+        <h1 className="font-display mt-1 text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">Edit service</h1>
         <p className="mt-2 text-muted-foreground">Changes apply to drafts. Published services go through review again.</p>
       </div>
 

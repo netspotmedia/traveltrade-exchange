@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/server'
 import { AuthShell } from '@/components/auth/auth-shell'
 import { OnboardingForm } from './onboarding-form'
 import { StatusBadge } from '@/components/ui/status-badge'
+import { Reveal } from '@/components/ui/reveal'
 
 type SubmissionRow = { id: string; type: string; status: string; rejection_reason: string | null; created_at: string }
 
@@ -56,18 +57,21 @@ export default async function OnboardingPage() {
   return (
     <div className="min-h-screen bg-background">
       <main id="main" className="mx-auto max-w-3xl px-4 py-10 pb-24 lg:px-8">
+        <Reveal>
         <div>
-          <p className="font-mono text-xs font-bold uppercase tracking-widest text-primary">Seller onboarding</p>
-          <h1 className="mt-2 text-3xl font-semibold tracking-tight font-display">Verification status</h1>
+          <p className="font-eyebrow text-primary">Seller onboarding</p>
+          <h1 className="font-display mt-2 text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">Verification status</h1>
           <p className="mt-2 text-muted-foreground">
             {fullyVerified
               ? 'Your business is verified — you can now list services and trade.'
               : 'Complete the steps below to start trading. Everything is reviewed by our team.'}
           </p>
         </div>
+        </Reveal>
 
         {/* Status card */}
-        <section className="mt-6 glass-panel rounded-3xl p-6 sm:p-8">
+        <Reveal>
+        <section className="mt-6 rounded-3xl border border-border bg-card p-6 shadow-card sm:p-8">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <span className="grid size-11 place-items-center rounded-xl bg-brand-soft text-brand" aria-hidden="true">
@@ -121,24 +125,27 @@ export default async function OnboardingPage() {
             {fullyVerified ? (
               <Link
                 href="/dashboard"
-                className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-on-primary shadow-lg shadow-primary-container/20 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:shadow-xl"
+                className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-card transition hover:opacity-90"
               >
                 Go to dashboard <ChevronRight className="size-4" />
               </Link>
             ) : (
               <Link
                 href="/agent/verification"
-                className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-on-primary shadow-lg shadow-primary-container/20 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:shadow-xl"
+                className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-card transition hover:opacity-90"
               >
                 {kybRejected ? 'Resubmit verification' : 'Continue verification'} <ChevronRight className="size-4" />
               </Link>
             )}
           </div>
         </section>
+        </Reveal>
 
+        <Reveal>
         <p className="mt-6 flex items-center gap-2 text-sm text-muted-foreground">
           <FileUp className="size-4" aria-hidden="true" /> Documents are kept private and only reviewed by our team.
         </p>
+        </Reveal>
       </main>
     </div>
   )

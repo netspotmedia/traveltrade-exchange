@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
+import { Reveal } from '@/components/ui/reveal'
 import OrderForm from './order-form'
 import { createClient } from '@/lib/supabase/server'
 
@@ -30,12 +31,16 @@ export default async function NewOrderPage({ searchParams }: { searchParams: Pro
   return (
     <div className="min-h-screen bg-background">
       <main id="main" className="relative w-full px-4 py-8 pb-24 lg:px-8 lg:py-10">
+        <Reveal>
         <Link href="/marketplace" className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition hover:text-foreground">
           <ArrowLeft className="size-4" /> Back to marketplace
         </Link>
+        </Reveal>
+        <Reveal>
         <div className="mt-5">
           <OrderForm serviceId={serviceId} agencyId={params.agency ?? null} serviceMeta={serviceMeta} />
         </div>
+        </Reveal>
       </main>
     </div>
   )

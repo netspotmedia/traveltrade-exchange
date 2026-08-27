@@ -1,6 +1,8 @@
 import Link from 'next/link'
 import type { Metadata } from 'next'
 import { getCmsPage } from '@/lib/cms'
+import { Reveal } from '@/components/ui/reveal'
+import { SectionHeader } from '@/components/ui/section-header'
 
 export const metadata: Metadata = {
   title: 'Help Center',
@@ -55,15 +57,18 @@ export default async function HelpPage() {
   return (
     <div className="min-h-[100dvh] bg-background">
       <main id="main" className="mx-auto max-w-3xl px-4 py-12 lg:px-8">
+        <Reveal>
         <div className="text-center">
           <p className="font-eyebrow text-primary">Help Center</p>
           <h1 className="font-display mt-4 text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">{title}</h1>
-          <p className="mx-auto mt-3 max-w-xl text-pretty text-muted-foreground">{description}</p>
+          <p className="mx-auto mt-4 max-w-xl text-pretty text-muted-foreground">{description}</p>
         </div>
+        </Reveal>
 
         <div className="mt-12 flex flex-col gap-10">
-          {SECTIONS.map((section) => (
-            <section key={section.title}>
+          {SECTIONS.map((section, i) => (
+            <Reveal key={section.title} delay={i * 60}>
+            <section>
               <h2 className="text-xl font-semibold tracking-tight">{section.title}</h2>
               <div className="glass-card mt-4 flex flex-col divide-y divide-border rounded-2xl">
                 {section.items.map((item) => (
@@ -81,9 +86,11 @@ export default async function HelpPage() {
                 ))}
               </div>
             </section>
+            </Reveal>
           ))}
         </div>
 
+        <Reveal delay={240}>
         <div className="mt-12 rounded-2xl bg-primary p-8 text-center text-primary-foreground">
           <h2 className="text-xl font-semibold">Still need help?</h2>
           <p className="mx-auto mt-2 max-w-md text-sm text-primary-foreground/80">
@@ -96,6 +103,7 @@ export default async function HelpPage() {
             Contact Support
           </Link>
         </div>
+        </Reveal>
       </main>
     </div>
   )

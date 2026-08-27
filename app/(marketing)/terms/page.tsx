@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { getCmsPage } from '@/lib/cms'
+import { Reveal } from '@/components/ui/reveal'
 
 export const metadata: Metadata = {
   title: 'Terms of Service',
@@ -26,16 +27,20 @@ export default async function TermsPage() {
   return (
     <div className="min-h-screen bg-background">
       <main id="main" className="mx-auto max-w-3xl px-4 py-12 lg:px-8">
+        <Reveal>
         <p className="font-eyebrow text-primary">Legal</p>
         <h1 className="font-display mt-4 text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">{title}</h1>
         <p className="mt-3 text-sm text-muted-foreground">The terms that govern your use of TravelTrade Exchange.</p>
+        </Reveal>
 
         <div className="mt-10 flex flex-col gap-8">
-          {SECTIONS.map((section) => (
-            <section key={section.title}>
+          {SECTIONS.map((section, i) => (
+            <Reveal key={section.title} delay={i * 40}>
+            <section>
               <h2 className="text-lg font-semibold">{section.title}</h2>
               <p className="mt-2 text-sm leading-7 text-muted-foreground">{section.content}</p>
             </section>
+            </Reveal>
           ))}
         </div>
       </main>

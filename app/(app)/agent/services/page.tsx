@@ -6,6 +6,7 @@ import { SubmitServiceAction } from './submit-action'
 import { StatusBadge } from '@/components/ui/status-badge'
 import { EmptyState } from '@/components/ui/empty-state'
 import { Button } from '@/components/ui/button'
+import { Reveal } from '@/components/ui/reveal'
 import { PageHeader } from '@/components/dashboard/page-header'
 import { Store } from 'lucide-react'
 
@@ -29,6 +30,7 @@ export default async function AgentServicesPage() {
   return (
     <div className="min-h-screen bg-background">
       <main id="main" className="relative w-full px-4 py-8 pb-24 lg:px-8 lg:py-10">
+        <Reveal>
         <PageHeader
           title="Manage your services"
           actions={
@@ -37,6 +39,8 @@ export default async function AgentServicesPage() {
             </Link>
           }
         />
+        </Reveal>
+        <Reveal>
         <div className="mt-6 flex flex-col gap-4">
           {!services || services.length === 0 ? (
             <EmptyState
@@ -71,6 +75,7 @@ export default async function AgentServicesPage() {
             ))
           )}
         </div>
+        </Reveal>
       </main>
     </div>
   )

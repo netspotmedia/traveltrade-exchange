@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Mail, MapPin, Clock } from 'lucide-react'
 import { getCmsPage } from '@/lib/cms'
+import { Reveal } from '@/components/ui/reveal'
 import { ContactForm } from './contact-form'
 
 export const metadata: Metadata = {
@@ -25,13 +26,16 @@ export default async function ContactPage() {
   return (
     <div className="min-h-[100dvh] bg-background">
       <main id="main" className="mx-auto max-w-6xl px-4 py-12 lg:px-8">
+        <Reveal>
         <div className="max-w-2xl">
           <p className="font-eyebrow text-primary">Contact</p>
           <h1 className="font-display mt-4 text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">{title}</h1>
-          <p className="mt-3 text-pretty text-muted-foreground">{description}</p>
+          <p className="mt-4 text-pretty text-muted-foreground">{description}</p>
         </div>
+        </Reveal>
 
         <div className="mt-12 grid gap-8 lg:grid-cols-2">
+          <Reveal delay={60}>
           <div className="space-y-4">
             <h2 className="text-lg font-semibold">Get in touch</h2>
             {METHODS.map((m) => (
@@ -52,11 +56,14 @@ export default async function ContactPage() {
               </div>
             ))}
           </div>
+          </Reveal>
 
+          <Reveal delay={120}>
           <div>
             <h2 className="text-lg font-semibold">Send a message</h2>
             <ContactForm />
           </div>
+          </Reveal>
         </div>
       </main>
     </div>

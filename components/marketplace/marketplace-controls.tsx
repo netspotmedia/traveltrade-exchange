@@ -95,6 +95,12 @@ export function MarketplaceControls({
   }, [minPrice, maxPrice])
 
   useEffect(() => {
+    if (!mountedRef.current) return
+    commit({ verifiedOnly })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [verifiedOnly])
+
+  useEffect(() => {
     mountedRef.current = true
   }, [])
 

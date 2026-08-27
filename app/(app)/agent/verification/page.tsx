@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { StatusBadge } from '@/components/ui/status-badge'
+import { Reveal } from '@/components/ui/reveal'
 import { PageHeader } from '@/components/dashboard/page-header'
 import { Panel, SectionTitle } from '@/components/dashboard/panel'
 import { VerificationSubmitForm } from './verification-submit-form'
@@ -46,12 +47,15 @@ export default async function AgentVerificationPage() {
   return (
     <div className="min-h-screen bg-background">
       <main id="main" className="relative w-full px-4 py-8 pb-24 lg:px-8 lg:py-10">
+        <Reveal>
         <PageHeader
           title="Agency verification"
           description="Submit documents for KYB, NANTA and IATA. Each is reviewed by our team before it appears on your profile."
         />
+        </Reveal>
 
         {/* Current status */}
+        <Reveal>
         <Panel className="mt-6 p-6 sm:p-8">
           <SectionTitle>Current status</SectionTitle>
           <div className="mt-4 grid gap-3 sm:grid-cols-3">
@@ -63,8 +67,10 @@ export default async function AgentVerificationPage() {
             ))}
           </div>
         </Panel>
+        </Reveal>
 
         {/* Submit */}
+        <Reveal>
         <Panel className="mt-5 p-6 sm:p-8">
           <SectionTitle>Submit verification</SectionTitle>
           <p className="mt-1 text-sm text-muted-foreground">One submission at a time per type. Choose a type and attach a supporting document.</p>
@@ -72,9 +78,11 @@ export default async function AgentVerificationPage() {
             <VerificationSubmitForm pendingTypes={pendingTypes} />
           </div>
         </Panel>
+        </Reveal>
 
         {/* History */}
 {list.length > 0 && (
+          <Reveal>
           <Panel className="mt-5 p-6 sm:p-8">
             <SectionTitle>Submission history</SectionTitle>
             <div className="mt-4 flex flex-col gap-3">
@@ -92,6 +100,7 @@ export default async function AgentVerificationPage() {
               ))}
             </div>
           </Panel>
+          </Reveal>
         )}
       </main>
     </div>

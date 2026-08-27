@@ -18,6 +18,8 @@ import { Avatar } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { VerificationBadges } from '@/components/ui/verification-badges'
+import { Reveal } from '@/components/ui/reveal'
+import { SectionHeader } from '@/components/ui/section-header'
 import { categoryIcon } from '@/lib/categories'
 import { formatMoney, formatNumber, formatResponseTime, formatDate } from '@/lib/format'
 import { publicImageUrl } from '@/lib/images'
@@ -108,15 +110,18 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
   return (
     <div className="min-h-screen bg-background">
       <main id="main" className="mx-auto max-w-6xl px-4 py-8 lg:px-8">
-        <Link href="/marketplace" className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition hover:text-foreground">
-          <ArrowLeft className="size-4" /> Back to marketplace
-        </Link>
+        <Reveal>
+          <Link href="/marketplace" className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition hover:text-foreground">
+            <ArrowLeft className="size-4" /> Back to marketplace
+          </Link>
+        </Reveal>
 
         <div className="mt-6 grid gap-8 lg:grid-cols-[1fr_340px]">
           {/* Main column */}
           <div className="flex flex-col gap-8">
             {/* Overview */}
-            <section className="glass-panel rounded-3xl p-6 sm:p-8">
+            <Reveal>
+              <section className="glass-panel rounded-3xl p-6 sm:p-8">
               {mainImage && (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={mainImage} alt={service!.title} className="mb-7 aspect-[16/9] w-full rounded-[1.5rem] border border-border object-cover" />
@@ -167,9 +172,11 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                 <p className="mt-3 whitespace-pre-line leading-7 text-muted-foreground">{service!.description || 'No description provided yet.'}</p>
               </div>
             </section>
+            </Reveal>
 
             {/* What's included / requirements / delivery */}
             {details && (details.included?.length || details.requirements?.length || details.delivery) && (
+              <Reveal>
               <section className="glass-panel rounded-3xl p-6 sm:p-8">
                 <h2 className="text-lg font-semibold">Service details</h2>
                 <div className="mt-5 grid gap-6 sm:grid-cols-2">
@@ -207,10 +214,12 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                   )}
                 </div>
               </section>
+              </Reveal>
             )}
 
             {/* FAQ */}
             {faqs.length > 0 && (
+              <Reveal>
               <section className="glass-panel rounded-3xl p-6 sm:p-8">
                 <h2 className="text-lg font-semibold">Frequently asked questions</h2>
                 <div className="mt-4 flex flex-col divide-y divide-border">
@@ -222,9 +231,11 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                   ))}
                 </div>
               </section>
+              </Reveal>
             )}
 
             {/* How ordering works */}
+            <Reveal>
             <section className="glass-panel rounded-3xl p-6 sm:p-8">
               <h2 className="text-lg font-semibold">How it works</h2>
               <div className="mt-5 grid gap-4 sm:grid-cols-2">
@@ -243,8 +254,10 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                 )}
               </div>
             </section>
+            </Reveal>
 
             {/* Secure payment */}
+            <Reveal>
             <section className="glass-panel rounded-3xl p-6 sm:p-8">
               <div className="flex items-start gap-4">
                 <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-brand-soft text-brand">
@@ -264,8 +277,10 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                 </div>
               </div>
             </section>
+            </Reveal>
 
             {/* Reviews */}
+            <Reveal>
             <section className="glass-panel rounded-3xl p-6 sm:p-8">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <h2 className="text-lg font-semibold">Reviews</h2>
@@ -298,9 +313,11 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                 )}
               </div>
             </section>
+            </Reveal>
           </div>
 
           {/* Sidebar */}
+          <Reveal delay={100}>
           <aside className="flex flex-col gap-5 lg:sticky lg:top-24 lg:self-start">
             {/* Booking panel */}
             <section className="glass-panel rounded-3xl p-6">
@@ -336,7 +353,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                 </div>
                 <div className="mt-4 flex flex-col gap-2 border-t border-border pt-4 text-sm text-muted-foreground">
                   {rating > 0 && (
-                    <span className="flex items-center gap-2"><Star className="size-4 fill-amber-400 text-amber-400" /> {rating.toFixed(1)} rating</span>
+                    <span className="flex items-center gap-2"><Star className="size-4 fill-accent text-accent" /> {rating.toFixed(1)} rating</span>
                   )}
                   <span className="flex items-center gap-2"><BadgeCheck className="size-4 text-primary" /> {verified ? 'Verified business' : 'Verification in progress'}</span>
                   {Number(agency.completed_orders) > 0 && (
@@ -365,12 +382,14 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
               </section>
             )}
           </aside>
+          </Reveal>
         </div>
 
         {/* Related services */}
         {related && related.length > 0 && (
+          <Reveal delay={60}>
           <section className="mt-14">
-            <h2 className="text-2xl font-semibold tracking-tight">You may also like</h2>
+            <SectionHeader title="You may also like" />
             <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {(related as RelatedRow[]).map((s) => {
                 const a = Array.isArray(s.agencies) ? s.agencies[0] : s.agencies
@@ -378,6 +397,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
               })}
             </div>
           </section>
+          </Reveal>
         )}
       </main>
     </div>

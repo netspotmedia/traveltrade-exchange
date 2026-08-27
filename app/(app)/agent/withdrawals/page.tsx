@@ -6,6 +6,7 @@ import { requireVerifiedAgent } from '@/lib/server/workflows'
 import { WithdrawalForm } from '../../dashboard/wallet/withdrawal-form'
 import { StatusBadge } from '@/components/ui/status-badge'
 import { EmptyState } from '@/components/ui/empty-state'
+import { Reveal } from '@/components/ui/reveal'
 import { PageHeader } from '@/components/dashboard/page-header'
 import { Panel, SectionTitle } from '@/components/dashboard/panel'
 import { formatMoney, formatDate } from '@/lib/format'
@@ -31,12 +32,15 @@ export default async function AgentWithdrawalsPage() {
   return (
     <div className="min-h-screen bg-background">
       <main id="main" className="relative w-full px-4 py-8 pb-24 lg:px-8 lg:py-10">
+        <Reveal>
         <PageHeader
           title="Request a withdrawal"
           description="Move your available balance to your bank account."
         />
+        </Reveal>
 
         {/* Available balance */}
+        <Reveal>
         <section className="mt-6 rounded-3xl bg-primary p-6 text-on-primary shadow-lg shadow-primary-container/20">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
@@ -56,14 +60,18 @@ export default async function AgentWithdrawalsPage() {
             </Link>
           </div>
         </section>
+        </Reveal>
 
         {/* Withdrawal form */}
+        <Reveal>
         <Panel className="mt-5 p-6 sm:p-8">
           <SectionTitle>Request a withdrawal</SectionTitle>
           <WithdrawalForm />
         </Panel>
+        </Reveal>
 
         {/* History */}
+        <Reveal>
         <Panel className="mt-5 p-6 sm:p-8">
           <SectionTitle>Withdrawal history</SectionTitle>
           <div className="mt-4">
@@ -89,6 +97,7 @@ export default async function AgentWithdrawalsPage() {
             )}
           </div>
         </Panel>
+        </Reveal>
       </main>
     </div>
   )

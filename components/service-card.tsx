@@ -82,7 +82,7 @@ export function ServiceCard({ service, imageUrl, className }: ServiceCardProps) 
           </h3>
           {rating > 0 && (
             <span className="inline-flex shrink-0 items-center gap-1 rounded bg-surface-container-highest px-2 py-1 text-sm">
-              <Star className="size-3.5 fill-secondary text-secondary" />
+              <Star className="size-3.5 fill-accent text-accent" />
               <span className="font-bold text-primary">{rating.toFixed(1)}</span>
             </span>
           )}

@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation'
 import { StatusBadge } from '@/components/ui/status-badge'
 import { EmptyState } from '@/components/ui/empty-state'
 import { Button } from '@/components/ui/button'
+import { Reveal } from '@/components/ui/reveal'
 import { PageHeader } from '@/components/dashboard/page-header'
 import { rowMotion } from '@/components/dashboard/panel'
 import { cn } from '@/lib/utils'
@@ -52,6 +53,7 @@ export default async function OrdersPage() {
   return (
     <div className="min-h-screen bg-background">
       <main id="main" className="relative w-full px-4 py-8 pb-24 lg:px-8 lg:py-10">
+        <Reveal>
         <PageHeader
           title="Your orders"
           description="Track your agreements and see what needs your attention."
@@ -61,7 +63,9 @@ export default async function OrdersPage() {
             </Link>
           }
         />
+        </Reveal>
 
+        <Reveal>
         {orders.length === 0 ? (
           <div className="mt-8">
             <EmptyState
@@ -100,6 +104,7 @@ export default async function OrdersPage() {
             </section>
           </>
         )}
+        </Reveal>
       </main>
     </div>
   )

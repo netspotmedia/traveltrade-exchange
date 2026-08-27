@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { StatusBadge } from '@/components/ui/status-badge'
+import { Reveal } from '@/components/ui/reveal'
 import { PageHeader } from '@/components/dashboard/page-header'
 import { Panel, SectionTitle } from '@/components/dashboard/panel'
 import { WalletTopUp } from './wallet-top-up'
@@ -36,11 +37,14 @@ export default async function WalletPage() {
   return (
     <div className="min-h-screen bg-background">
       <main id="main" className="relative w-full px-4 py-8 pb-24 lg:px-8 lg:py-10">
+        <Reveal>
         <PageHeader
           title="Your balance"
           description="Top up to pay for services, and withdraw what you've earned."
         />
+        </Reveal>
 
+        <Reveal>
         <Panel className="mt-6 p-6 sm:p-8">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
@@ -54,8 +58,10 @@ export default async function WalletPage() {
           <WalletTopUp />
           {isSeller && <WithdrawalForm />}
         </Panel>
+        </Reveal>
 
         {isSeller && (
+          <Reveal>
           <Panel className="mt-5 p-6 sm:p-8">
             <SectionTitle>Withdrawals</SectionTitle>
             <div className="mt-4 flex flex-col gap-3 divide-y divide-border">
@@ -75,8 +81,10 @@ export default async function WalletPage() {
               )}
             </div>
           </Panel>
+          </Reveal>
         )}
 
+        <Reveal>
         <Panel className="mt-5 p-6 sm:p-8">
           <SectionTitle>Activity</SectionTitle>
           <div className="mt-4 flex flex-col gap-3 divide-y divide-border">
@@ -95,6 +103,7 @@ export default async function WalletPage() {
             )}
           </div>
         </Panel>
+        </Reveal>
       </main>
     </div>
   )

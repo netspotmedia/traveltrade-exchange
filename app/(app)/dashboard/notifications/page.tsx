@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { Bell } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
+import { Reveal } from '@/components/ui/reveal'
 import { PageHeader } from '@/components/dashboard/page-header'
 import { NotificationList } from './notification-list'
 
@@ -21,6 +22,7 @@ export default async function NotificationsPage() {
   return (
     <div className="min-h-screen bg-background">
       <main id="main" className="relative w-full px-4 py-8 pb-24 lg:px-8 lg:py-10">
+        <Reveal>
         <PageHeader
           title="Your alerts"
           description={unread > 0 ? `${unread} unread.` : "You're all caught up."}
@@ -30,10 +32,13 @@ export default async function NotificationsPage() {
             </span>
           }
         />
+        </Reveal>
 
+        <Reveal>
         <div className="mt-6">
           <NotificationList notifications={(notifications ?? []) as NotificationRow[]} />
         </div>
+        </Reveal>
       </main>
     </div>
   )

@@ -85,7 +85,7 @@ export default async function MarketplacePage({ searchParams }: { searchParams: 
         return ah - bh
       })
       count = sorted.length
-      services = sorted.slice(from, to)
+      services = sorted.slice(from, to + 1)
     } else if (!noResults) {
       switch (sort) {
         case 'rating':

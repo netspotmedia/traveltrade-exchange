@@ -17,6 +17,8 @@ import { EmptyState } from '@/components/ui/empty-state'
 import { StatusBadge } from '@/components/ui/status-badge'
 import { Button } from '@/components/ui/button'
 import { VerificationBadges } from '@/components/ui/verification-badges'
+import { Reveal } from '@/components/ui/reveal'
+import { SectionHeader } from '@/components/ui/section-header'
 import { formatNumber, formatResponseTime } from '@/lib/format'
 
 type ServiceRow = {
@@ -34,100 +36,94 @@ type ServiceRow = {
 
 export default async function AgentProfilePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
+  const supabase = await createClient()
 
-  let agency: { id: string; name: string; slug: string; city: string | null; country: string | null; verification_status: string; rating: number; completed_orders: number; verifications: string[] | null } | null = null
+  // Public RLS policy allows reading verified agencies (and the owner their own).
+  const { data: agency } = await supabase
+    .from('agencies')
+    .select('id, name, slug, city, country, verification_status, rating, completed_orders, verifications')
+    .eq('slug', slug)
+    .is('deleted_at', null)
+    .maybeSingle()
+
+  if (!agency) notFound()
+
+  const verified = agency.verification_status === 'verified'
+  const rating = Number(agency.rating ?? 0)
+
+  // Real computed response metrics.
   let responseStats: { avgResponseHours: number | null; responseRate: number | null } | null = null
-  let list: ServiceRow[] = []
+  const { data: stats } = await supabase.rpc('agency_response_stats', { p_agency_id: agency.id })
+  const s = stats as { avg_response_hours?: number | null; response_rate?: number | null } | null
+  responseStats = { avgResponseHours: s?.avg_response_hours ?? null, responseRate: s?.response_rate ?? null }
+  const responseLabel = formatResponseTime(responseStats.avgResponseHours ?? null)
 
-  try {
-    const supabase = await createClient()
+  const { data: services } = await supabase
+    .from('services')
+    .select('*, agencies(name, slug, verification_status, rating, city)')
+    .eq('agency_id', agency.id)
+    .eq('status', 'published')
+    .is('deleted_at', null)
+    .order('created_at', { ascending: false })
 
-    // Public RLS policy allows reading verified agencies (and the owner their own).
-    const { data } = await supabase
-      .from('agencies')
-      .select('id, name, slug, city, country, verification_status, rating, completed_orders, verifications')
-      .eq('slug', slug)
-      .is('deleted_at', null)
-      .maybeSingle()
-
-    agency = data
-
-    if (!agency) notFound()
-
-    // Real computed response metrics.
-    const { data: stats } = await supabase.rpc('agency_response_stats', { p_agency_id: agency.id })
-    const s = stats as { avg_response_hours?: number | null; response_rate?: number | null } | null
-    responseStats = { avgResponseHours: s?.avg_response_hours ?? null, responseRate: s?.response_rate ?? null }
-
-    const { data: services } = await supabase
-      .from('services')
-      .select('*, agencies(name, slug, verification_status, rating, city)')
-      .eq('agency_id', agency.id)
-      .eq('status', 'published')
-      .is('deleted_at', null)
-      .order('created_at', { ascending: false })
-
-    list = (services ?? []) as ServiceRow[]
-  } catch {
-    notFound()
-  }
-
-  const verified = agency!.verification_status === 'verified'
-  const rating = Number(agency!.rating ?? 0)
-  const responseLabel = formatResponseTime(responseStats?.avgResponseHours ?? null)
+  const list = (services ?? []) as ServiceRow[]
 
   return (
     <div className="min-h-screen bg-background">
       <main id="main" className="mx-auto max-w-6xl px-4 py-8 lg:px-8">
-        <Link href="/marketplace" className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition hover:text-foreground">
-          <ArrowLeft className="size-4" /> Back to marketplace
-        </Link>
+        <Reveal>
+          <Link href="/marketplace" className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition hover:text-foreground">
+            <ArrowLeft className="size-4" /> Back to marketplace
+          </Link>
+        </Reveal>
 
         {/* Profile header */}
-        <section className="mt-6 glass-panel rounded-3xl p-6 sm:p-8">
-          <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center gap-5">
-              <Avatar name={agency.name} size="xl" />
-              <div>
-                <div className="flex flex-wrap items-center gap-2">
-                  <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">{agency.name}</h1>
-                  <StatusBadge domain="agency" status={agency.verification_status} />
-                </div>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  <MapPin className="mr-1 inline size-3.5" />
-                  {agency.city || agency.country || 'Nigeria'}
-                </p>
-                <div className="mt-3">
-                  <VerificationBadges verifications={agency.verifications as string[] | null} />
-                </div>
-              </div>
-            </div>
-            <div className="flex flex-wrap gap-x-8 gap-y-3">
-              {rating > 0 && (
+        <Reveal delay={60}>
+          <section className="relative mt-6 overflow-hidden rounded-3xl border border-border bg-card p-6 shadow-card sm:p-8">
+            <div className="pointer-events-none absolute -inset-x-10 -top-32 -z-10 h-64 bg-[radial-gradient(60%_100%_at_20%_0%,var(--brand-soft),transparent)]" aria-hidden="true" />
+            <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-center gap-5">
+                <Avatar name={agency.name} size="xl" />
                 <div>
-                  <p className="flex items-center gap-1 font-mono text-2xl font-semibold">
-                    <Star className="size-5 fill-accent text-accent" />
-                    {rating.toFixed(1)}
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h1 className="font-display text-2xl font-semibold leading-tight tracking-tight sm:text-3xl">{agency.name}</h1>
+                    <StatusBadge domain="agency" status={agency.verification_status} />
+                  </div>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    <MapPin className="mr-1 inline size-3.5" />
+                    {agency.city || agency.country || 'Nigeria'}
                   </p>
-                  <p className="text-xs text-muted-foreground">Rating</p>
+                  <div className="mt-3">
+                    <VerificationBadges verifications={agency.verifications as string[] | null} />
+                  </div>
                 </div>
-              )}
-              <div>
-                <p className="font-mono text-2xl font-semibold">{formatNumber(agency.completed_orders)}</p>
-                <p className="text-xs text-muted-foreground">Orders completed</p>
               </div>
-              <div>
-                <p className="font-mono text-2xl font-semibold">{list.length}</p>
-                <p className="text-xs text-muted-foreground">Services</p>
-              </div>
-              {responseStats.responseRate != null && (
+              <div className="flex flex-wrap gap-x-8 gap-y-3">
+                {rating > 0 && (
+                  <div>
+                    <p className="flex items-center gap-1 font-mono text-2xl font-semibold">
+                      <Star className="size-5 fill-accent text-accent" />
+                      {rating.toFixed(1)}
+                    </p>
+                    <p className="text-xs text-muted-foreground">Rating</p>
+                  </div>
+                )}
                 <div>
-                  <p className="font-mono text-2xl font-semibold">{responseStats.responseRate}%</p>
-                  <p className="text-xs text-muted-foreground">Response rate</p>
+                  <p className="font-mono text-2xl font-semibold">{formatNumber(agency.completed_orders)}</p>
+                  <p className="text-xs text-muted-foreground">Orders completed</p>
                 </div>
-              )}
+                <div>
+                  <p className="font-mono text-2xl font-semibold">{list.length}</p>
+                  <p className="text-xs text-muted-foreground">Services</p>
+                </div>
+                {responseStats.responseRate != null && (
+                  <div>
+                    <p className="font-mono text-2xl font-semibold">{responseStats.responseRate}%</p>
+                    <p className="text-xs text-muted-foreground">Response rate</p>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
 
           {/* Trust strip */}
           <div className="mt-6 grid gap-3 border-t border-border pt-5 sm:grid-cols-3">
@@ -162,17 +158,14 @@ export default async function AgentProfilePage({ params }: { params: Promise<{ s
             </div>
           </div>
         </section>
+        </Reveal>
 
         {/* Services */}
-        <section className="mt-10">
-          <div className="flex flex-wrap items-end justify-between gap-4">
-            <div>
-              <h2 className="text-2xl font-semibold tracking-tight">Services by {agency.name}</h2>
-              <p className="mt-1 text-muted-foreground">Every service includes protected payments.</p>
-            </div>
-          </div>
+        <Reveal delay={120}>
+          <section className="mt-14">
+          <SectionHeader title={`Services by ${agency.name}`} description="Every service includes protected payments." />
 
-          <div className="mt-6">
+          <div className="mt-8">
             {list.length === 0 ? (
               <EmptyState
                 icon={Compass}
@@ -189,27 +182,30 @@ export default async function AgentProfilePage({ params }: { params: Promise<{ s
             )}
           </div>
         </section>
+        </Reveal>
 
         {/* How to work together */}
-        <section className="mt-10">
-          <div className="rounded-3xl bg-primary p-6 text-primary-foreground sm:p-8">
-            <div className="flex items-start gap-4">
-              <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-primary-foreground/15" aria-hidden="true">
-                <Handshake className="size-5" />
-              </span>
-              <div>
-                <h2 className="text-xl font-semibold">Working with this agent</h2>
-                <p className="mt-2 max-w-2xl text-sm leading-6 text-primary-foreground/85">
-                  Request a quote or order a service, agree on clear milestones, and keep every naira protected until the work is
-                  delivered and approved. One clear record covers proposals, milestones, delivery and messages.
-                </p>
-                <Link href="/marketplace" className="mt-4 inline-block">
-                  <Button className="bg-primary text-on-primary hover:shadow-xl shadow-lg shadow-primary-container/20">Explore the marketplace</Button>
-                </Link>
+        <Reveal delay={180}>
+          <section className="mt-14 mb-4">
+            <div className="rounded-4xl bg-primary p-6 text-primary-foreground shadow-soft-lg sm:p-8">
+              <div className="flex items-start gap-4">
+                <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-primary-foreground/15" aria-hidden="true">
+                  <Handshake className="size-5" />
+                </span>
+                <div>
+                  <h2 className="font-display text-xl font-semibold tracking-tight sm:text-2xl">Working with this agent</h2>
+                  <p className="mt-2 max-w-2xl text-sm leading-6 text-primary-foreground/85">
+                    Request a quote or order a service, agree on clear milestones, and keep every naira protected until the work is
+                    delivered and approved. One clear record covers proposals, milestones, delivery and messages.
+                  </p>
+                  <Link href="/marketplace" className="mt-4 inline-block">
+                    <Button className="bg-white text-primary hover:bg-white/90">Explore the marketplace</Button>
+                  </Link>
+                </div>
               </div>
             </div>
-          </div>
-        </section>
+          </section>
+        </Reveal>
       </main>
     </div>
   )

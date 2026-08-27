@@ -2,6 +2,7 @@ import { notFound, redirect } from 'next/navigation'
 import { AlertTriangle, CheckCircle2, Circle, Compass, Lock } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { StatusBadge } from '@/components/ui/status-badge'
+import { Reveal } from '@/components/ui/reveal'
 import { EscrowActions } from './escrow-actions'
 import { AgreementActions } from './agreement-actions'
 import { RefundRequestForm } from './refund-request-form'
@@ -125,6 +126,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
     <div className="min-h-screen bg-background">
       <main id="main" className="relative w-full px-4 py-8 pb-24 lg:px-8 lg:py-10">
         {/* Header */}
+        <Reveal>
         <PageHeader
           title={order.title}
           description={
@@ -134,8 +136,10 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
           }
           actions={<StatusBadge domain="order" status={order.status} className="self-start text-sm" />}
         />
+        </Reveal>
 
         {/* Progress timeline */}
+        <Reveal>
         <Panel className="mt-5 p-6 sm:p-8">
           <div className="flex items-start gap-2 text-sm">
             {order.status === 'disputed' ? (
@@ -178,9 +182,11 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
             </div>
           )}
         </Panel>
+        </Reveal>
 
         {/* Agreement & signatures */}
         {agreement && (
+          <Reveal>
           <Panel className="mt-5 p-6 sm:p-8">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <SectionTitle>Agreement & signatures</SectionTitle>
@@ -215,9 +221,11 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
               />
             </div>
           </Panel>
+          </Reveal>
         )}
 
         {/* Milestones */}
+        <Reveal>
         <Panel className="mt-5 p-6 sm:p-8">
           <SectionTitle>Payment plan</SectionTitle>
           <div className="mt-4 flex flex-col gap-3">
@@ -245,7 +253,9 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
             </div>
           )}
         </Panel>
+        </Reveal>
 
+        <Reveal>
         <div className="mt-5">
           <ProposalPanel orderId={id} currentUserId={user.id} isBuyer={isBuyer} isSeller={isSeller} proposals={proposalList} />
         </div>
@@ -273,7 +283,9 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
             </div>
           </Panel>
         )}
+        </Reveal>
 
+        <Reveal>
         <div className="mt-5">
           <Panel className="overflow-hidden">
             <div className="border-b border-border px-5 py-4">
@@ -289,6 +301,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
             <ReviewForm orderId={id} hasReview={hasReview} />
           </div>
         )}
+        </Reveal>
       </main>
     </div>
   )

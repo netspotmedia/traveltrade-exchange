@@ -55,7 +55,7 @@ export function NewServiceForm() {
       <form onSubmit={submit} className="mx-auto flex max-w-2xl flex-col gap-5">
       <div>
         <p className="text-sm font-semibold text-primary">Sell a service</p>
-        <h1 className="mt-1 text-3xl font-semibold tracking-tight">Create a new service</h1>
+        <h1 className="font-display mt-1 text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">Create a new service</h1>
         <p className="mt-2 text-muted-foreground">Services start as drafts and go live after moderation.</p>
       </div>
 

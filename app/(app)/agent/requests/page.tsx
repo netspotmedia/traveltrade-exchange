@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import { requireVerifiedAgent } from '@/lib/server/workflows'
 import { StatusBadge } from '@/components/ui/status-badge'
 import { EmptyState } from '@/components/ui/empty-state'
+import { Reveal } from '@/components/ui/reveal'
 import { PageHeader } from '@/components/dashboard/page-header'
 import { Inbox } from 'lucide-react'
 
@@ -34,10 +35,13 @@ export default async function AgentRequestsPage() {
   return (
     <div className="min-h-screen bg-background">
       <main id="main" className="relative w-full px-4 py-8 pb-24 lg:px-8 lg:py-10">
+        <Reveal>
         <PageHeader
           title="Incoming requests"
           description="Respond with a proposal and milestone breakdown."
         />
+        </Reveal>
+        <Reveal>
         <div className="mt-6 flex flex-col gap-4">
           {!orders || orders.length === 0 ? (
             <EmptyState
@@ -65,6 +69,7 @@ export default async function AgentRequestsPage() {
             ))
           )}
         </div>
+        </Reveal>
       </main>
     </div>
   )

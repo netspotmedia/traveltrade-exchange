@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { ArrowRight } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
+import { Reveal } from '@/components/ui/reveal'
 import { PageHeader } from '@/components/dashboard/page-header'
 import { MessagesInbox, type InboxConversation } from '@/components/messages/inbox'
 
@@ -76,6 +77,7 @@ export default async function MessagesPage() {
   return (
     <div className="min-h-screen bg-background">
       <main id="main" className="relative w-full px-4 py-8 pb-24 lg:px-8 lg:py-10">
+        <Reveal>
         <PageHeader
           title="Conversations"
           description={
@@ -87,10 +89,13 @@ export default async function MessagesPage() {
             </Link>
           }
         />
+        </Reveal>
 
+        <Reveal>
         <div className="mt-6">
           <MessagesInbox conversations={conversations} currentUserId={user.id} />
         </div>
+        </Reveal>
       </main>
     </div>
   )

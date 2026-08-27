@@ -4,6 +4,8 @@ import { BadgeCheck, MapPin, Star, UserRound } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { Avatar } from '@/components/ui/avatar'
 import { EmptyState } from '@/components/ui/empty-state'
+import { Reveal } from '@/components/ui/reveal'
+import { SectionHeader } from '@/components/ui/section-header'
 import { cn } from '@/lib/utils'
 
 export const metadata: Metadata = {
@@ -71,6 +73,7 @@ export default async function AgentsPage({ searchParams }: { searchParams: Promi
   return (
     <div className="min-h-screen bg-background">
       <main id="main" className="mx-auto max-w-7xl px-4 py-12 lg:px-8">
+        <Reveal>
         <div className="relative max-w-2xl">
           <div className="pointer-events-none absolute -inset-x-10 -top-24 -z-10 h-64 bg-[radial-gradient(60%_100%_at_50%_0%,var(--brand-soft),transparent)]" aria-hidden="true" />
           <h1 className="font-display text-4xl font-semibold leading-tight tracking-tight text-balance sm:text-5xl">Trusted travel professionals</h1>
@@ -78,9 +81,11 @@ export default async function AgentsPage({ searchParams }: { searchParams: Promi
             {total} verified {total === 1 ? 'agent' : 'agents'} ready to serve you — every one completes business verification before trading.
           </p>
         </div>
+        </Reveal>
 
         {/* Country filter */}
         {countries.length > 0 && (
+          <Reveal delay={60}>
           <div className="mt-8 flex flex-wrap gap-2" role="group" aria-label="Filter by country">
             <Link href={buildHref(null, 1)} className={cn('glass-card rounded-full px-3 py-1 text-sm transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]', !country ? 'border-primary bg-primary-soft text-primary' : 'text-muted-foreground hover:bg-muted')}>
               All Countries
@@ -91,6 +96,7 @@ export default async function AgentsPage({ searchParams }: { searchParams: Promi
               </Link>
             ))}
           </div>
+          </Reveal>
         )}
 
         <div className="mt-10">
@@ -109,11 +115,11 @@ export default async function AgentsPage({ searchParams }: { searchParams: Promi
             />
           ) : (
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {list.map((a) => {
+              {list.map((a, i) => {
                 const rating = Number(a.rating ?? 0)
                 return (
+                  <Reveal key={a.id} delay={i * 60}>
                   <Link
-                    key={a.id}
                     href={`/agencies/${a.slug}`}
                     className="group glass-card flex flex-col gap-4 rounded-2xl p-6 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:border-primary/15 hover:shadow-soft-lg active:scale-[0.995]"
                   >
@@ -140,6 +146,7 @@ export default async function AgentsPage({ searchParams }: { searchParams: Promi
                       <span>{Number(a.completed_orders ?? 0)} orders completed</span>
                     </div>
                   </Link>
+                  </Reveal>
                 )
               })}
             </div>
@@ -147,6 +154,7 @@ export default async function AgentsPage({ searchParams }: { searchParams: Promi
         </div>
 
         {totalPages > 1 && (
+          <Reveal delay={120}>
           <nav className="mt-10 flex items-center justify-center gap-3" aria-label="Pagination">
             {page > 1 ? (
               <Link href={buildHref(country || null, page - 1)} className="glass-card inline-flex h-10 items-center rounded-xl px-4 text-sm font-medium transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:bg-muted">
@@ -166,6 +174,7 @@ export default async function AgentsPage({ searchParams }: { searchParams: Promi
               <span className="inline-flex h-10 items-center rounded-xl border border-border px-4 text-sm font-medium text-muted-foreground/50">Next</span>
             )}
           </nav>
+          </Reveal>
         )}
       </main>
     </div>

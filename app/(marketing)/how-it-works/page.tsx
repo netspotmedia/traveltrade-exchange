@@ -2,6 +2,8 @@ import Link from 'next/link'
 import type { Metadata } from 'next'
 import { BadgeCheck, FileText, Handshake, Lock, Search, WalletCards } from 'lucide-react'
 import { getCmsPage } from '@/lib/cms'
+import { Reveal } from '@/components/ui/reveal'
+import { SectionHeader } from '@/components/ui/section-header'
 
 export const metadata: Metadata = {
   title: 'How It Works',
@@ -36,15 +38,18 @@ export default async function HowItWorksPage() {
   return (
     <div className="min-h-[100dvh] bg-background">
       <main id="main" className="mx-auto max-w-7xl px-4 py-12 lg:px-8">
+        <Reveal>
         <div className="mx-auto max-w-2xl text-center">
           <p className="font-eyebrow text-primary">One clear workflow</p>
           <h1 className="font-display mt-4 text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">{title}</h1>
           <p className="mt-4 text-pretty text-muted-foreground">{description}</p>
         </div>
+        </Reveal>
 
         <div className="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {STEPS.map((s) => (
-            <div key={s.n} className="group glass-card flex flex-col gap-5 rounded-2xl p-7 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1 hover:shadow-soft">
+          {STEPS.map((s, i) => (
+            <Reveal key={s.n} delay={i * 60}>
+            <div className="group glass-card flex flex-col gap-5 rounded-2xl p-7 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1 hover:shadow-soft">
               <div className="flex items-center justify-between">
                 <span className="grid size-11 place-items-center rounded-full bg-brand-soft text-brand transition-colors duration-300 group-hover:bg-brand group-hover:text-primary-foreground">
                   <s.icon className="size-5" />
@@ -56,9 +61,11 @@ export default async function HowItWorksPage() {
                 <p className="mt-2 text-sm leading-6 text-muted-foreground">{s.body}</p>
               </div>
             </div>
+            </Reveal>
           ))}
         </div>
 
+        <Reveal delay={240}>
         <section className="mt-16 rounded-3xl border-y border-border bg-muted/35 px-4 py-14">
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="text-2xl font-semibold tracking-tight">Why travel with TTX</h2>
@@ -76,7 +83,9 @@ export default async function HowItWorksPage() {
             ))}
           </div>
         </section>
+        </Reveal>
 
+        <Reveal>
         <section className="mx-auto max-w-7xl px-4 py-16 lg:px-8">
           <div className="flex flex-col items-center justify-between gap-8 rounded-3xl bg-primary px-8 py-12 text-primary-foreground lg:flex-row lg:px-14">
             <div className="max-w-xl text-center lg:text-left">
@@ -95,6 +104,7 @@ export default async function HowItWorksPage() {
             </div>
           </div>
         </section>
+        </Reveal>
       </main>
     </div>
   )

@@ -5,6 +5,7 @@ import { requireVerifiedAgent } from '@/lib/server/workflows'
 import { StatusBadge } from '@/components/ui/status-badge'
 import { EmptyState } from '@/components/ui/empty-state'
 import { formatMoney } from '@/lib/format'
+import { Reveal } from '@/components/ui/reveal'
 import { PageHeader } from '@/components/dashboard/page-header'
 import { FileText } from 'lucide-react'
 
@@ -39,11 +40,14 @@ export default async function AgentProposalsPage() {
   return (
     <div className="min-h-screen bg-background">
       <main id="main" className="relative w-full px-4 py-8 pb-24 lg:px-8 lg:py-10">
+        <Reveal>
         <PageHeader
           title="My proposals"
           description="Offers you&apos;ve submitted in response to customer requests."
         />
+        </Reveal>
 
+        <Reveal>
         <div className="mt-6">
           {list.length === 0 ? (
             <EmptyState
@@ -83,6 +87,7 @@ export default async function AgentProposalsPage() {
             </div>
           )}
         </div>
+        </Reveal>
       </main>
     </div>
   )
