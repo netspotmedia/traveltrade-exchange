@@ -215,7 +215,7 @@ export default async function DashboardPage() {
             </div>
             <Link
               href={createHref}
-              className="group inline-flex w-fit items-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-semibold text-on-primary shadow-lg shadow-primary-container/20 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-t-2 hover:border-secondary hover:brightness-110 active:scale-[0.98]"
+              className="group inline-flex w-fit items-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-semibold text-on-primary shadow-lg shadow-primary-container/20 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-t-2 hover:border-secondary hover:shadow-xl active:scale-[0.98]"
             >
               <Plus className="size-[18px]" aria-hidden="true" />
               New Trade Request

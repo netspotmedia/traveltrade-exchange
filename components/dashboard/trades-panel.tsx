@@ -113,7 +113,7 @@ export function TradesPanel({ trades, viewAllHref, createHref }: TradesPanelProp
               <p className="mt-1 max-w-sm text-sm text-on-surface-variant">{query || filter !== 'all' ? 'Try adjusting your filters or search.' : 'Start a trade request and it will appear here.'}</p>
             </div>
             {!query && filter === 'all' && (
-              <Link href={createHref} className="mt-1 inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-on-primary transition hover:opacity-90">
+              <Link href={createHref} className="mt-1 inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-on-primary transition hover:shadow-lg active:scale-[0.98]">
                 New trade request <ArrowRight className="size-3.5" aria-hidden="true" />
               </Link>
             )}
@@ -201,7 +201,7 @@ function TradeRowView({ trade, expanded, onToggle }: { trade: TradeRow; expanded
             </div>
             <Link
               href={`/dashboard/orders/${trade.id}`}
-              className="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-on-primary transition hover:opacity-90 active:scale-[0.98]"
+              className="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-on-primary transition hover:shadow-lg active:scale-[0.98]"
             >
               Open order <ArrowRight className="size-3.5" aria-hidden="true" />
             </Link>

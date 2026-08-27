@@ -63,7 +63,7 @@ export function KpiCard({ label, value, hint, icon: Icon, accent = 'mint', child
         <p className={cn('font-eyebrow pt-1', t.label)}>{label}</p>
         {Icon && (
           <span className={cn('grid size-9 shrink-0 place-items-center rounded-full', t.chip)} aria-hidden="true">
-            <Icon className="size-[18px]" />
+            <Icon className={cn('size-[18px]', t.value)} />
           </span>
         )}
       </div>

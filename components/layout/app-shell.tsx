@@ -88,7 +88,7 @@ export default async function AppShell({ children }: { children: React.ReactNode
       <div className="mt-auto space-y-4 border-t border-white/10 pt-5">
         <Link
           href={cta.href}
-          className="group flex w-full items-center justify-between rounded-full bg-primary py-2.5 pl-5 pr-2.5 text-sm font-semibold text-on-primary shadow-lg shadow-primary-container/25 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:brightness-110 active:scale-[0.98]"
+          className="group flex w-full items-center justify-between rounded-full bg-primary py-2.5 pl-5 pr-2.5 text-sm font-semibold text-on-primary shadow-lg shadow-primary-container/25 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:shadow-xl active:scale-[0.98]"
         >
           <span>{cta.label}</span>
           <span
