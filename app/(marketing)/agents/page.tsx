@@ -30,26 +30,34 @@ export default async function AgentsPage({ searchParams }: { searchParams: Promi
   const page = Math.max(1, Number(params.page) || 1)
   const skip = (page - 1) * PER_PAGE
 
-  const supabase = await createClient()
+  let list: AgencyRow[] = []
+  let total = 0
+  let countries: string[] = []
 
-  // Available countries for the filter (from verified agencies).
-  const { data: countriesData } = await supabase
-    .from('agencies')
-    .select('country')
-    .eq('verification_status', 'verified')
-    .is('deleted_at', null)
-  const countries = Array.from(new Set((countriesData ?? []).map((c) => (c.country as string) ?? 'Nigeria').filter(Boolean))).sort()
+  try {
+    const supabase = await createClient()
 
-  let query = supabase
-    .from('agencies')
-    .select('id, name, slug, country, city, rating, completed_orders', { count: 'exact' })
-    .eq('verification_status', 'verified')
-    .is('deleted_at', null)
-  if (country) query = query.eq('country', country)
-  const { data: agencies, count } = await query.order('rating', { ascending: false }).range(skip, skip + PER_PAGE - 1)
+    // Available countries for the filter (from verified agencies).
+    const { data: countriesData } = await supabase
+      .from('agencies')
+      .select('country')
+      .eq('verification_status', 'verified')
+      .is('deleted_at', null)
+    countries = Array.from(new Set((countriesData ?? []).map((c) => (c.country as string) ?? 'Nigeria').filter(Boolean))).sort()
 
-  const list = (agencies ?? []) as AgencyRow[]
-  const total = count ?? 0
+    let query = supabase
+      .from('agencies')
+      .select('id, name, slug, country, city, rating, completed_orders', { count: 'exact' })
+      .eq('verification_status', 'verified')
+      .is('deleted_at', null)
+    if (country) query = query.eq('country', country)
+    const { data: agencies, count } = await query.order('rating', { ascending: false }).range(skip, skip + PER_PAGE - 1)
+
+    list = (agencies ?? []) as AgencyRow[]
+    total = count ?? 0
+  } catch {
+    // Supabase unavailable — show empty state
+  }
   const totalPages = Math.max(1, Math.ceil(total / PER_PAGE))
 
   function buildHref(nextCountry: string | null, nextPage: number) {

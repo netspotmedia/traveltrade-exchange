@@ -25,108 +25,115 @@ export default async function MarketplacePage({ searchParams }: { searchParams: 
   const from = (page - 1) * PAGE_SIZE
   const to = from + PAGE_SIZE - 1
 
-  const supabase = await createClient()
-
-  // Verified-agent filter is applied as an IN-list on agency_id (type-safe).
-  let verifiedAgencyIds: string[] = []
-  let noResults = false
-  if (verifiedOnly) {
-    const { data: vAgencies } = await supabase
-      .from('agencies')
-      .select('id')
-      .eq('verification_status', 'verified')
-      .is('deleted_at', null)
-    verifiedAgencyIds = (vAgencies ?? []).map((a) => a.id)
-    if (verifiedAgencyIds.length === 0) noResults = true
-  }
-
-  let query = supabase
-    .from('services')
-    .select('*, agencies(id, name, slug, verification_status, rating, city)', { count: 'exact' })
-    .eq('status', 'published')
-    .is('deleted_at', null)
-
-  if (q) query = query.or(`title.ilike.%${q}%,description.ilike.%${q}%`)
-  if (category) query = query.eq('category', category)
-  if (Number.isFinite(min) && min > 0) query = query.gte('base_price', min)
-  if (Number.isFinite(max) && max > 0) query = query.lte('base_price', max)
-  if (verifiedOnly && !noResults) query = query.in('agency_id', verifiedAgencyIds)
-
-  const agencyIdOf = (s: ServiceRow) => {
-    const a = Array.isArray(s.agencies) ? s.agencies[0] : s.agencies
-    return a?.id ?? null
-  }
-  const statsMap = new Map<string, { avgResponseHours: number | null; responseRate: number | null }>()
-
   let services: ServiceRow[] | null = null
   let count: number | null = null
-
-  if (!noResults && sort === 'response_time') {
-    // Fastest Response: fetch all matches, sort by real avg response time,
-    // then paginate — keeps the sort correct across pages.
-    const { data: all } = await query.order('created_at', { ascending: false })
-    const rows = (all ?? []) as ServiceRow[]
-    const ids = Array.from(new Set(rows.map(agencyIdOf).filter(Boolean) as string[]))
-    if (ids.length > 0) {
-      const { data: stats } = await supabase.rpc('agency_response_stats_batch', { p_agency_ids: ids })
-      for (const row of (stats ?? []) as { agency_id: string; avg_response_hours: number | null; response_rate: number | null }[]) {
-        statsMap.set(row.agency_id, { avgResponseHours: row.avg_response_hours, responseRate: row.response_rate })
-      }
-    }
-    const sorted = rows.slice().sort((a, b) => {
-      const ah = agencyIdOf(a) ? (statsMap.get(agencyIdOf(a)!)?.avgResponseHours ?? null) : null
-      const bh = agencyIdOf(b) ? (statsMap.get(agencyIdOf(b)!)?.avgResponseHours ?? null) : null
-      if (ah === null && bh === null) return 0
-      if (ah === null) return 1
-      if (bh === null) return -1
-      return ah - bh
-    })
-    count = sorted.length
-    services = sorted.slice(from, to)
-  } else if (!noResults) {
-    switch (sort) {
-      case 'rating':
-        query = query.order('rating', { referencedTable: 'agencies', ascending: false })
-        break
-      case 'price_asc':
-        query = query.order('base_price', { ascending: true })
-        break
-      case 'completed':
-        query = query.order('completed_orders', { referencedTable: 'agencies', ascending: false })
-        break
-      default:
-        query = query.order('created_at', { ascending: false })
-    }
-    const { data, count: c } = await query.range(from, to)
-    services = (data ?? []) as ServiceRow[]
-    count = c
-    const ids = Array.from(new Set(services.map(agencyIdOf).filter(Boolean) as string[]))
-    if (ids.length > 0) {
-      const { data: stats } = await supabase.rpc('agency_response_stats_batch', { p_agency_ids: ids })
-      for (const row of (stats ?? []) as { agency_id: string; avg_response_hours: number | null; response_rate: number | null }[]) {
-        statsMap.set(row.agency_id, { avgResponseHours: row.avg_response_hours, responseRate: row.response_rate })
-      }
-    }
-  }
-
-  const categoryRes = noResults ? null : await supabase.from('services').select('category').eq('status', 'published').is('deleted_at', null)
-
-  // Review counts for the services on this page (one batched query).
+  let categories: string[] = []
   const reviewCounts = new Map<string, number>()
-  const pageIds = (services ?? []).map((s: ServiceRow) => s.id)
-  if (pageIds.length > 0) {
-    const { data: reviewRows } = await supabase.from('reviews').select('service_id').in('service_id', pageIds).is('deleted_at', null)
-    for (const r of (reviewRows ?? []) as { service_id: string }[]) {
-      if (!r.service_id) continue
-      reviewCounts.set(r.service_id, (reviewCounts.get(r.service_id) ?? 0) + 1)
+  const statsMap = new Map<string, { avgResponseHours: number | null; responseRate: number | null }>()
+
+  try {
+    const supabase = await createClient()
+
+    // Verified-agent filter is applied as an IN-list on agency_id (type-safe).
+    let verifiedAgencyIds: string[] = []
+    let noResults = false
+    if (verifiedOnly) {
+      const { data: vAgencies } = await supabase
+        .from('agencies')
+        .select('id')
+        .eq('verification_status', 'verified')
+        .is('deleted_at', null)
+      verifiedAgencyIds = (vAgencies ?? []).map((a) => a.id)
+      if (verifiedAgencyIds.length === 0) noResults = true
     }
+
+    let query = supabase
+      .from('services')
+      .select('*, agencies(id, name, slug, verification_status, rating, city)', { count: 'exact' })
+      .eq('status', 'published')
+      .is('deleted_at', null)
+
+    if (q) query = query.or(`title.ilike.%${q}%,description.ilike.%${q}%`)
+    if (category) query = query.eq('category', category)
+    if (Number.isFinite(min) && min > 0) query = query.gte('base_price', min)
+    if (Number.isFinite(max) && max > 0) query = query.lte('base_price', max)
+    if (verifiedOnly && !noResults) query = query.in('agency_id', verifiedAgencyIds)
+
+    const agencyIdOf = (s: ServiceRow) => {
+      const a = Array.isArray(s.agencies) ? s.agencies[0] : s.agencies
+      return a?.id ?? null
+    }
+
+    if (!noResults && sort === 'response_time') {
+      // Fastest Response: fetch all matches, sort by real avg response time,
+      // then paginate — keeps the sort correct across pages.
+      const { data: all } = await query.order('created_at', { ascending: false })
+      const rows = (all ?? []) as ServiceRow[]
+      const ids = Array.from(new Set(rows.map(agencyIdOf).filter(Boolean) as string[]))
+      if (ids.length > 0) {
+        const { data: stats } = await supabase.rpc('agency_response_stats_batch', { p_agency_ids: ids })
+        for (const row of (stats ?? []) as { agency_id: string; avg_response_hours: number | null; response_rate: number | null }[]) {
+          statsMap.set(row.agency_id, { avgResponseHours: row.avg_response_hours, responseRate: row.response_rate })
+        }
+      }
+      const sorted = rows.slice().sort((a, b) => {
+        const ah = agencyIdOf(a) ? (statsMap.get(agencyIdOf(a)!)?.avgResponseHours ?? null) : null
+        const bh = agencyIdOf(b) ? (statsMap.get(agencyIdOf(b)!)?.avgResponseHours ?? null) : null
+        if (ah === null && bh === null) return 0
+        if (ah === null) return 1
+        if (bh === null) return -1
+        return ah - bh
+      })
+      count = sorted.length
+      services = sorted.slice(from, to)
+    } else if (!noResults) {
+      switch (sort) {
+        case 'rating':
+          query = query.order('rating', { referencedTable: 'agencies', ascending: false })
+          break
+        case 'price_asc':
+          query = query.order('base_price', { ascending: true })
+          break
+        case 'completed':
+          query = query.order('completed_orders', { referencedTable: 'agencies', ascending: false })
+          break
+        default:
+          query = query.order('created_at', { ascending: false })
+      }
+      const { data, count: c } = await query.range(from, to)
+      services = (data ?? []) as ServiceRow[]
+      count = c
+      const ids = Array.from(new Set(services.map(agencyIdOf).filter(Boolean) as string[]))
+      if (ids.length > 0) {
+        const { data: stats } = await supabase.rpc('agency_response_stats_batch', { p_agency_ids: ids })
+        for (const row of (stats ?? []) as { agency_id: string; avg_response_hours: number | null; response_rate: number | null }[]) {
+          statsMap.set(row.agency_id, { avgResponseHours: row.avg_response_hours, responseRate: row.response_rate })
+        }
+      }
+    }
+
+    const categoryRes = noResults ? null : await supabase.from('services').select('category').eq('status', 'published').is('deleted_at', null)
+    categories = Array.from(new Set((categoryRes?.data ?? []).map((c) => c.category as string).filter(Boolean)))
+
+    // Review counts for the services on this page (one batched query).
+    const pageIds = (services ?? []).map((s: ServiceRow) => s.id)
+    if (pageIds.length > 0) {
+      const { data: reviewRows } = await supabase.from('reviews').select('service_id').in('service_id', pageIds).is('deleted_at', null)
+      for (const r of (reviewRows ?? []) as { service_id: string }[]) {
+        if (!r.service_id) continue
+        reviewCounts.set(r.service_id, (reviewCounts.get(r.service_id) ?? 0) + 1)
+      }
+    }
+  } catch {
+    // Supabase unavailable — show empty state
+    services = []
+    count = 0
   }
 
-  const total = noResults ? 0 : (count ?? 0)
+  const total = services === null ? 0 : (count ?? 0)
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
   const currentPage = Math.min(page, totalPages)
   const sortLabel = SORT_OPTIONS.find((o) => o.value === sort)?.label ?? 'Recommended'
-  const categories = Array.from(new Set((categoryRes?.data ?? []).map((c) => c.category as string).filter(Boolean)))
 
   const controls = { q, category, sort, minPrice: Number.isFinite(min) && min > 0 ? String(min) : '', maxPrice: Number.isFinite(max) && max > 0 ? String(max) : '', verifiedOnly }
 

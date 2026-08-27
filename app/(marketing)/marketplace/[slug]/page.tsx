@@ -34,62 +34,75 @@ type ReviewRow = {
 
 export default async function ServiceDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const supabase = await createClient()
 
-  const { data: service } = await supabase
-    .from('services')
-    .select('*, agencies(id, name, slug, verification_status, rating, city, completed_orders, verifications)')
-    .eq('slug', slug)
-    .is('deleted_at', null)
-    .maybeSingle()
+  let service: { id: string; title: string; slug: string; category: string; description: string | null; location: string | null; base_price: number; currency: string; ordering_mode: string | null; images?: string[] | null; agencies: Agency | Agency[] | null; details?: unknown; faqs?: unknown } | null = null
+  let agency: Agency | undefined
+  let responseStats: { avgResponseHours: number | null; responseRate: number | null } | null = null
+  let related: RelatedRow[] | null = null
+  let reviewList: ReviewRow[] = []
 
-  if (!service) notFound()
+  try {
+    const supabase = await createClient()
 
-  const agency = (Array.isArray(service.agencies) ? service.agencies[0] : service.agencies) as Agency | undefined
-  const isInstant = service.ordering_mode === 'instant_order'
-  const Icon = categoryIcon(service.category)
+    const { data: serviceData } = await supabase
+      .from('services')
+      .select('*, agencies(id, name, slug, verification_status, rating, city, completed_orders, verifications)')
+      .eq('slug', slug)
+      .is('deleted_at', null)
+      .maybeSingle()
+
+    service = serviceData
+    if (!service) notFound()
+
+    agency = (Array.isArray(service.agencies) ? service.agencies[0] : service.agencies) as Agency | undefined
+
+    // Related services in the same category (honest recommendation, real data).
+    const { data: relatedData } = await supabase
+      .from('services')
+      .select('*, agencies(name, slug, verification_status, rating, city)')
+      .eq('status', 'published')
+      .eq('category', service.category)
+      .neq('id', service.id)
+      .is('deleted_at', null)
+      .order('created_at', { ascending: false })
+      .limit(3)
+    related = (relatedData ?? []) as RelatedRow[]
+
+    // Real computed response metrics for this agency.
+    if (agency) {
+      const { data: stats } = await supabase.rpc('agency_response_stats', { p_agency_id: agency.id })
+      const s = stats as { avg_response_hours?: number | null; response_rate?: number | null } | null
+      responseStats = { avgResponseHours: s?.avg_response_hours ?? null, responseRate: s?.response_rate ?? null }
+    }
+
+    // Reviews for this service (public read for published services).
+    // Only the reviewer's display name is selected — never email or contact info.
+    const { data: reviews } = await supabase
+      .from('reviews')
+      .select('id, rating, comment, created_at, author:profiles(full_name)')
+      .eq('service_id', service.id)
+      .is('deleted_at', null)
+      .order('created_at', { ascending: false })
+      .limit(20)
+    reviewList = (reviews ?? []) as ReviewRow[]
+  } catch {
+    notFound()
+  }
+
+  const isInstant = service!.ordering_mode === 'instant_order'
+  const Icon = categoryIcon(service!.category)
   const rating = Number(agency?.rating ?? 0)
   const verified = agency?.verification_status === 'verified'
-
-  // Related services in the same category (honest recommendation, real data).
-  const { data: related } = await supabase
-    .from('services')
-    .select('*, agencies(name, slug, verification_status, rating, city)')
-    .eq('status', 'published')
-    .eq('category', service.category)
-    .neq('id', service.id)
-    .is('deleted_at', null)
-    .order('created_at', { ascending: false })
-    .limit(3)
-
-  // Real computed response metrics for this agency.
-  let responseStats: { avgResponseHours: number | null; responseRate: number | null } | null = null
-  if (agency) {
-    const { data: stats } = await supabase.rpc('agency_response_stats', { p_agency_id: agency.id })
-    const s = stats as { avg_response_hours?: number | null; response_rate?: number | null } | null
-    responseStats = { avgResponseHours: s?.avg_response_hours ?? null, responseRate: s?.response_rate ?? null }
-  }
   const responseLabel = formatResponseTime(responseStats?.avgResponseHours ?? null)
-
-  // Reviews for this service (public read for published services).
-  // Only the reviewer's display name is selected — never email or contact info.
-  const { data: reviews } = await supabase
-    .from('reviews')
-    .select('id, rating, comment, created_at, author:profiles(full_name)')
-    .eq('service_id', service.id)
-    .is('deleted_at', null)
-    .order('created_at', { ascending: false })
-    .limit(20)
-  const reviewList = (reviews ?? []) as ReviewRow[]
   const reviewCount = reviewList.length
   const reviewAvg = reviewCount > 0 ? Math.round((reviewList.reduce((sum, r) => sum + Number(r.rating), 0) / reviewCount) * 10) / 10 : null
 
-  const images = ((service.images ?? []) as string[]).filter(Boolean)
+  const images = ((service!.images ?? []) as string[]).filter(Boolean)
   const mainImage = images.length > 0 ? publicImageUrl(images[0]) : null
-  const details = (service.details ?? null) as { included?: string[]; requirements?: string[]; delivery?: string | null } | null
-  const faqs = (service.faqs ?? []) as { question: string; answer: string }[]
+  const details = (service!.details ?? null) as { included?: string[]; requirements?: string[]; delivery?: string | null } | null
+  const faqs = (service!.faqs ?? []) as { question: string; answer: string }[]
 
-  const ctaHref = isInstant ? `/orders/new?service=${service.id}` : `/requests/new?service=${service.id}`
+  const ctaHref = isInstant ? `/orders/new?service=${service!.id}` : `/requests/new?service=${service!.id}`
   const ctaLabel = isInstant ? 'Order now' : 'Request a quote'
 
   return (
@@ -106,7 +119,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
             <section className="glass-panel rounded-3xl p-6 sm:p-8">
               {mainImage && (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={mainImage} alt={service.title} className="mb-7 aspect-[16/9] w-full rounded-[1.5rem] border border-border object-cover" />
+                <img src={mainImage} alt={service!.title} className="mb-7 aspect-[16/9] w-full rounded-[1.5rem] border border-border object-cover" />
               )}
               <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
                 <div className="flex flex-col gap-4">
@@ -115,10 +128,10 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                   </span>
                   <div>
                     <div className="flex flex-wrap items-center gap-2">
-                      <Badge variant="secondary">{service.category}</Badge>
+                      <Badge variant="secondary">{service!.category}</Badge>
                       {isInstant && <Badge variant="brand" className="bg-primary text-primary-foreground">Instant order</Badge>}
                     </div>
-                    <h1 className="font-display mt-4 text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">{service.title}</h1>
+                    <h1 className="font-display mt-4 text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">{service!.title}</h1>
                   </div>
                 </div>
               </div>
@@ -136,9 +149,9 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                     <BadgeCheck className="size-4" /> Verified agent
                   </span>
                 )}
-                {(service.location || agency?.city) && (
+                {(service!.location || agency?.city) && (
                   <span className="flex items-center gap-1.5">
-                    <MapPin className="size-4" /> {service.location || agency?.city}
+                    <MapPin className="size-4" /> {service!.location || agency?.city}
                   </span>
                 )}
               </div>
@@ -151,7 +164,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
 
               <div className="mt-6">
                 <h2 className="text-lg font-semibold">About this service</h2>
-                <p className="mt-3 whitespace-pre-line leading-7 text-muted-foreground">{service.description || 'No description provided yet.'}</p>
+                <p className="mt-3 whitespace-pre-line leading-7 text-muted-foreground">{service!.description || 'No description provided yet.'}</p>
               </div>
             </section>
 
@@ -292,7 +305,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
             {/* Booking panel */}
             <section className="glass-panel rounded-3xl p-6">
               <p className="text-sm text-muted-foreground">Starting from</p>
-              <p className="mt-1 font-mono text-3xl font-semibold">{formatMoney(service.base_price, service.currency)}</p>
+              <p className="mt-1 font-mono text-3xl font-semibold">{formatMoney(service!.base_price, service!.currency)}</p>
               <p className="mt-2 text-sm text-muted-foreground">
                 {isInstant ? 'Order now and secure your booking.' : 'Request a quote — the final plan is agreed before you pay.'}
               </p>

@@ -33,6 +33,13 @@ type ServiceRow = {
 }
 
 export default async function HomePage() {
+  let services: ServiceRow[] = []
+  let serviceCount = 0
+  let verifiedAgents = 0
+  let completedOrders = 0
+  const reviewCounts = new Map<string, number>()
+  let categories: string[] = FALLBACK_CATEGORIES
+
   const supabase = await createClient()
 
   // Homepage A/B: variant is assigned sticky by middleware (ttx_hero cookie).
@@ -48,24 +55,44 @@ export default async function HomePage() {
     description: typeof heroSection.description === 'string' ? heroSection.description : undefined,
   }
 
-  const [servicesRes, verifiedAgenciesRes, serviceCountRes, categoryRes, completedRes] = await Promise.all([
-    supabase
-      .from('services')
-      .select('*, agencies(name, slug, verification_status, rating, city)')
-      .eq('status', 'published')
-      .is('deleted_at', null)
-      .order('created_at', { ascending: false })
-      .limit(6),
-    supabase.from('agencies').select('id', { count: 'exact', head: true }).eq('verification_status', 'verified').is('deleted_at', null),
-    supabase.from('services').select('id', { count: 'exact', head: true }).eq('status', 'published').is('deleted_at', null),
-    supabase.from('services').select('category').eq('status', 'published').is('deleted_at', null),
-    supabase.from('agencies').select('completed_orders').eq('verification_status', 'verified').is('deleted_at', null),
-  ])
+  try {
+    const [servicesRes, verifiedAgenciesRes, serviceCountRes, categoryRes, completedRes] = await Promise.all([
+      supabase
+        .from('services')
+        .select('*, agencies(name, slug, verification_status, rating, city)')
+        .eq('status', 'published')
+        .is('deleted_at', null)
+        .order('created_at', { ascending: false })
+        .limit(6),
+      supabase.from('agencies').select('id', { count: 'exact', head: true }).eq('verification_status', 'verified').is('deleted_at', null),
+      supabase.from('services').select('id', { count: 'exact', head: true }).eq('status', 'published').is('deleted_at', null),
+      supabase.from('services').select('category').eq('status', 'published').is('deleted_at', null),
+      supabase.from('agencies').select('completed_orders').eq('verification_status', 'verified').is('deleted_at', null),
+    ])
 
-  const services = (servicesRes.data ?? []) as ServiceRow[]
-  const serviceCount = serviceCountRes.count ?? 0
-  const verifiedAgents = verifiedAgenciesRes.count ?? 0
-  const completedOrders = (completedRes.data ?? []).reduce((sum, a) => sum + Number(a.completed_orders ?? 0), 0)
+    services = (servicesRes.data ?? []) as ServiceRow[]
+    serviceCount = serviceCountRes.count ?? 0
+    verifiedAgents = verifiedAgenciesRes.count ?? 0
+    completedOrders = (completedRes.data ?? []).reduce((sum, a) => sum + Number(a.completed_orders ?? 0), 0)
+
+    const realCategories = Array.from(new Set((categoryRes.data ?? []).map((c) => c.category as string).filter(Boolean)))
+    if (realCategories.length > 0) categories = realCategories.slice(0, 9)
+
+    // Review counts for the popular services (one batched query).
+    if (services.length > 0) {
+      const { data: reviewRows } = await supabase
+        .from('reviews')
+        .select('service_id')
+        .in('service_id', services.map((s) => s.id))
+        .is('deleted_at', null)
+      for (const r of (reviewRows ?? []) as { service_id: string }[]) {
+        if (!r.service_id) continue
+        reviewCounts.set(r.service_id, (reviewCounts.get(r.service_id) ?? 0) + 1)
+      }
+    }
+  } catch {
+    // Supabase unavailable — show empty/fallback state
+  }
 
   // Hero marketplace preview — real published services only (never fabricated).
   const heroServices = services.slice(0, 2).map((s) => {
@@ -83,23 +110,6 @@ export default async function HomePage() {
         : null,
     }
   })
-
-  // Review counts for the popular services (one batched query).
-  const reviewCounts = new Map<string, number>()
-  if (services.length > 0) {
-    const { data: reviewRows } = await supabase
-      .from('reviews')
-      .select('service_id')
-      .in('service_id', services.map((s) => s.id))
-      .is('deleted_at', null)
-    for (const r of (reviewRows ?? []) as { service_id: string }[]) {
-      if (!r.service_id) continue
-      reviewCounts.set(r.service_id, (reviewCounts.get(r.service_id) ?? 0) + 1)
-    }
-  }
-
-  const realCategories = Array.from(new Set((categoryRes.data ?? []).map((c) => c.category as string).filter(Boolean)))
-  const categories = realCategories.length > 0 ? realCategories.slice(0, 9) : FALLBACK_CATEGORIES
 
   return (
     <div className="min-h-[100dvh] bg-background">
