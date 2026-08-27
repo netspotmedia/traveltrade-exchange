@@ -81,7 +81,7 @@ export function HeaderBar({
           {signedIn ? (
             <Link
               href="/dashboard"
-              className="group inline-flex items-center gap-1.5 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-card transition-all duration-200 hover:shadow-soft hover:opacity-95 active:scale-[0.98]"
+              className="group inline-flex items-center gap-1.5 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary-container/20 transition-all hover:shadow-xl active:scale-[0.98]"
             >
               Open workspace
               <ArrowRight className="size-4 transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true" />
@@ -96,7 +96,7 @@ export function HeaderBar({
               </Link>
               <Link
                 href="/auth/sign-up"
-                className="group inline-flex items-center gap-1.5 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-card transition-all duration-200 hover:shadow-soft hover:opacity-95 active:scale-[0.98]"
+                className="group inline-flex items-center gap-1.5 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary-container/20 transition-all hover:shadow-xl active:scale-[0.98]"
               >
                 Get started
                 <ArrowRight className="size-4 transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true" />

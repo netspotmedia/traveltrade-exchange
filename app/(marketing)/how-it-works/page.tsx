@@ -44,7 +44,7 @@ export default async function HowItWorksPage() {
 
         <div className="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {STEPS.map((s) => (
-            <div key={s.n} className="group flex flex-col gap-5 rounded-2xl border border-border bg-card p-7 shadow-card transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1 hover:shadow-soft">
+            <div key={s.n} className="group glass-card flex flex-col gap-5 rounded-2xl p-7 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1 hover:shadow-soft">
               <div className="flex items-center justify-between">
                 <span className="grid size-11 place-items-center rounded-full bg-brand-soft text-brand transition-colors duration-300 group-hover:bg-brand group-hover:text-primary-foreground">
                   <s.icon className="size-5" />
@@ -66,7 +66,7 @@ export default async function HowItWorksPage() {
           </div>
           <div className="mx-auto mt-10 grid max-w-4xl gap-5 md:grid-cols-3">
             {TRUST.map((t) => (
-              <div key={t.title} className="rounded-2xl border border-border bg-card p-6 shadow-card">
+              <div key={t.title} className="glass-panel rounded-2xl p-6">
                 <span className="grid size-11 place-items-center rounded-xl bg-brand-soft text-brand">
                   <t.icon className="size-5" />
                 </span>
@@ -86,7 +86,7 @@ export default async function HowItWorksPage() {
               </p>
             </div>
             <div className="flex flex-wrap justify-center gap-3">
-              <Link href="/marketplace" className="rounded-xl bg-white px-5 py-3 text-sm font-semibold text-primary shadow-card transition hover:opacity-90">
+              <Link href="/marketplace" className="rounded-lg bg-primary px-5 py-3 text-sm font-semibold text-on-primary shadow-lg shadow-primary-container/20 transition-all hover:shadow-xl">
                 Explore services
               </Link>
               <Link href="/onboarding" className="rounded-xl border border-primary-foreground/30 px-5 py-3 text-sm font-semibold text-primary-foreground transition hover:bg-primary-foreground/10">

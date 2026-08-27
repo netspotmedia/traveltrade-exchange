@@ -35,13 +35,13 @@ export function MessagesInbox({ conversations, currentUserId, activeOrderId }: I
       {/* Conversation list */}
       <div className={cn('flex flex-col gap-2', activeId ? 'hidden lg:flex' : 'flex')}>
         {conversations.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-border bg-background/60 px-4 py-12 text-center">
+          <div className="rounded-2xl border border-dashed glass-card px-4 py-12 text-center">
             <MessageSquareText className="mx-auto size-8 text-muted-foreground" aria-hidden="true" />
             <p className="mt-3 text-sm font-medium">No conversations yet</p>
             <p className="mt-1 text-xs text-muted-foreground">When you message a travel partner inside an order, it appears here.</p>
             <Link
               href="/marketplace"
-              className="mt-4 inline-flex rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-card transition hover:opacity-90"
+              className="mt-4 inline-flex rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary-container/20 transition-all hover:shadow-xl"
             >
               Find a service
             </Link>
@@ -59,7 +59,7 @@ export function MessagesInbox({ conversations, currentUserId, activeOrderId }: I
                   aria-pressed={isActive}
                   className={cn(
                     'rounded-2xl border p-4 text-left transition',
-                    isActive ? 'border-primary/40 bg-primary-soft' : 'border-border bg-card shadow-card hover:-translate-y-0.5 hover:shadow-lift',
+                    isActive ? 'border-primary/40 bg-primary-soft' : 'glass-card hover:-translate-y-0.5 hover:shadow-lift',
                   )}
                 >
                   <div className="flex items-center gap-2">
@@ -88,7 +88,7 @@ export function MessagesInbox({ conversations, currentUserId, activeOrderId }: I
       {/* Active thread */}
       <div className={cn(activeId ? 'block' : 'hidden lg:block')}>
         {active ? (
-          <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-card">
+          <div className="flex h-full flex-col overflow-hidden rounded-2xl glass-panel">
             {/* Mobile back button */}
             <div className="flex items-center gap-2 border-b border-border px-4 py-3 lg:hidden">
               <button
@@ -111,7 +111,7 @@ export function MessagesInbox({ conversations, currentUserId, activeOrderId }: I
             <MessageThread orderId={active.orderId} currentUserId={currentUserId} scrollClassName="h-[calc(100dvh-18rem)] min-h-[26rem]" />
           </div>
         ) : (
-          <div className="grid h-[calc(100dvh-16rem)] min-h-[26rem] place-items-center rounded-2xl border border-dashed border-border bg-background/60 text-sm text-muted-foreground">
+          <div className="grid h-[calc(100dvh-16rem)] min-h-[26rem] place-items-center rounded-2xl border border-dashed glass-card text-sm text-muted-foreground">
             Select a conversation to start messaging
           </div>
         )}

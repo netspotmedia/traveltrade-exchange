@@ -63,7 +63,7 @@ export default async function AdminEmailLogsPage({ searchParams }: { searchParam
           {/* Status summary */}
           <div className="grid gap-4 sm:grid-cols-5">
             {STATUSES.map((st) => (
-              <Link key={st} href={buildHref(st)} className={cn('rounded-2xl border bg-card p-4 text-center transition hover:-translate-y-0.5 hover:shadow-lift active:scale-[0.995]', filter === st ? 'border-primary/40 ring-2 ring-primary/30' : 'border-border')}>
+              <Link key={st} href={buildHref(st)} className={cn('glass-card rounded-2xl p-4 text-center transition hover:-translate-y-0.5 hover:shadow-lift active:scale-[0.995]', filter === st ? 'border-primary/40 ring-2 ring-primary/30' : '')}>
                 <p className="font-mono text-2xl font-semibold">{countMap[st] ?? 0}</p>
                 <p className="text-sm capitalize text-muted-foreground">{st}</p>
               </Link>
@@ -72,11 +72,11 @@ export default async function AdminEmailLogsPage({ searchParams }: { searchParam
 
         {/* Filter bar */}
         <div className="flex flex-wrap gap-2" role="group" aria-label="Filter by status">
-          <Link href={buildHref(null)} className={cn('rounded-full border px-3 py-1 text-sm transition active:scale-[0.995]', !filter ? 'border-primary bg-primary-soft text-primary' : 'border-border bg-card text-muted-foreground hover:bg-muted')}>
+          <Link href={buildHref(null)} className={cn('rounded-full border px-3 py-1 text-sm transition active:scale-[0.995]', !filter ? 'border-primary bg-primary-soft text-primary' : 'glass-card text-muted-foreground hover:bg-muted')}>
             All
           </Link>
           {STATUSES.map((st) => (
-            <Link key={st} href={buildHref(st)} className={cn('rounded-full border px-3 py-1 text-sm capitalize transition active:scale-[0.995]', filter === st ? 'border-primary bg-primary-soft text-primary' : 'border-border bg-card text-muted-foreground hover:bg-muted')}>
+            <Link key={st} href={buildHref(st)} className={cn('rounded-full border px-3 py-1 text-sm capitalize transition active:scale-[0.995]', filter === st ? 'border-primary bg-primary-soft text-primary' : 'glass-card text-muted-foreground hover:bg-muted')}>
               {st}
             </Link>
           ))}

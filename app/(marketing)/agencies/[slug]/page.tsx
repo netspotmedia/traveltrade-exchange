@@ -74,7 +74,7 @@ export default async function AgentProfilePage({ params }: { params: Promise<{ s
         </Link>
 
         {/* Profile header */}
-        <section className="mt-6 rounded-3xl border border-border bg-card p-6 shadow-card sm:p-8">
+        <section className="mt-6 glass-panel rounded-3xl p-6 sm:p-8">
           <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-5">
               <Avatar name={agency.name} size="xl" />
@@ -194,7 +194,7 @@ export default async function AgentProfilePage({ params }: { params: Promise<{ s
                   delivered and approved. One clear record covers proposals, milestones, delivery and messages.
                 </p>
                 <Link href="/marketplace" className="mt-4 inline-block">
-                  <Button className="bg-white text-primary hover:bg-white/90">Explore the marketplace</Button>
+                  <Button className="bg-primary text-on-primary hover:shadow-xl shadow-lg shadow-primary-container/20">Explore the marketplace</Button>
                 </Link>
               </div>
             </div>

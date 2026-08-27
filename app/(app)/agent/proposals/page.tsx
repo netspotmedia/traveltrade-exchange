@@ -52,7 +52,7 @@ export default async function AgentProposalsPage() {
               description="When a customer requests a quote from your services, your proposals will appear here."
               action={
                 <Link href="/agent/requests">
-                  <button className="rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-card transition hover:opacity-90">
+                  <button className="rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-on-primary shadow-lg shadow-primary-container/20 transition-all hover:shadow-xl">
                     View quote requests
                   </button>
                 </Link>
@@ -66,7 +66,7 @@ export default async function AgentProposalsPage() {
                   <Link
                     key={p.id}
                     href={order ? `/dashboard/orders/${order.id}` : '/agent/requests'}
-                    className="group rounded-[1.25rem] border border-border bg-card p-5 shadow-soft surface-soft transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-primary/15 hover:-translate-y-0.5 hover:shadow-soft-lg active:scale-[0.995]"
+                    className="group glass-card rounded-[1.25rem] p-5 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-primary/15 hover:-translate-y-0.5 hover:shadow-soft-lg active:scale-[0.995]"
                   >
                     <div className="flex flex-wrap items-start justify-between gap-3">
                       <div className="min-w-0">

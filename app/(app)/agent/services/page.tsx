@@ -32,7 +32,7 @@ export default async function AgentServicesPage() {
         <PageHeader
           title="Manage your services"
           actions={
-            <Link href="/agent/services/new" className="rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground shadow-card transition hover:opacity-90">
+            <Link href="/agent/services/new" className="rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-on-primary shadow-lg shadow-primary-container/20 transition-all hover:shadow-xl">
               New service
             </Link>
           }
@@ -51,7 +51,7 @@ export default async function AgentServicesPage() {
             />
           ) : (
             (services as ServiceRow[]).map((svc) => (
-              <div key={svc.id} className="group flex flex-wrap items-center justify-between gap-3 rounded-[1.25rem] border border-border bg-card p-5 shadow-soft surface-soft transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-primary/15 hover:-translate-y-0.5 hover:shadow-soft-lg active:scale-[0.995]">
+              <div key={svc.id} className="group flex flex-wrap items-center justify-between gap-3 glass-card rounded-[1.25rem] p-5 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-primary/15 hover:-translate-y-0.5 hover:shadow-soft-lg active:scale-[0.995]">
                 <div>
                   <p className="font-semibold">{svc.title}</p>
                   <p className="text-sm text-muted-foreground">

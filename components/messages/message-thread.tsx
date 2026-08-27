@@ -97,7 +97,7 @@ export function MessageThread({
             <div key={m.id} className={cn('flex', mine ? 'justify-end' : 'justify-start')}>
               <div
                 className={cn(
-                  'flex max-w-[78%] flex-col gap-1 rounded-2xl px-4 py-2 text-sm shadow-card',
+                  'flex max-w-[78%] flex-col gap-1 rounded-2xl px-4 py-2 text-sm glass-card',
                   mine ? 'rounded-br-md bg-primary text-primary-foreground' : 'rounded-bl-md bg-muted text-foreground',
                 )}
               >

@@ -65,7 +65,7 @@ export default async function HelpPage() {
           {SECTIONS.map((section) => (
             <section key={section.title}>
               <h2 className="text-xl font-semibold tracking-tight">{section.title}</h2>
-              <div className="mt-4 flex flex-col divide-y divide-border rounded-2xl border border-border bg-card shadow-card">
+              <div className="glass-card mt-4 flex flex-col divide-y divide-border rounded-2xl">
                 {section.items.map((item) => (
                   <details key={item.q} className="group px-5 py-4">
                     <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-sm font-semibold">
@@ -91,7 +91,7 @@ export default async function HelpPage() {
           </p>
           <Link
             href="/contact"
-            className="mt-5 inline-flex rounded-xl bg-white px-5 py-3 text-sm font-semibold text-primary shadow-card transition hover:opacity-90"
+            className="mt-5 inline-flex rounded-lg bg-primary px-5 py-3 text-sm font-semibold text-on-primary shadow-lg shadow-primary-container/20 transition-all hover:shadow-xl"
           >
             Contact Support
           </Link>

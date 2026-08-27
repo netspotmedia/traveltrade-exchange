@@ -36,14 +36,14 @@ export function MobileMenu({ signedIn }: { signedIn: boolean }) {
         aria-expanded={open}
         aria-controls="mobile-nav"
         onClick={() => setOpen((v) => !v)}
-        className="grid size-10 place-items-center rounded-xl border border-border bg-background text-foreground transition hover:bg-muted active:scale-[0.97]"
+        className="grid size-10 place-items-center rounded-xl glass-card text-foreground transition hover:bg-muted active:scale-[0.97]"
       >
         {open ? <X className="size-5" /> : <Menu className="size-5" />}
       </button>
       {open && (
         <div
           id="mobile-nav"
-          className="absolute inset-x-0 top-full z-50 border-b border-border bg-card/95 px-4 py-3 shadow-lift backdrop-blur-md"
+          className="absolute inset-x-0 top-full z-50 border-b border-border/50 bg-surface/80 backdrop-blur-sm px-4 py-3 shadow-lift"
         >
           <nav className="flex flex-col gap-0.5" aria-label="Mobile">
             {LINKS.map((l) => {
@@ -66,7 +66,7 @@ export function MobileMenu({ signedIn }: { signedIn: boolean }) {
             <button
               type="button"
               onClick={() => go(signedIn ? '/dashboard' : '/auth/sign-up')}
-              className="mt-1.5 min-h-11 rounded-xl bg-primary px-3 text-sm font-semibold text-primary-foreground transition hover:opacity-95 active:scale-[0.98]"
+              className="mt-1.5 min-h-11 rounded-xl bg-primary px-3 text-sm font-semibold text-primary-foreground transition hover:shadow-xl active:scale-[0.98]"
             >
               {signedIn ? 'Open workspace' : 'Get started'}
             </button>

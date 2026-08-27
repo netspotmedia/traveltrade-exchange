@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TravelTrade Exchange - Marketplace</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;family=Noto+Serif:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary-container": "#afb2b4",
+                    "on-error-container": "#93000a",
+                    "surface-bright": "#f9f9ff",
+                    "on-background": "#111c2d",
+                    "tertiary-fixed": "#e0e3e5",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary-fixed-dim": "#e9c349",
+                    "surface-container-highest": "#d8e3fb",
+                    "error-container": "#ffdad6",
+                    "on-tertiary": "#ffffff",
+                    "on-primary": "#ffffff",
+                    "on-surface-variant": "#404944",
+                    "surface-tint": "#2b6954",
+                    "outline": "#707974",
+                    "primary-container": "#064e3b",
+                    "background": "#f9f9ff",
+                    "tertiary-fixed-dim": "#c4c7c9",
+                    "outline-variant": "#bfc9c3",
+                    "on-secondary": "#ffffff",
+                    "on-tertiary-fixed": "#191c1e",
+                    "on-primary-fixed": "#002117",
+                    "secondary-container": "#fed65b",
+                    "primary": "#003527",
+                    "on-primary-fixed-variant": "#0b513d",
+                    "on-secondary-container": "#745c00",
+                    "inverse-on-surface": "#ecf1ff",
+                    "on-secondary-fixed": "#241a00",
+                    "surface": "#f9f9ff",
+                    "surface-container-high": "#dee8ff",
+                    "on-tertiary-fixed-variant": "#444749",
+                    "on-surface": "#111c2d",
+                    "inverse-primary": "#95d3ba",
+                    "primary-fixed": "#b0f0d6",
+                    "tertiary-container": "#424547",
+                    "tertiary": "#2b2f30",
+                    "surface-variant": "#d8e3fb",
+                    "surface-dim": "#cfdaf2",
+                    "error": "#ba1a1a",
+                    "secondary-fixed": "#ffe088",
+                    "primary-fixed-dim": "#95d3ba",
+                    "surface-container": "#e7eeff",
+                    "secondary": "#735c00",
+                    "on-primary-container": "#80bea6",
+                    "surface-container-low": "#f0f3ff",
+                    "inverse-surface": "#263143",
+                    "on-secondary-fixed-variant": "#574500",
+                    "on-error": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-mobile": "16px",
+                    "margin-desktop": "40px",
+                    "base": "8px",
+                    "gutter": "24px",
+                    "container-max": "1280px"
+            },
+            "fontFamily": {
+                    "display-lg": [
+                            "Noto Serif"
+                    ],
+                    "display-lg-mobile": [
+                            "Noto Serif"
+                    ],
+                    "headline-sm": [
+                            "Noto Serif"
+                    ],
+                    "body-lg": [
+                            "Hanken Grotesk"
+                    ],
+                    "interactive": [
+                            "Hanken Grotesk"
+                    ],
+                    "body-md": [
+                            "Hanken Grotesk"
+                    ],
+                    "label-caps": [
+                            "Hanken Grotesk"
+                    ],
+                    "headline-md": [
+                            "Noto Serif"
+                    ]
+            },
+            "fontSize": {
+                    "display-lg": [
+                            "48px",
+                            {
+                                    "lineHeight": "56px",
+                                    "letterSpacing": "-0.02em",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "display-lg-mobile": [
+                            "32px",
+                            {
+                                    "lineHeight": "40px",
+                                    "letterSpacing": "-0.01em",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "headline-sm": [
+                            "24px",
+                            {
+                                    "lineHeight": "32px",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "body-lg": [
+                            "18px",
+                            {
+                                    "lineHeight": "28px",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "interactive": [
+                            "14px",
+                            {
+                                    "lineHeight": "20px",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "body-md": [
+                            "16px",
+                            {
+                                    "lineHeight": "24px",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "label-caps": [
+                            "12px",
+                            {
+                                    "lineHeight": "16px",
+                                    "letterSpacing": "0.1em",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "headline-md": [
+                            "32px",
+                            {
+                                    "lineHeight": "40px",
+                                    "fontWeight": "600"
+                            }
+                    ]
+            }
+    },
+        },
+      }
+    </script>
+<style>
+        .glass-panel {
+            background-color: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 30px rgba(0, 53, 39, 0.05);
+        }
+        
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 53, 39, 0.1);
+            backdrop-filter: blur(32px);
+            -webkit-backdrop-filter: blur(32px);
+        }
+
+        .ambient-bg {
+            background: linear-gradient(135deg, #f9f9ff 0%, #e7eeff 100%);
+        }
+    </style>
+</head>
+<body class="ambient-bg text-on-background font-body-md min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<header class="bg-surface/70 backdrop-blur-3xl fixed top-0 w-full z-50 border-b border-white/20 shadow-[0_8px_30px_rgb(0,53,39,0.1)]">
+<div class="flex justify-between items-center px-margin-desktop py-4 max-w-container-max mx-auto">
+<div class="flex items-center gap-8">
+<a class="font-display-lg text-headline-sm font-bold text-primary tracking-tight" href="#">VoyageTrade</a>
+<nav class="hidden md:flex items-center gap-6">
+<a class="font-interactive text-interactive text-primary border-b-2 border-secondary-container pb-1 hover:backdrop-blur-2xl transition-all duration-300" href="#">Marketplace</a>
+<a class="font-interactive text-interactive text-on-surface-variant hover:text-primary hover:backdrop-blur-2xl transition-all duration-300" href="#">Dashboard</a>
+<a class="font-interactive text-interactive text-on-surface-variant hover:text-primary hover:backdrop-blur-2xl transition-all duration-300" href="#">Trades</a>
+<a class="font-interactive text-interactive text-on-surface-variant hover:text-primary hover:backdrop-blur-2xl transition-all duration-300" href="#">Services</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden lg:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-sm">search</span>
+<input class="pl-9 pr-4 py-2 rounded-full border-none bg-surface-container text-body-md focus:ring-2 focus:ring-primary/50 w-64 transition-all" placeholder="Search..." type="text"/>
+</div>
+<button class="material-symbols-outlined text-primary hover:translate-y-[-1px] active:scale-95 transition-all">notifications</button>
+<button class="material-symbols-outlined text-primary hover:translate-y-[-1px] active:scale-95 transition-all">shield_with_heart</button>
+<button class="bg-primary text-on-primary px-4 py-2 rounded-lg font-interactive text-interactive hover:bg-primary/90 hover:translate-y-[-1px] active:scale-95 transition-all shadow-sm hidden md:block border-t border-transparent hover:border-secondary-fixed">
+                    Create Request
+                </button>
+<img alt="User profile" class="w-10 h-10 rounded-full object-cover border-2 border-white cursor-pointer" data-alt="A professional headshot of a well-dressed travel agent in a bright, modern office space with soft lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBeLbUNFJZ2DvgT3s0351VUAZo9-KxRjgvxBRlw1hNiuTFEMAKIiZe7k8mnM-6o_JApXMO3AQwhpmL7sTKB0KkYEKJFuBbNRFqsMemGeT_6gL5MU4F9qefhdiq_sxy-b7gGvzUXDEXxiBCMhcQcSXxcmqhH9Lg4hZfcLNQbbvTzST8kipXwr5sGLw-iYvEcr17kJtG1d1uGN4OP5aS_OJmNsBOyOh9SwxPxTnGY7Rknzf3eI85KfRVr"/>
+</div>
+</div>
+</header>
+<main class="flex-grow pt-32 pb-24 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto w-full">
+<!-- Header Section -->
+<div class="mb-12">
+<h1 class="font-display-lg text-display-lg-mobile md:text-display-lg text-primary mb-4">Marketplace</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">Discover and book verified travel professionals, exclusive routes, and premium services for your global logistics needs.</p>
+</div>
+<!-- Controls & Filters (Bento Layout) -->
+<div class="glass-panel rounded-xl p-6 mb-12 flex flex-col gap-6">
+<div class="flex flex-col md:flex-row gap-4">
+<!-- Search -->
+<div class="relative flex-grow">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full h-12 pl-12 pr-10 rounded-lg border-b border-outline-variant bg-surface-container-lowest/50 focus:bg-surface-container-lowest focus:border-primary focus:ring-0 transition-colors font-body-md placeholder:text-outline text-on-surface" placeholder="Search destinations, services, or agents…" type="text"/>
+</div>
+<!-- Category -->
+<div class="relative min-w-[200px]">
+<select class="w-full h-12 appearance-none rounded-lg border border-outline-variant bg-surface-container-lowest/50 pl-4 pr-10 font-interactive text-interactive text-on-surface focus:border-primary focus:ring-0 transition-colors cursor-pointer">
+<option value="">All Categories</option>
+<option value="freight">Air Freight</option>
+<option value="charter">Private Charter</option>
+<option value="concierge">Concierge</option>
+<option value="escrow">Escrow Services</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none">expand_more</span>
+</div>
+<!-- Sort -->
+<div class="relative min-w-[200px]">
+<select class="w-full h-12 appearance-none rounded-lg border border-outline-variant bg-surface-container-lowest/50 pl-4 pr-10 font-interactive text-interactive text-on-surface focus:border-primary focus:ring-0 transition-colors cursor-pointer">
+<option value="recommended">Recommended</option>
+<option value="rating">Top Rated</option>
+<option value="price_asc">Lowest Price</option>
+<option value="response_time">Fastest Response</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none">expand_more</span>
+</div>
+<!-- Filter Toggle -->
+<button class="h-12 px-6 rounded-lg border border-outline-variant bg-surface-container-lowest/50 font-interactive text-interactive flex items-center gap-2 hover:bg-surface-container transition-colors" id="filterToggle">
+<span class="material-symbols-outlined text-[20px]">tune</span>
+                    Filters
+                 </button>
+</div>
+<!-- Expanded Filters (Hidden by default, shown for demo) -->
+<div class="pt-4 border-t border-outline-variant/30 flex flex-wrap gap-6 items-end" id="expandedFilters">
+<div class="flex flex-col gap-2">
+<label class="font-label-caps text-label-caps text-on-surface-variant uppercase">Min Price (USD)</label>
+<input class="w-32 h-10 rounded-md border-b border-outline-variant bg-surface-container-lowest/50 focus:border-primary focus:ring-0 px-3 font-body-md text-on-surface" placeholder="0" type="number"/>
+</div>
+<div class="flex flex-col gap-2">
+<label class="font-label-caps text-label-caps text-on-surface-variant uppercase">Max Price (USD)</label>
+<input class="w-32 h-10 rounded-md border-b border-outline-variant bg-surface-container-lowest/50 focus:border-primary focus:ring-0 px-3 font-body-md text-on-surface" placeholder="Any" type="number"/>
+</div>
+<label class="flex items-center gap-3 h-10 cursor-pointer">
+<input checked="" class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary accent-primary bg-surface-container-lowest" type="checkbox"/>
+<span class="font-interactive text-interactive text-on-surface">Verified Agents Only</span>
+</label>
+<div class="flex-grow flex justify-end">
+<button class="font-interactive text-interactive text-outline hover:text-error transition-colors">Clear all</button>
+</div>
+</div>
+</div>
+<!-- Main Content Layout -->
+<div class="flex flex-col lg:flex-row gap-gutter">
+<!-- Sidebar (Desktop) -->
+<aside class="hidden lg:flex flex-col gap-6 w-64 flex-shrink-0">
+<div class="glass-panel rounded-xl p-6">
+<h3 class="font-headline-sm text-headline-sm text-primary mb-4">Featured Regions</h3>
+<div class="flex flex-col gap-3">
+<label class="flex items-center gap-3 cursor-pointer group">
+<input class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary accent-primary bg-surface-container-lowest" type="checkbox"/>
+<span class="font-body-md text-body-md text-on-surface-variant group-hover:text-primary transition-colors">Europe &amp; UK</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary accent-primary bg-surface-container-lowest" type="checkbox"/>
+<span class="font-body-md text-body-md text-on-surface-variant group-hover:text-primary transition-colors">North America</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary accent-primary bg-surface-container-lowest" type="checkbox"/>
+<span class="font-body-md text-body-md text-on-surface-variant group-hover:text-primary transition-colors">Asia Pacific</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary accent-primary bg-surface-container-lowest" type="checkbox"/>
+<span class="font-body-md text-body-md text-on-surface-variant group-hover:text-primary transition-colors">Middle East</span>
+</label>
+</div>
+</div>
+<div class="glass-panel rounded-xl p-6 relative overflow-hidden">
+<div class="absolute inset-0 opacity-20 pointer-events-none">
+<!-- Abstract Map placeholder -->
+<div class="bg-cover bg-center w-full h-full" data-alt="An abstract, stylized dark emerald vector map of the world with subtle glowing gold nodes representing trade routes, very subtle and light." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAy5MSx_tnCTPfmZkci_3N8jvJoyrCrvTY7QZqA0GvIcoogWpd-2nD1PIjJn0oRcJQpeYXbC4SibEP-2rjvmcBsdviCU1Yqs_3r8Be_kUjEgL8hoT3qPNtYkTJeyiK5txBb9F-3EzN8J2kyf-DcDlpHBllzOKBeOuXbHHzahKMyZiUOikkCzmxHSYy2YtnB6TaytT1KVUxMRJQqh3S2tgxvLStuStkoG4VF1F8GY8jFjtK7_yEenoLZ')"></div>
+</div>
+<div class="relative z-10">
+<h3 class="font-headline-sm text-headline-sm text-primary mb-2">Global Coverage</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-4 text-sm">Access 150+ verified agents across key trade hubs.</p>
+<a class="font-interactive text-interactive text-primary flex items-center gap-1 hover:text-primary-container transition-colors" href="#">
+                            View Map <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- Results Grid -->
+<div class="flex-grow grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+<!-- Card 1 -->
+<div class="glass-panel rounded-xl overflow-hidden card-hover flex flex-col">
+<div class="relative h-48 w-full">
+<img class="w-full h-full object-cover" data-alt="A high-end luxury private jet parked on a pristine tarmac at sunset, with a deep emerald and soft gold light-mode aesthetic, signaling premium travel services." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAcSZTqbCJzJorosfAn2X9p7AaNC4pefVbMEr-yEguUT7F46mZmmqbH2_ItcpAeNP00gGJeZDBSp9cQbmhY6jt2UyvLwm_u18OiZL9rPiCHPgvhNqbtKso6PYhk1bkHAs6aLJPy_LFBCw7afJbjSkHnc1qrr3X-P3kgg1D_GCz5cCuvMzYy3ullufSMK7fgY-avrSF0Y7M1UMlvWLFux7n0lOEnaq1UBghAnPxtOQj1dDTcUU2D_TDG"/>
+<div class="absolute top-3 right-3 bg-secondary-container text-on-secondary-container font-label-caps text-label-caps px-2 py-1 rounded flex items-center gap-1 shadow-sm">
+<span class="material-symbols-outlined text-[14px]">verified</span>
+                            VERIFIED
+                        </div>
+</div>
+<div class="p-5 flex flex-col flex-grow">
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-headline-sm text-headline-sm text-primary line-clamp-1">Executive Air Charter</h3>
+<div class="flex items-center gap-1 bg-surface-container-highest px-2 py-1 rounded text-sm">
+<span class="material-symbols-outlined text-[14px] text-secondary">star</span>
+<span class="font-interactive font-bold">4.9</span>
+</div>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-4 text-sm line-clamp-2">Priority routing and dedicated concierge for high-net-worth logistics.</p>
+<div class="mt-auto pt-4 border-t border-outline-variant/30 flex justify-between items-center">
+<div class="flex items-center gap-2">
+<img class="w-6 h-6 rounded-full object-cover" data-alt="A small circular avatar of a professional agent wearing a sharp suit against a white background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4vqTmlwTItUGYLlCOKv3U19qJcE6a9KKagsVSf5cYP3MeHsxIt1tIVuTEn4QF4gAVcZubqSiMBeRXDEVJG5xiLv4KKZx3JGk1gkjYIy99gOm6FhPgvAexlqR-djzkpZGracsbTbUnW1rtO_hIljx_oEdcrquPvGJ627nm9oT0NoCdt9v8acXyd1-KKD6yMwd3YvoUiLNwEe0vkR8oOG6v-2f5Hcw095BLHmUTnmDAjhQaoplGFMOh"/>
+<span class="font-interactive text-interactive text-sm">Marcus Vance</span>
+</div>
+<div class="text-right">
+<span class="block font-label-caps text-[10px] text-outline uppercase">Starting at</span>
+<span class="font-interactive text-interactive text-primary font-bold">$12,500</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="glass-panel rounded-xl overflow-hidden card-hover flex flex-col">
+<div class="relative h-48 w-full">
+<img class="w-full h-full object-cover" data-alt="A massive modern container ship cutting through calm, deep blue waters, with subtle emerald and white brand colors in the sky, conveying reliable global shipping." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUn96u7DEHOjBjIms61VmWpTgBqXyqI8-L1ugr3Hd9QgXqyumDku3LTbnyuwtG0GVatnYkIYGsmVcWrmm1FwrEkFdeyxdLMfuSL5uz5sg5cq6r0fZ0KaBrKDhQjjKhI2t7ilO-eQNxAn7tpP7Qa1Jh_DO8o10tcB8P_Bh0zXsa8Ki1_Q_GzGZNrbtTmvY9b5mBON8GWVKRXjepDWEmT9wYcluKf4QCC663ztvMXOoqo2qFJk1LOcBu"/>
+<div class="absolute top-3 right-3 bg-surface-container-lowest text-on-surface font-label-caps text-label-caps px-2 py-1 rounded flex items-center gap-1 shadow-sm border border-outline-variant/50">
+                            PRO
+                        </div>
+</div>
+<div class="p-5 flex flex-col flex-grow">
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-headline-sm text-headline-sm text-primary line-clamp-1">Trans-Pacific Freight</h3>
+<div class="flex items-center gap-1 bg-surface-container-highest px-2 py-1 rounded text-sm">
+<span class="material-symbols-outlined text-[14px] text-secondary">star</span>
+<span class="font-interactive font-bold">4.7</span>
+</div>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-4 text-sm line-clamp-2">Secure ocean freight with real-time escrow tracking.</p>
+<div class="mt-auto pt-4 border-t border-outline-variant/30 flex justify-between items-center">
+<div class="flex items-center gap-2">
+<img class="w-6 h-6 rounded-full object-cover" data-alt="A small circular avatar of a logistics expert in a modern control room setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBRE4avQhb_zbl_tZwMWP9DDoLyC1N653erDXt1cBEghRPLiBNf_c-3Ekam-Qx--dh_KHfslszYvt-q8n05srhKogRajV1UO5LvULnDVO9dejJml8n6RY6lRxxH7WF89Ei3KLGy0jVN2qeTKe-ZYxV9hZtKATYggnL23HuLFzBEYCk0zcAnnFTRdf-OYUdyR975oOXxisW25AbF4Ev1GiDWsYDQ0jtrHBIZYwikJ_RfA1tRlP36FX1k"/>
+<span class="font-interactive text-interactive text-sm">Elena Rostova</span>
+</div>
+<div class="text-right">
+<span class="block font-label-caps text-[10px] text-outline uppercase">Starting at</span>
+<span class="font-interactive text-interactive text-primary font-bold">$3,200</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="glass-panel rounded-xl overflow-hidden card-hover flex flex-col">
+<div class="relative h-48 w-full">
+<img class="w-full h-full object-cover" data-alt="A sleek, modern high-speed train moving through a futuristic European landscape, clean white and emerald aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCsMVWe0UQ-96RdiYa7DSN-qDLh5th0kNRqjcS81BnyUtH_sOr_jgJtSYuq3H_D9rMJifr8XWFUPf7LyV56JANanOIAYWAIyssxx6COumiRM55d4GWZk-tkvBmUmpnqIUFy5sVtuVdr78VJp16FKvR7p0EIJ3d8eg3DeElo2oVpCTo_cGuIdUebcOyRV-AaB_pADnxUbgFxA-9WevE7--5HMdk-WZewfffNRvKQdzqxFovBFZrePRx5"/>
+<div class="absolute top-3 right-3 bg-secondary-container text-on-secondary-container font-label-caps text-label-caps px-2 py-1 rounded flex items-center gap-1 shadow-sm">
+<span class="material-symbols-outlined text-[14px]">verified</span>
+                            VERIFIED
+                        </div>
+</div>
+<div class="p-5 flex flex-col flex-grow">
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-headline-sm text-headline-sm text-primary line-clamp-1">EuroRail Secure</h3>
+<div class="flex items-center gap-1 bg-surface-container-highest px-2 py-1 rounded text-sm">
+<span class="material-symbols-outlined text-[14px] text-secondary">star</span>
+<span class="font-interactive font-bold">4.8</span>
+</div>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-4 text-sm line-clamp-2">Bonded cross-border rail logistics for high-value goods.</p>
+<div class="mt-auto pt-4 border-t border-outline-variant/30 flex justify-between items-center">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-interactive text-xs font-bold">JH</div>
+<span class="font-interactive text-interactive text-sm">James Howe</span>
+</div>
+<div class="text-right">
+<span class="block font-label-caps text-[10px] text-outline uppercase">Starting at</span>
+<span class="font-interactive text-interactive text-primary font-bold">$1,500</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-primary w-full mt-auto grid grid-cols-1 md:flex md:justify-between items-center px-margin-desktop py-12 border-t border-primary-container">
+<div class="mb-6 md:mb-0 text-center md:text-left">
+<span class="font-display-lg text-headline-sm font-bold text-primary-fixed block mb-2">VoyageTrade</span>
+<span class="font-body-md text-body-md text-on-primary opacity-80">© 2024 VoyageTrade Global. All rights reserved.</span>
+</div>
+<div class="flex flex-wrap justify-center gap-6">
+<a class="font-body-md text-body-md text-primary-fixed-dim/80 hover:text-secondary-fixed transition-colors cursor-pointer" href="#">Terms of Service</a>
+<a class="font-body-md text-body-md text-primary-fixed-dim/80 hover:text-secondary-fixed transition-colors cursor-pointer" href="#">Privacy Policy</a>
+<a class="font-body-md text-body-md text-primary-fixed-dim/80 hover:text-secondary-fixed transition-colors cursor-pointer" href="#">Escrow Protection</a>
+<a class="font-body-md text-body-md text-primary-fixed-dim/80 hover:text-secondary-fixed transition-colors cursor-pointer" href="#">Contact Support</a>
+</div>
+</footer>
+<script>
+        // Simple filter toggle logic for demonstration
+        document.getElementById('filterToggle').addEventListener('click', function() {
+            const filters = document.getElementById('expandedFilters');
+            if (filters.classList.contains('hidden')) {
+                filters.classList.remove('hidden');
+                this.classList.add('border-primary/40', 'text-primary', 'bg-surface-container');
+            } else {
+                // Assuming it's not hidden initially in this layout, but if we wanted to toggle:
+                // filters.classList.add('hidden');
+                // this.classList.remove('border-primary/40', 'text-primary', 'bg-surface-container');
+            }
+        });
+    </script>
+</body></html>

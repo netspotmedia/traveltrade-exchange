@@ -103,7 +103,7 @@ function ServiceCard({ service, className }: { service: HeroService; className?:
     <Link
       href={`/marketplace/${service.slug}`}
       className={cn(
-        'group w-[17rem] rounded-2xl border border-border bg-card p-5 text-left shadow-soft-lg transition-shadow duration-300 hover:shadow-float sm:w-[18.5rem]',
+        'group w-[17rem] rounded-2xl glass-card p-5 text-left transition-shadow duration-300 hover:shadow-float sm:w-[18.5rem]',
         className,
       )}
     >
@@ -150,7 +150,7 @@ function PaymentBadge({ className }: { className?: string }) {
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground shadow-soft-lg',
+        'inline-flex items-center gap-1.5 rounded-full glass-card px-3 py-1.5 text-xs font-medium text-foreground shadow-soft-lg',
         className,
       )}
     >
@@ -166,7 +166,7 @@ function EarlyMarketplace() {
   return (
     <div className="flex w-full flex-col items-center gap-5">
       <div className="relative flex flex-col items-center">
-        <div className="animate-float flex w-56 flex-col gap-3 rounded-2xl border border-dashed border-border bg-card/70 p-4 shadow-soft">
+        <div className="animate-float flex w-56 flex-col gap-3 rounded-2xl border-dashed glass-card p-4">
           <div className="flex items-center justify-between">
             <span className="grid size-8 place-items-center rounded-lg bg-brand-soft text-brand">
               <Compass className="size-4" aria-hidden="true" />
@@ -182,7 +182,7 @@ function EarlyMarketplace() {
             <span className="h-6 w-14 rounded-full bg-brand-soft" />
           </div>
         </div>
-        <div className="animate-float-delayed -mt-8 ml-8 flex w-48 flex-col gap-2.5 rounded-2xl border border-dashed border-border bg-card/70 p-4 shadow-soft">
+        <div className="animate-float-delayed -mt-8 ml-8 flex w-48 flex-col gap-2.5 rounded-2xl border-dashed glass-card p-4">
           <div className="h-2.5 w-2/3 rounded-full bg-muted" />
           <div className="h-2 w-1/3 rounded-full bg-muted" />
         </div>

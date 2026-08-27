@@ -21,7 +21,7 @@ export function SettingsNav({ active }: { active: 'security' | 'notifications' }
               'inline-flex shrink-0 items-center gap-1.5 rounded-xl border px-4 py-2.5 text-sm font-medium transition',
               isActive
                 ? 'border-primary/30 bg-brand-soft text-primary'
-                : 'border-border bg-card text-muted-foreground hover:bg-muted hover:text-foreground',
+                : 'glass-card text-muted-foreground hover:bg-muted hover:text-foreground',
             )}
           >
             <Icon className="size-4" aria-hidden="true" />

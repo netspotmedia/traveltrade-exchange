@@ -21,8 +21,8 @@ export function PageHeader({ title, description, actions, className, ambient = t
         />
       )}
       <div>
-        <h1 className="font-display text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">{title}</h1>
-        {description && <p className="mt-2 max-w-2xl text-pretty text-muted-foreground">{description}</p>}
+        <h1 className="font-display text-3xl font-bold leading-tight tracking-tight text-primary text-balance sm:text-4xl">{title}</h1>
+        {description && <p className="mt-2 max-w-2xl text-pretty text-on-surface-variant">{description}</p>}
       </div>
       {actions}
     </div>

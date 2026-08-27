@@ -1,0 +1,356 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-sans: var(--font-sans), ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: var(--font-display), Georgia, 'Times New Roman', serif;
+
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+
+  /* Semantic status tokens (for badges, alerts, progress) */
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  --color-brand: var(--brand);
+  --color-brand-soft: var(--brand-soft);
+
+  /* Elevation */
+  --shadow-card: 0 1px 2px 0 rgb(11 22 30 / 0.04), 0 1px 3px 0 rgb(11 22 30 / 0.06);
+  --shadow-lift: 0 6px 16px -4px rgb(11 22 30 / 0.1), 0 2px 6px -2px rgb(11 22 30 / 0.06);
+  --shadow-float: 0 12px 32px -8px rgb(11 22 30 / 0.18), 0 4px 12px -4px rgb(11 22 30 / 0.08);
+
+  /* ------------------------------------------------------------
+     Controlled radius scale (TTX design language)
+     - sm/md/lg: small controls, chips, buttons, inputs
+     - xl:       standard cards
+     - 2xl:      featured cards, list panels
+     - 3xl:      large surfaces, forms, modals
+     - 4xl:      hero-scale containers only (never scattered)
+     ------------------------------------------------------------ */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.625rem;
+  --radius-lg: var(--radius);
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
+  --radius-3xl: 1.5rem;
+  --radius-4xl: 2rem;
+
+  /* Alternating section surface (quiet tone change, no borders) */
+  --color-surface-alt: var(--surface-alt);
+
+  /* Tinted semantic surfaces (KPI accents, status chips) */
+  --color-secondary-soft: var(--secondary-soft);
+  --color-accent-soft: var(--accent-soft);
+}
+
+:root {
+  color-scheme: light;
+  /* Brand — deep trustworthy navy (trust) + teal (travel) + warm amber (action)
+     Aligned with the TTX Next design system. */
+  --brand: #0b3d5c;
+  --brand-soft: #e7f0f6;
+  --primary: #0b3d5c;
+  --primary-hover: #0a4a6e;
+  --primary-active: #093451;
+  --primary-soft: #e7f0f6;
+  --primary-foreground: #ffffff;
+  --secondary: #0e7c66;
+  --secondary-hover: #0d6b58;
+  --secondary-soft: #e2f4ef;
+  --secondary-foreground: #ffffff;
+  --accent: #e8a33d;
+  --accent-hover: #d9942f;
+  --accent-soft: #fdf3e2;
+  --accent-foreground: #1f2937;
+
+  --background: #f7f8fa;
+  --foreground: #16222c;
+  --card: #ffffff;
+  --card-foreground: #16222c;
+  --popover: #ffffff;
+  --popover-foreground: #16222c;
+  --muted: #f0f2f5;
+  --muted-foreground: #5a6b78;
+  --destructive: #c0392b;
+  --border: #dde2e7;
+  --input: #c6cfd7;
+  --ring: #0b3d5c;
+  --chart-1: #0b3d5c;
+  --chart-2: #0e7c66;
+  --chart-3: #e8a33d;
+  --chart-4: #2563eb;
+  --chart-5: #7c3aed;
+  --radius: 0.75rem;
+  --surface-alt: #eef1f4;
+
+  /* Semantic status */
+  --success: #e2f4ef;
+  --success-foreground: #0e7c66;
+  --warning: #fef3e2;
+  --warning-foreground: #d97706;
+  --info: #e8f0fe;
+  --info-foreground: #2563eb;
+
+  --sidebar: #ffffff;
+  --sidebar-foreground: #16222c;
+  --sidebar-primary: #0b3d5c;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #e7f0f6;
+  --sidebar-accent-foreground: #0b3d5c;
+  --sidebar-border: #dde2e7;
+  --sidebar-ring: #0b3d5c;
+}
+
+/* ------------------------------------------------------------
+   Motion system (TTX design language)
+   - Micro interactions: 120-180ms (transition utilities)
+   - Reveals: 400-700ms (hero-in / reveal)
+   - Ambient: gentle float, never continuous spinning
+   All animations are neutralised by the prefers-reduced-motion
+   guard in the base layer below.
+   ------------------------------------------------------------ */
+@theme {
+  --animate-hero-in: hero-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-float-delayed: float 7s ease-in-out 2.2s infinite;
+  --animate-pulse-soft: pulse-soft 3.5s ease-in-out infinite;
+
+  @keyframes hero-in {
+    from {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+  @keyframes pulse-soft {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.55;
+    }
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem; /* keeps anchors clear of the sticky header */
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-sans);
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    font-variant-numeric: tabular-nums;
+    font-size: 1rem;
+    line-height: 1.6;
+    caret-color: var(--brand);
+    overflow-x: clip;
+  }
+  ::selection {
+    background-color: color-mix(in oklch, var(--brand) 22%, transparent);
+  }
+  /* Themed thin scrollbars — browser surfaces belong to the design system. */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in oklch, var(--muted-foreground) 35%, transparent) transparent;
+  }
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  *::-webkit-scrollbar-thumb {
+    background: color-mix(in oklch, var(--muted-foreground) 35%, transparent);
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* Thin, unobtrusive scrollbars on panels */
+@layer utilities {
+  .scrollbar-none {
+    scrollbar-width: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* ------------------------------------------------------------
+   Premium editorial helpers (TTX design language)
+   - font-display: Fraunces serif for editorial marketing headlines
+   - font-eyebrow: microscopic uppercase tracking labels
+   - shadow-soft: diffused, premium elevation (no harsh drop shadows)
+   - text-balance / text-pretty: balanced heading + body wrapping
+   ------------------------------------------------------------ */
+@layer components {
+  .font-display {
+    font-family: var(--font-display);
+    font-optical-sizing: auto;
+  }
+  .font-eyebrow {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+  .shadow-soft {
+    box-shadow:
+      0 1px 2px 0 rgb(11 22 30 / 0.04),
+      0 8px 24px -6px rgb(11 22 30 / 0.1),
+      0 2px 6px -2px rgb(11 22 30 / 0.05);
+  }
+  .shadow-soft-lg {
+    box-shadow:
+      0 2px 4px 0 rgb(11 22 30 / 0.05),
+      0 20px 48px -12px rgb(11 22 30 / 0.16),
+      0 6px 14px -6px rgb(11 22 30 / 0.08);
+  }
+  /* Machined surface — diffused elevation plus a hairline top highlight so
+     cards read as physical plates rather than flat rectangles. */
+  .surface-soft {
+    box-shadow:
+      0 1px 2px 0 rgb(11 22 30 / 0.04),
+      0 8px 24px -6px rgb(11 22 30 / 0.1),
+      0 2px 6px -2px rgb(11 22 30 / 0.05),
+      inset 0 1px 0 rgb(255 255 255 / 0.5);
+  }
+  .dark .surface-soft {
+    box-shadow:
+      0 1px 2px 0 rgb(0 0 0 / 0.2),
+      0 8px 24px -6px rgb(0 0 0 / 0.35),
+      0 2px 6px -2px rgb(0 0 0 / 0.2),
+      inset 0 1px 0 rgb(255 255 255 / 0.05);
+  }
+  /* Faint architectural grid for the hero — masked toward the edges so it
+     reads as depth, never as a screenshot of a spreadsheet. */
+  .hero-grid {
+    background-image:
+      linear-gradient(to right, rgb(11 61 92 / 0.045) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(11 61 92 / 0.045) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse 70% 62% at 50% 0%, black 20%, transparent 72%);
+    -webkit-mask-image: radial-gradient(ellipse 70% 62% at 50% 0%, black 20%, transparent 72%);
+  }
+  .dark .hero-grid {
+    background-image:
+      linear-gradient(to right, rgb(226 232 240 / 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(226 232 240 / 0.05) 1px, transparent 1px);
+  }
+  /* Fine grain to stop flat color fields from feeling sterile. */
+  .bg-noise {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  }
+
+  /* Hero signature visual — route line draws in once on load, destination
+     mark settles with a gentle scale-in. Both respect prefers-reduced-motion
+     via the global guard in @layer base. */
+  .route-line-draw {
+    stroke-dasharray: 6 8;
+    stroke-dashoffset: 420;
+    animation: route-draw 1.8s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards;
+  }
+  .route-line-plane {
+    opacity: 0;
+    transform-origin: 300px 70px;
+    animation: route-mark-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) 1.9s forwards;
+  }
+  @keyframes route-draw {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  @keyframes route-mark-in {
+    from {
+      opacity: 0;
+      transform: scale(0.4);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+}
+
+/* Mobile bottom-sheet entrance (respects prefers-reduced-motion) */
+@keyframes sheet-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}

@@ -18,7 +18,7 @@ export async function Logo({ className }: { className?: string }) {
 
   return (
     <Link href="/" className={cn('flex items-center gap-2.5', className)} aria-label="TravelTrade Exchange home">
-      <span className="grid size-9 place-items-center rounded-xl bg-primary text-primary-foreground shadow-card" aria-hidden="true">
+      <span className="grid size-9 place-items-center rounded-xl bg-primary text-on-primary shadow-lg shadow-primary-container/20" aria-hidden="true">
         <Compass className="size-5" />
       </span>
       <span className="leading-tight">

@@ -67,7 +67,7 @@ export default async function OnboardingPage() {
         </div>
 
         {/* Status card */}
-        <section className="mt-6 rounded-3xl border border-border bg-card p-6 shadow-card sm:p-8">
+        <section className="mt-6 glass-panel rounded-3xl p-6 sm:p-8">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <span className="grid size-11 place-items-center rounded-xl bg-brand-soft text-brand" aria-hidden="true">
@@ -121,14 +121,14 @@ export default async function OnboardingPage() {
             {fullyVerified ? (
               <Link
                 href="/dashboard"
-                className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-card transition hover:opacity-90"
+                className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-on-primary shadow-lg shadow-primary-container/20 transition-all hover:shadow-xl"
               >
                 Go to dashboard <ChevronRight className="size-4" />
               </Link>
             ) : (
               <Link
                 href="/agent/verification"
-                className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-card transition hover:opacity-90"
+                className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-on-primary shadow-lg shadow-primary-container/20 transition-all hover:shadow-xl"
               >
                 {kybRejected ? 'Resubmit verification' : 'Continue verification'} <ChevronRight className="size-4" />
               </Link>

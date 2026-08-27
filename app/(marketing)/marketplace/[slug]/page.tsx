@@ -103,7 +103,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
           {/* Main column */}
           <div className="flex flex-col gap-8">
             {/* Overview */}
-            <section className="rounded-3xl border border-border bg-card p-6 shadow-card sm:p-8">
+            <section className="glass-panel rounded-3xl p-6 sm:p-8">
               {mainImage && (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={mainImage} alt={service.title} className="mb-7 aspect-[16/9] w-full rounded-[1.5rem] border border-border object-cover" />
@@ -157,7 +157,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
 
             {/* What's included / requirements / delivery */}
             {details && (details.included?.length || details.requirements?.length || details.delivery) && (
-              <section className="rounded-3xl border border-border bg-card p-6 shadow-card sm:p-8">
+              <section className="glass-panel rounded-3xl p-6 sm:p-8">
                 <h2 className="text-lg font-semibold">Service details</h2>
                 <div className="mt-5 grid gap-6 sm:grid-cols-2">
                   {details.included && details.included.length > 0 && (
@@ -198,7 +198,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
 
             {/* FAQ */}
             {faqs.length > 0 && (
-              <section className="rounded-3xl border border-border bg-card p-6 shadow-card sm:p-8">
+              <section className="glass-panel rounded-3xl p-6 sm:p-8">
                 <h2 className="text-lg font-semibold">Frequently asked questions</h2>
                 <div className="mt-4 flex flex-col divide-y divide-border">
                   {faqs.map((faq, i) => (
@@ -212,7 +212,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
             )}
 
             {/* How ordering works */}
-            <section className="rounded-3xl border border-border bg-card p-6 shadow-card sm:p-8">
+            <section className="glass-panel rounded-3xl p-6 sm:p-8">
               <h2 className="text-lg font-semibold">How it works</h2>
               <div className="mt-5 grid gap-4 sm:grid-cols-2">
                 {isInstant ? (
@@ -232,7 +232,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
             </section>
 
             {/* Secure payment */}
-            <section className="rounded-3xl border border-border bg-card p-6 shadow-card sm:p-8">
+            <section className="glass-panel rounded-3xl p-6 sm:p-8">
               <div className="flex items-start gap-4">
                 <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-brand-soft text-brand">
                   <Lock className="size-5" />
@@ -253,7 +253,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
             </section>
 
             {/* Reviews */}
-            <section className="rounded-3xl border border-border bg-card p-6 shadow-card sm:p-8">
+            <section className="glass-panel rounded-3xl p-6 sm:p-8">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <h2 className="text-lg font-semibold">Reviews</h2>
                 {reviewAvg != null && (
@@ -290,7 +290,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
           {/* Sidebar */}
           <aside className="flex flex-col gap-5 lg:sticky lg:top-24 lg:self-start">
             {/* Booking panel */}
-            <section className="rounded-3xl border border-border bg-card p-6 shadow-card">
+            <section className="glass-panel rounded-3xl p-6">
               <p className="text-sm text-muted-foreground">Starting from</p>
               <p className="mt-1 font-mono text-3xl font-semibold">{formatMoney(service.base_price, service.currency)}</p>
               <p className="mt-2 text-sm text-muted-foreground">
@@ -310,7 +310,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
 
             {/* Agent preview */}
             {agency && (
-              <section className="rounded-3xl border border-border bg-card p-6 shadow-card">
+              <section className="glass-panel rounded-3xl p-6">
                 <h2 className="text-sm font-semibold text-muted-foreground">Travel professional</h2>
                 <div className="mt-3 flex items-center gap-3">
                   <Avatar name={agency.name} size="lg" />

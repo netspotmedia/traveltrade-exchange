@@ -49,7 +49,7 @@ export function MfaEnrollment({ enforced }: { enforced: boolean }) {
   }
 
   return (
-    <section className="rounded-2xl border border-border bg-card p-6 surface-soft sm:p-8">
+    <section className="glass-panel rounded-2xl p-6 sm:p-8">
       <div className="flex items-start gap-4">
         <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-brand-soft text-brand" aria-hidden="true">
           <KeyRound className="size-5" />

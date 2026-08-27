@@ -23,7 +23,7 @@ export function HeroSearch({ variant }: { variant: 'a' | 'b' }) {
         action="/marketplace"
         method="get"
         onSubmit={submit}
-        className="group relative mx-auto flex w-full max-w-2xl items-center gap-2 rounded-full border border-border/80 bg-card p-1.5 pl-5 shadow-soft-lg transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:shadow-soft focus-within:border-primary/40 focus-within:shadow-soft focus-within:ring-4 focus-within:ring-primary/10"
+        className="group relative mx-auto flex w-full max-w-2xl items-center gap-2 rounded-full glass-card p-1.5 pl-5 shadow-soft-lg transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:shadow-soft focus-within:border-primary/40 focus-within:shadow-soft focus-within:ring-4 focus-within:ring-primary/10"
       >
         <span className="grid size-9 shrink-0 place-items-center rounded-full bg-brand-soft text-brand transition-transform duration-300 group-focus-within:scale-105">
           <Search className="size-4" aria-hidden="true" />
@@ -59,7 +59,7 @@ export function HeroSearch({ variant }: { variant: 'a' | 'b' }) {
               <Link
                 href={`/marketplace?q=${encodeURIComponent(ex)}`}
                 onClick={() => track('hero_search_chip', { variant, q: ex })}
-                className="group/chip inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3.5 py-1.5 text-xs font-medium text-foreground transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:border-primary/30 hover:text-primary hover:shadow-soft"
+                className="group/chip inline-flex items-center gap-1.5 rounded-full glass-card px-3.5 py-1.5 text-xs font-medium text-foreground transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:border-primary/30 hover:text-primary hover:shadow-soft"
               >
                 {ex}
                 <ArrowRight className="size-3 -translate-x-0.5 text-muted-foreground opacity-0 transition-all duration-200 group-hover/chip:translate-x-0 group-hover/chip:opacity-100" aria-hidden="true" />

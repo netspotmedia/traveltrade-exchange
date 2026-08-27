@@ -37,7 +37,7 @@ export function ReviewForm({ orderId, hasReview }: { orderId: string; hasReview:
 
   if (hasReview) {
     return (
-      <section className="rounded-[1.5rem] border border-border bg-card p-6 shadow-soft">
+      <section className="glass-card rounded-[1.5rem] p-6">
         <h2 className="text-lg font-semibold">Review</h2>
         <p className="mt-2 text-sm text-muted-foreground">You've already reviewed this order. Thanks for sharing your experience.</p>
       </section>
@@ -45,7 +45,7 @@ export function ReviewForm({ orderId, hasReview }: { orderId: string; hasReview:
   }
 
   return (
-    <section className="rounded-[1.5rem] border border-border bg-card p-6 shadow-soft sm:p-8">
+    <section className="glass-card rounded-[1.5rem] p-6 sm:p-8">
       <h2 className="text-lg font-semibold">Leave a review</h2>
       <p className="mt-1 text-sm text-muted-foreground">Your feedback helps other travellers choose with confidence.</p>
 

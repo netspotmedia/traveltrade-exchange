@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
  *  professionals are joining while keeping the page feeling alive. */
 export function MarketplaceEmpty() {
   return (
-    <div className="flex flex-col items-center gap-6 rounded-3xl border border-dashed border-border bg-card/60 px-6 py-14 text-center">
+    <div className="flex flex-col items-center gap-6 rounded-3xl border-dashed glass-card px-6 py-14 text-center">
       <span className="grid size-12 place-items-center rounded-2xl bg-brand-soft text-brand">
         <Compass className="size-6" aria-hidden="true" />
       </span>

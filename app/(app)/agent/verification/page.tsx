@@ -56,7 +56,7 @@ export default async function AgentVerificationPage() {
           <SectionTitle>Current status</SectionTitle>
           <div className="mt-4 grid gap-3 sm:grid-cols-3">
             {Object.entries(TYPE_LABELS).map(([type, label]) => (
-              <div key={type} className="group rounded-2xl border border-border p-4 surface-soft transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-primary/15 hover:-translate-y-0.5 hover:shadow-soft-lg active:scale-[0.995]">
+              <div key={type} className="group rounded-2xl border border-border p-4 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-primary/15 hover:-translate-y-0.5 hover:shadow-soft-lg active:scale-[0.995]">
                 <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{label}</p>
                 <StatusBadge domain="verification" status={statusFor(type)} className="mt-2" />
               </div>

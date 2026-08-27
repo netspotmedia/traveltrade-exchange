@@ -125,7 +125,7 @@ export default async function HomePage() {
               />
               <Link
                 href="/marketplace"
-                className="group inline-flex h-9 items-center gap-1.5 rounded-full border border-border bg-card px-4 text-sm font-semibold text-foreground shadow-card transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:text-primary hover:shadow-soft"
+                className="group glass-card inline-flex h-9 items-center gap-1.5 rounded-full px-4 text-sm font-semibold text-foreground transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:text-primary hover:shadow-soft"
               >
                 Browse all services
                 <ArrowRight className="size-4 transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true" />
@@ -185,7 +185,7 @@ export default async function HomePage() {
                   <Reveal key={cat} delay={i * 60}>
                     <Link
                       href={`/marketplace?category=${encodeURIComponent(cat)}`}
-                      className="group relative flex flex-col gap-3 rounded-xl border border-border bg-card p-5 shadow-card transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1 hover:border-primary/15 hover:shadow-soft"
+                      className="group glass-card relative flex flex-col gap-3 rounded-xl p-5 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1 hover:border-primary/15 hover:shadow-soft"
                     >
                       <span className="grid size-11 place-items-center rounded-xl bg-brand-soft text-brand transition-colors duration-300 group-hover:bg-brand group-hover:text-primary-foreground">
                         <Icon className="size-5" aria-hidden="true" />
@@ -267,7 +267,7 @@ export default async function HomePage() {
 
               {/* Stacked secondary card */}
               <Reveal delay={100}>
-                <div className="flex h-full flex-col justify-between gap-6 rounded-2xl border border-border bg-card p-7 shadow-card transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1 hover:border-secondary/25 hover:shadow-soft">
+                <div className="glass-card flex h-full flex-col justify-between gap-6 rounded-2xl p-7 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1 hover:border-secondary/25 hover:shadow-soft">
                   <span className="grid size-11 place-items-center rounded-full bg-secondary-soft text-secondary">
                     <Lock className="size-5" aria-hidden="true" />
                   </span>
@@ -282,7 +282,7 @@ export default async function HomePage() {
 
               {/* Wide strip — amber-accented, breaks the card-height rhythm */}
               <Reveal delay={200}>
-                <div className="flex h-full flex-col justify-between gap-6 rounded-2xl border border-accent/25 bg-accent-soft p-7 shadow-card transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1 hover:border-accent/40 hover:shadow-soft">
+                <div className="flex h-full flex-col justify-between gap-6 rounded-2xl border border-accent/25 bg-accent-soft p-7 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1 hover:border-accent/40 hover:shadow-soft">
                   <span className="grid size-11 place-items-center rounded-full bg-accent text-accent-foreground">
                     <FileText className="size-5" aria-hidden="true" />
                   </span>
@@ -311,7 +311,7 @@ export default async function HomePage() {
                 </p>
               </div>
               <div className="flex flex-wrap justify-center gap-3">
-                <Link href="/marketplace" className="inline-flex h-12 items-center rounded-full bg-white px-7 text-base font-semibold text-primary shadow-sm transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:opacity-90 active:scale-[0.98]">
+                <Link href="/marketplace" className="inline-flex h-12 items-center rounded-lg bg-primary px-7 text-base font-semibold text-on-primary shadow-lg shadow-primary-container/20 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:shadow-xl active:scale-[0.98]">
                   Explore services
                 </Link>
                 <Link href="/onboarding" className="inline-flex h-12 items-center rounded-full border border-primary-foreground/30 px-7 text-base font-semibold text-primary-foreground transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:bg-primary-foreground/10 active:scale-[0.98]">

@@ -80,7 +80,7 @@ export default async function AboutPage() {
         </section>
 
         <Reveal>
-          <section className="mt-20 rounded-3xl border border-border bg-card p-6 shadow-card sm:p-8">
+          <section className="mt-20 glass-panel rounded-3xl p-6 sm:p-8">
             <h2 className="text-2xl font-semibold tracking-tight">How TTX protects every transaction</h2>
             <div className="mt-6 flex flex-col gap-3">
               {PROTECTIONS.map((p) => (
@@ -104,7 +104,7 @@ export default async function AboutPage() {
                 <p className="mt-3 text-pretty text-primary-foreground/80">Join verified travel professionals and customers trading with confidence.</p>
               </div>
               <div className="flex flex-wrap justify-center gap-3">
-                <Link href="/marketplace" className="inline-flex h-12 items-center rounded-full bg-white px-7 text-base font-semibold text-primary shadow-sm transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:opacity-90 active:scale-[0.98]">
+                <Link href="/marketplace" className="inline-flex h-12 items-center rounded-lg bg-primary px-7 text-base font-semibold text-on-primary shadow-lg shadow-primary-container/20 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:shadow-xl active:scale-[0.98]">
                   Explore services
                 </Link>
                 <Link href="/auth/sign-up" className="inline-flex h-12 items-center rounded-full border border-primary-foreground/30 px-7 text-base font-semibold text-primary-foreground transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:bg-primary-foreground/10 active:scale-[0.98]">

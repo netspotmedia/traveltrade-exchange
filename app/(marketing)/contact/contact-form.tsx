@@ -40,7 +40,7 @@ export function ContactForm() {
   }
 
   return (
-    <form onSubmit={submit} className="mt-4 flex flex-col gap-4 rounded-2xl border border-border bg-card p-6 shadow-card">
+    <form onSubmit={submit} className="glass-panel mt-4 flex flex-col gap-4 rounded-2xl p-6">
       <label className="flex flex-col gap-1.5 text-sm font-medium">
         Name
         <Input required value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" autoComplete="name" />

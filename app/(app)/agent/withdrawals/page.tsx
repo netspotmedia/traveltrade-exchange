@@ -37,7 +37,7 @@ export default async function AgentWithdrawalsPage() {
         />
 
         {/* Available balance */}
-        <section className="mt-6 rounded-3xl border border-border bg-primary p-6 text-primary-foreground shadow-card">
+        <section className="mt-6 rounded-3xl bg-primary p-6 text-on-primary shadow-lg shadow-primary-container/20">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
               <p className="text-sm text-primary-foreground/75">Available balance</p>
@@ -50,7 +50,7 @@ export default async function AgentWithdrawalsPage() {
             </div>
             <Link
               href="/dashboard/wallet"
-              className="inline-flex items-center gap-1.5 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-primary shadow-card transition hover:opacity-90"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-on-primary shadow-lg shadow-primary-container/20 transition-all hover:shadow-xl"
             >
               <WalletCards className="size-4" /> View full wallet
             </Link>
@@ -76,7 +76,7 @@ export default async function AgentWithdrawalsPage() {
             ) : (
               <div className="flex flex-col gap-3">
                 {withdrawals.map((w) => (
-                  <div key={w.id} className="group flex flex-wrap items-center justify-between gap-3 border-b border-border py-3 text-sm surface-soft transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:border-primary/15 hover:shadow-soft-lg active:scale-[0.995] last:border-0">
+                  <div key={w.id} className="group flex flex-wrap items-center justify-between gap-3 border-b border-border py-3 text-sm transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:border-primary/15 hover:shadow-soft-lg active:scale-[0.995] last:border-0">
                     <div>
                       <span className="font-medium">{formatMoney(w.amount, w.currency)}</span>
                       <span className="ml-3 text-muted-foreground">{formatDate(w.created_at)}</span>

@@ -252,7 +252,7 @@ export function MarketplaceControls({
             role="dialog"
             aria-modal="true"
             aria-label="Filters"
-            className="fixed inset-x-0 bottom-0 z-50 max-h-[85dvh] overflow-y-auto rounded-t-3xl border-t border-border bg-card p-6 shadow-float pb-[calc(1.5rem+env(safe-area-inset-bottom))] motion-safe:animate-[sheet-up_220ms_ease-out]"
+            className="fixed inset-x-0 bottom-0 z-50 max-h-[85dvh] overflow-y-auto rounded-t-3xl border-t border-border/50 glass-panel p-6 pb-[calc(1.5rem+env(safe-area-inset-bottom))] motion-safe:animate-[sheet-up_220ms_ease-out]"
           >
             <div className="mx-auto mb-5 h-1 w-10 rounded-full bg-border" aria-hidden="true" />
             <div className="flex items-center justify-between">

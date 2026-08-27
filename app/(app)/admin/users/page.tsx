@@ -88,7 +88,7 @@ export default async function AdminUsersPage({ searchParams }: { searchParams: P
             {totalPages > 1 && (
               <nav className="flex items-center justify-center gap-3" aria-label="Pagination">
                 {page > 1 ? (
-                  <Link href={buildPage(page - 1)} className="inline-flex h-10 items-center rounded-xl border border-border bg-card px-4 text-sm font-medium shadow-card transition hover:bg-muted active:scale-[0.995]">
+                  <Link href={buildPage(page - 1)} className="inline-flex h-10 items-center rounded-xl glass-card px-4 text-sm font-medium transition hover:bg-muted active:scale-[0.995]">
                     Previous
                   </Link>
                 ) : (
@@ -98,7 +98,7 @@ export default async function AdminUsersPage({ searchParams }: { searchParams: P
                   Page <strong className="text-foreground">{page}</strong> of {totalPages}
                 </span>
                 {page < totalPages ? (
-                  <Link href={buildPage(page + 1)} className="inline-flex h-10 items-center rounded-xl border border-border bg-card px-4 text-sm font-medium shadow-card transition hover:bg-muted active:scale-[0.995]">
+                  <Link href={buildPage(page + 1)} className="inline-flex h-10 items-center rounded-xl glass-card px-4 text-sm font-medium transition hover:bg-muted active:scale-[0.995]">
                     Next
                   </Link>
                 ) : (

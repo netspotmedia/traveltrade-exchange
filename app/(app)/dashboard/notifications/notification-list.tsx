@@ -44,7 +44,7 @@ export function NotificationList({ notifications: initial }: { notifications: No
           <div
             key={n.id}
             className={cn(
-              'flex items-start gap-3 rounded-2xl border bg-card p-5 surface-soft transition',
+              'flex items-start gap-3 glass-card rounded-2xl p-5 transition',
               unread ? 'border-primary/25 bg-brand-soft/40' : 'border-border opacity-80',
             )}
           >

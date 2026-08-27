@@ -44,7 +44,7 @@ export default async function AdminCmsPage() {
                 <Link
                   key={p.slug}
                   href={`/admin/cms/${p.slug}`}
-                  className="flex items-center justify-between gap-4 rounded-2xl border border-border bg-card p-5 surface-soft transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:border-primary/15 hover:shadow-soft-lg active:scale-[0.995]"
+                  className="flex items-center justify-between gap-4 glass-card rounded-2xl p-5 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:border-primary/15 hover:shadow-soft-lg active:scale-[0.995]"
                 >
                 <span className="flex items-center gap-3">
                   <span className="grid size-10 place-items-center rounded-xl bg-brand-soft text-brand" aria-hidden="true">

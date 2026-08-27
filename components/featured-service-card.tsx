@@ -21,7 +21,7 @@ export function FeaturedServiceCard({ service, responseStats, imageUrl, reviewCo
   return (
     <Link
       href={`/marketplace/${service.slug}`}
-      className={`group flex flex-col overflow-hidden rounded-3xl border border-border bg-card transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1 hover:border-input/70 hover:shadow-soft-lg focus-visible:ring-2 focus-visible:ring-ring/50 md:flex-row ${className ?? ''}`}
+      className={`group flex flex-col overflow-hidden rounded-3xl glass-card transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1 hover:border-input/70 hover:shadow-soft-lg focus-visible:ring-2 focus-visible:ring-ring/50 md:flex-row ${className ?? ''}`}
     >
       {/* Larger visual — roughly half the card on desktop, full-bleed top on mobile */}
       <div className="relative aspect-[16/10] shrink-0 overflow-hidden bg-gradient-to-br from-brand/12 via-brand-soft to-secondary md:aspect-auto md:w-[45%]">
@@ -34,7 +34,7 @@ export function FeaturedServiceCard({ service, responseStats, imageUrl, reviewCo
           />
         ) : (
           <span className="absolute inset-0 flex items-center justify-center" aria-hidden="true">
-            <span className="grid size-16 place-items-center rounded-2xl bg-card text-brand shadow-card transition-transform duration-300 group-hover:scale-105">
+            <span className="grid size-16 place-items-center rounded-2xl glass-card text-brand transition-transform duration-300 group-hover:scale-105">
               <Icon className="size-8" />
             </span>
           </span>
@@ -98,7 +98,7 @@ export function FeaturedServiceCard({ service, responseStats, imageUrl, reviewCo
               {formatMoney(service.base_price, service.currency)}
             </p>
           </div>
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:opacity-90">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:shadow-xl">
             View service
             <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-0.5" />
           </span>

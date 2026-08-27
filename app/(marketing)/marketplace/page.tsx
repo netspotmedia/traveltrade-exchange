@@ -232,7 +232,7 @@ export default async function MarketplacePage({ searchParams }: { searchParams: 
                 {currentPage > 1 ? (
                   <Link
                     href={`/marketplace?${paramsToQs(params, currentPage - 1)}`}
-                    className="inline-flex h-10 items-center gap-1.5 rounded-xl border border-border bg-card px-4 text-sm font-medium shadow-card transition hover:bg-muted"
+                    className="inline-flex h-10 items-center gap-1.5 rounded-xl glass-card px-4 text-sm font-medium transition hover:bg-muted"
                   >
                     <ChevronLeft className="size-4" /> Previous
                   </Link>
@@ -247,7 +247,7 @@ export default async function MarketplacePage({ searchParams }: { searchParams: 
                 {currentPage < totalPages ? (
                   <Link
                     href={`/marketplace?${paramsToQs(params, currentPage + 1)}`}
-                    className="inline-flex h-10 items-center gap-1.5 rounded-xl border border-border bg-card px-4 text-sm font-medium shadow-card transition hover:bg-muted"
+                    className="inline-flex h-10 items-center gap-1.5 rounded-xl glass-card px-4 text-sm font-medium transition hover:bg-muted"
                   >
                     Next <ChevronRight className="size-4" />
                   </Link>

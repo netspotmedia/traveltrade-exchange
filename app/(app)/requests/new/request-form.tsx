@@ -30,7 +30,7 @@ export function RequestForm({ serviceId }: { serviceId: string }) {
   }
 
   return (
-    <form onSubmit={submit} className="flex flex-col gap-5 rounded-2xl border border-border bg-card p-6 surface-soft sm:p-8">
+    <form onSubmit={submit} className="flex flex-col gap-5 glass-panel rounded-2xl p-6 sm:p-8">
       <div>
         <p className="text-sm font-semibold text-primary">Request a quote</p>
         <h1 className="mt-1 text-3xl font-semibold tracking-tight">Tell the agent what you need</h1>

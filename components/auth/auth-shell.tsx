@@ -26,7 +26,7 @@ export function AuthShell({
       {/* Form column */}
       <div className="flex flex-col px-5 py-8 sm:px-8 lg:px-14">
         <Link href="/" className="flex w-fit items-center gap-2.5" aria-label="TravelTrade Exchange home">
-          <span className="grid size-9 place-items-center rounded-xl bg-primary text-primary-foreground shadow-card" aria-hidden="true">
+          <span className="grid size-9 place-items-center rounded-xl bg-primary text-on-primary shadow-lg shadow-primary-container/20" aria-hidden="true">
             <Compass className="size-5" />
           </span>
           <span className="leading-tight">

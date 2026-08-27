@@ -88,7 +88,7 @@ export function ProposalPanel({
   }
 
   return (
-    <section className="rounded-2xl border border-border bg-card surface-soft">
+    <section className="glass-panel rounded-2xl">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-5 py-4">
         <div>
           <h2 className="font-semibold">Proposal & milestones</h2>

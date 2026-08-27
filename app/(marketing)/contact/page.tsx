@@ -35,7 +35,7 @@ export default async function ContactPage() {
           <div className="space-y-4">
             <h2 className="text-lg font-semibold">Get in touch</h2>
             {METHODS.map((m) => (
-              <div key={m.label} className="flex items-center gap-4 rounded-2xl border border-border bg-card p-5 shadow-card">
+              <div key={m.label} className="glass-panel flex items-center gap-4 rounded-2xl p-5">
                 <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-brand-soft text-brand">
                   <m.icon className="size-5" />
                 </span>

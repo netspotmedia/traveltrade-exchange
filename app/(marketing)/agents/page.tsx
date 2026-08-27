@@ -74,11 +74,11 @@ export default async function AgentsPage({ searchParams }: { searchParams: Promi
         {/* Country filter */}
         {countries.length > 0 && (
           <div className="mt-8 flex flex-wrap gap-2" role="group" aria-label="Filter by country">
-            <Link href={buildHref(null, 1)} className={cn('rounded-full border px-3 py-1 text-sm transition', !country ? 'border-primary bg-primary-soft text-primary' : 'border-border bg-card text-muted-foreground hover:bg-muted')}>
+            <Link href={buildHref(null, 1)} className={cn('glass-card rounded-full px-3 py-1 text-sm transition', !country ? 'border-primary bg-primary-soft text-primary' : 'text-muted-foreground hover:bg-muted')}>
               All Countries
             </Link>
             {countries.map((c) => (
-              <Link key={c} href={buildHref(c, 1)} className={cn('rounded-full border px-3 py-1 text-sm transition', country === c ? 'border-primary bg-primary-soft text-primary' : 'border-border bg-card text-muted-foreground hover:bg-muted')}>
+              <Link key={c} href={buildHref(c, 1)} className={cn('glass-card rounded-full px-3 py-1 text-sm transition', country === c ? 'border-primary bg-primary-soft text-primary' : 'text-muted-foreground hover:bg-muted')}>
                 {c}
               </Link>
             ))}
@@ -93,7 +93,7 @@ export default async function AgentsPage({ searchParams }: { searchParams: Promi
               description={country ? 'Try a different country or browse all agents.' : 'We are onboarding our first verified agents. Check back soon.'}
               action={
                 country ? (
-                  <Link href="/agents" className="inline-flex rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-medium shadow-card transition hover:bg-muted">
+                  <Link href="/agents" className="glass-panel inline-flex rounded-xl px-4 py-2.5 text-sm font-medium transition hover:bg-muted">
                     View all agents
                   </Link>
                 ) : undefined
@@ -107,7 +107,7 @@ export default async function AgentsPage({ searchParams }: { searchParams: Promi
                   <Link
                     key={a.id}
                     href={`/agencies/${a.slug}`}
-                    className="group flex flex-col gap-4 rounded-2xl border border-border bg-card p-6 surface-soft transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:border-primary/15 hover:shadow-soft-lg active:scale-[0.995]"
+                    className="group glass-card flex flex-col gap-4 rounded-2xl p-6 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:border-primary/15 hover:shadow-soft-lg active:scale-[0.995]"
                   >
                     <div className="flex items-center gap-3">
                       <Avatar name={a.name} size="lg" />
@@ -141,7 +141,7 @@ export default async function AgentsPage({ searchParams }: { searchParams: Promi
         {totalPages > 1 && (
           <nav className="mt-10 flex items-center justify-center gap-3" aria-label="Pagination">
             {page > 1 ? (
-              <Link href={buildHref(country || null, page - 1)} className="inline-flex h-10 items-center rounded-xl border border-border bg-card px-4 text-sm font-medium shadow-card transition hover:bg-muted">
+              <Link href={buildHref(country || null, page - 1)} className="glass-card inline-flex h-10 items-center rounded-xl px-4 text-sm font-medium transition hover:bg-muted">
                 Previous
               </Link>
             ) : (
@@ -151,7 +151,7 @@ export default async function AgentsPage({ searchParams }: { searchParams: Promi
               Page <strong className="text-foreground">{page}</strong> of {totalPages}
             </span>
             {page < totalPages ? (
-              <Link href={buildHref(country || null, page + 1)} className="inline-flex h-10 items-center rounded-xl border border-border bg-card px-4 text-sm font-medium shadow-card transition hover:bg-muted">
+              <Link href={buildHref(country || null, page + 1)} className="glass-card inline-flex h-10 items-center rounded-xl px-4 text-sm font-medium transition hover:bg-muted">
                 Next
               </Link>
             ) : (
