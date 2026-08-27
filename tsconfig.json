@@ -29,5 +29,5 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"
   ],
-  "exclude": ["node_modules", "ttx-landing-upgrade", "ttx-full-upgrade"]
+  "exclude": ["node_modules", "ttx-landing-upgrade", "ttx-full-upgrade", "ttx-marketplace-audit"]
 }
