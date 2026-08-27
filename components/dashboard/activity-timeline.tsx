@@ -51,8 +51,8 @@ export function ActivityTimeline({ entries, viewAllHref }: ActivityTimelineProps
           <BellRing className="size-6" />
         </span>
         <div>
-          <p className="font-semibold text-primary">No activity yet</p>
-          <p className="mt-1 max-w-sm text-sm text-on-surface-variant">Escrow events, milestones and alerts will land here as your trades move.</p>
+          <p className="font-semibold text-primary">Nothing to show yet</p>
+          <p className="mt-1 max-w-sm text-sm text-on-surface-variant">Once you search, order, message an agent, or fund a booking, your activity will appear here.</p>
         </div>
       </div>
     )

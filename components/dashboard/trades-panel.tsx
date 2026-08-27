@@ -18,7 +18,7 @@ type Filter = 'all' | 'attention' | 'escrow'
 const FILTERS: Array<{ key: Filter; label: string }> = [
   { key: 'all', label: 'All' },
   { key: 'attention', label: 'Needs attention' },
-  { key: 'escrow', label: 'In escrow' },
+  { key: 'escrow', label: 'Payment secured' },
 ]
 
 /** Interactive Active Trades panel — role-aware filters, live search and
@@ -50,7 +50,7 @@ export function TradesPanel({ trades, viewAllHref, createHref }: TradesPanelProp
   return (
     <div className="glass-panel flex flex-col rounded-3xl p-6 md:p-7">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h3 className="font-display text-xl font-semibold tracking-tight text-primary">Active Trades</h3>
+        <h3 className="font-display text-xl font-semibold tracking-tight text-primary">Your Orders</h3>
         <Link href={viewAllHref} className="group inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline">
           View all
           <ArrowRight className="size-4 transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true" />
@@ -79,7 +79,7 @@ export function TradesPanel({ trades, viewAllHref, createHref }: TradesPanelProp
         </div>
 
         <label className="relative block w-full sm:w-56">
-          <span className="sr-only">Search trades</span>
+          <span className="sr-only">Search orders</span>
           <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-on-surface-variant" aria-hidden="true" />
           <input
             type="search"
@@ -109,12 +109,12 @@ export function TradesPanel({ trades, viewAllHref, createHref }: TradesPanelProp
               <ShieldAlert className="size-6" />
             </span>
             <div>
-              <p className="font-semibold text-primary">No trades here</p>
-              <p className="mt-1 max-w-sm text-sm text-on-surface-variant">{query || filter !== 'all' ? 'Try adjusting your filters or search.' : 'Start a trade request and it will appear here.'}</p>
+              <p className="font-semibold text-primary">No orders here</p>
+              <p className="mt-1 max-w-sm text-sm text-on-surface-variant">{query || filter !== 'all' ? 'Try adjusting your filters or search.' : 'Your active bookings will appear here once you request a service.'}</p>
             </div>
             {!query && filter === 'all' && (
               <Link href={createHref} className="mt-1 inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-on-primary transition hover:shadow-lg active:scale-[0.98]">
-                New trade request <ArrowRight className="size-3.5" aria-hidden="true" />
+                Start a booking <ArrowRight className="size-3.5" aria-hidden="true" />
               </Link>
             )}
           </div>

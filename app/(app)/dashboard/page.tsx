@@ -1,32 +1,26 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import {
-  ArrowLeftRight,
   ArrowRight,
-  BadgeCheck,
   BriefcaseBusiness,
-  FileText,
-  Inbox,
   MessageSquareText,
   Plus,
-  ShieldCheck,
+  ShoppingBag,
   Store,
-  WalletCards,
-  type LucideIcon,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
-import { ServiceCard } from '@/components/service-card'
+import { PremiumServiceCard } from '@/components/service-card-premium'
 import { Reveal } from '@/components/ui/reveal'
-import { KpiCard } from '@/components/dashboard/kpi-card'
-import { AnimatedCounter } from '@/components/dashboard/animated-counter'
-import { TradesPanel } from '@/components/dashboard/trades-panel'
 import { ActivityTimeline, type ActivityEntry } from '@/components/dashboard/activity-timeline'
-import { formatMoney, formatNumber } from '@/lib/format'
+import { TradesPanel } from '@/components/dashboard/trades-panel'
+import { DashboardSearch } from '@/components/dashboard/dashboard-search'
+import { ActionBanner } from '@/components/dashboard/action-banner'
+import { ActivitySummary } from '@/components/dashboard/activity-summary'
+import { DashboardEmptyState } from '@/components/dashboard/dashboard-empty-state'
+import { SellerTasks } from '@/components/dashboard/seller-tasks'
+import { formatMoney } from '@/lib/format'
+import { publicImageUrl } from '@/lib/images'
 import {
-  monthDelta,
-  monthlyBuckets,
-  securityScore,
-  standingLabel,
   timeAgo,
   type TradeRow,
 } from '@/lib/dashboard'
@@ -75,21 +69,34 @@ type ServiceRow = {
   base_price: number
   currency: string
   ordering_mode: string | null
+  images?: string[] | null
   agencies: { name: string; slug: string; verification_status: string; rating: number; city: string | null } | null
 }
+
+const QUICK_ACTIONS = [
+  { href: '/marketplace', label: 'Find services', detail: 'Browse verified travel professionals', icon: BriefcaseBusiness },
+  { href: '/orders', label: 'My orders', detail: 'Track your bookings', icon: ShoppingBag },
+  { href: '/messages', label: 'Messages', detail: 'Chat with travel partners', icon: MessageSquareText },
+]
+
+const SELLER_ACTIONS = [
+  { href: '/agent/services', label: 'My services', detail: 'Manage your listings', icon: Store },
+  { href: '/agent/requests', label: 'Quote requests', detail: 'Respond to customers', icon: BriefcaseBusiness },
+]
 
 export default async function DashboardPage() {
   const s = await createClient()
   const { data: { user } } = await s.auth.getUser()
   if (!user) redirect('/auth/login')
 
-  const [{ data: profile }, { data: wallet }, agencyRes, activeRes, notifRecentRes, servicesRes] = await Promise.all([
+  const [{ data: profile }, { data: wallet }, agencyRes, activeRes, notifRecentRes, servicesRes, unreadMsgRes] = await Promise.all([
     s.from('profiles').select('role').eq('id', user.id).maybeSingle(),
     s.from('wallets').select('available_balance, escrow_balance, currency').eq('user_id', user.id).is('deleted_at', null).maybeSingle(),
     s.from('agencies').select('id, name').eq('owner_id', user.id).is('deleted_at', null).maybeSingle(),
     s.from('orders').select('*, agencies(name, owner_id), buyer:profiles(email)').eq('buyer_id', user.id).in('status', ACTIVE).is('deleted_at', null).order('created_at', { ascending: false }),
     s.from('notifications').select('id, title, body, created_at').eq('user_id', user.id).order('created_at', { ascending: false }).limit(6),
     s.from('services').select('*, agencies(name, slug, verification_status, rating, city)').eq('status', 'published').is('deleted_at', null).order('created_at', { ascending: false }).limit(3),
+    s.from('order_messages').select('id', { count: 'exact', head: true }).neq('sender_id', user.id).is('read_at', null),
   ])
 
   const agency = agencyRes.data
@@ -116,20 +123,7 @@ export default async function DashboardPage() {
   const attention = allOrders.filter((o) => attentionStatuses.includes(o.status))
 
   const currency = wallet?.currency ?? 'NGN'
-  const buckets = monthlyBuckets(allOrders, 12)
   const escrowTotal = allOrders.reduce((sum, o) => sum + (Number(o.total_amount) || 0), 0)
-  const delta = monthDelta(buckets)
-  const disputedCount = allOrders.filter((o) => o.status === 'disputed').length
-  const score = securityScore(disputedCount, attention.length)
-
-  const partnerNames = new Set<string>()
-  for (const o of allOrders) {
-    const isBuyerSide = user.id === o.buyer_id
-    const agencyRow = Array.isArray(o.agencies) ? o.agencies[0] : o.agencies
-    const buyerRow = Array.isArray(o.buyer) ? o.buyer[0] : o.buyer
-    const name = isBuyerSide ? agencyRow?.name ?? 'Travel partner' : buyerRow?.email ?? 'Customer'
-    partnerNames.add(name)
-  }
 
   const trades: TradeRow[] = allOrders.map((o) => {
     const isBuyerSide = user.id === o.buyer_id
@@ -149,6 +143,9 @@ export default async function DashboardPage() {
   })
 
   const recentNotifs = (notifRecentRes.data ?? []) as Notif[]
+  const unreadMessages = unreadMsgRes.count ?? 0
+
+  const attentionTrades = trades.filter((t) => t.needsAttention).sort((a, b) => (b.createdAt > a.createdAt ? 1 : -1))
 
   const timeline: ActivityEntry[] = [
     ...recentNotifs.map((n) => ({
@@ -164,7 +161,7 @@ export default async function DashboardPage() {
       .map((o) => ({
         id: `e-${o.id}`,
         kind: 'escrow' as const,
-        title: 'Payment received',
+        title: 'Payment secured',
         body: `Escrow funds secured for ${o.title} (${formatMoney(o.total_amount, o.currency)})`,
         iso: o.created_at,
         label: timeAgo(o.created_at),
@@ -197,160 +194,147 @@ export default async function DashboardPage() {
   const firstName = (user.user_metadata?.full_name as string | undefined)?.split(' ')[0] ?? null
   const createHref = isSeller ? '/agent/services/new' : '/requests/new'
 
+  const hasData = allOrders.length > 0
+
+  // Greeting based on time of day
+  const hour = new Date().getHours()
+  const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening'
+
   return (
-    <main id="main" className="relative w-full px-4 pb-24 pt-8 md:px-8 md:pt-10 lg:pb-12">
+    <main id="main" className="relative w-full px-4 pb-24 pt-6 md:px-8 md:pt-8 lg:pb-12">
       {/* Ambient depth behind the header */}
       <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-80 bg-[radial-gradient(55%_100%_at_50%_-10%,var(--brand-soft),transparent)]" aria-hidden="true" />
-      <div className="pointer-events-none absolute -right-24 top-40 -z-10 h-72 w-72 rounded-full bg-[radial-gradient(closest-side,color-mix(in_oklch,var(--secondary-fixed) 45%,transparent),transparent)] blur-2xl" aria-hidden="true" />
 
       <div className="mx-auto flex w-full max-w-[1280px] flex-col gap-8">
-        {/* Page header */}
+        {/* ─── Hero: Welcome + Search ─── */}
         <Reveal>
-          <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
+          <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
             <div>
-              <h1 className="font-display text-3xl font-bold leading-tight tracking-tight text-primary text-balance sm:text-4xl md:text-5xl">Trade Overview</h1>
-              <p className="mt-2 max-w-2xl text-pretty text-lg text-on-surface-variant">
-                Monitor your active escrow trades and market performance{firstName ? `, ${firstName}` : ''}.
+              <h1 className="font-display text-3xl font-bold leading-tight tracking-tight text-primary text-balance sm:text-4xl md:text-5xl">
+                {firstName ? `${greeting}, ${firstName}` : greeting}
+              </h1>
+              <p className="mt-2 max-w-xl text-pretty text-base text-on-surface-variant">
+                What travel service do you need today?
               </p>
             </div>
             <Link
               href={createHref}
-              className="group inline-flex w-fit items-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-semibold text-on-primary shadow-lg shadow-primary-container/20 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-t-2 hover:border-secondary hover:shadow-xl active:scale-[0.98]"
+              className="group inline-flex w-fit items-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-on-primary shadow-lg shadow-primary-container/20 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:shadow-xl active:scale-[0.98]"
             >
               <Plus className="size-[18px]" aria-hidden="true" />
-              New Trade Request
+              {isSeller ? 'New service' : 'New request'}
             </Link>
           </div>
         </Reveal>
 
-        {/* KPI bento */}
-        <Reveal delay={80}>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <KpiCard
-              accent="solid"
-              icon={WalletCards}
-              label="Total Escrow Volume"
-              value={<AnimatedCounter value={escrowTotal} mode="money" currency={currency} />}
-              hint={delta !== null ? `${delta >= 0 ? '+' : ''}${delta}% this month` : `${allOrders.length} trades in escrow`}
-            />
-            <KpiCard
-              accent="mint"
-              icon={ArrowLeftRight}
-              label="Active Trades"
-              value={<AnimatedCounter value={allOrders.length} />}
-              hint={attention.length > 0 ? `${attention.length} require attention` : 'Nothing pending'}
-            />
-            <KpiCard
-              accent="gold"
-              icon={ShieldCheck}
-              label="Security Score"
-              value={<AnimatedCounter value={score} mode="percent" />}
-              hint={standingLabel(score)}
-            />
-            <KpiCard
-              accent="surface"
-              icon={BadgeCheck}
-              label="Verified Partners"
-              value={<AnimatedCounter value={partnerNames.size} />}
-              hint="Across your trade network"
-            />
-          </div>
+        {/* ─── Search ─── */}
+        <Reveal delay={40}>
+          <DashboardSearch />
         </Reveal>
 
-        {/* Trades + activity */}
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-          <div className="lg:col-span-2">
-            <TradesPanel trades={trades} viewAllHref="/orders" createHref={createHref} />
-          </div>
-          <section className="glass-panel flex h-full flex-col rounded-3xl p-6 md:p-7" aria-label="Recent activity">
-            <h3 className="font-display text-xl font-semibold tracking-tight text-primary">Recent Activity</h3>
-            <div className="mt-5 flex-grow">
-              <ActivityTimeline entries={timeline} viewAllHref="/dashboard/notifications" />
-            </div>
-          </section>
-        </div>
+        {/* ─── Action Banner (urgent items) ─── */}
+        {attentionTrades.length > 0 && (
+          <Reveal delay={60}>
+            <ActionBanner items={attentionTrades} viewAllHref="/orders" />
+          </Reveal>
+        )}
 
-        {/* Seller tasks */}
+        {/* ─── Activity Summary ─── */}
+        <Reveal delay={80}>
+          <ActivitySummary
+            activeOrders={allOrders.length}
+            unreadMessages={unreadMessages}
+            escrowTotal={escrowTotal}
+            currency={currency}
+          />
+        </Reveal>
+
+        {/* ─── Empty state for new users OR Active trades + Activity ─── */}
+        {!hasData ? (
+          <Reveal delay={100}>
+            <DashboardEmptyState isSeller={isSeller} />
+          </Reveal>
+        ) : (
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+            <div className="lg:col-span-2">
+              <TradesPanel trades={trades} viewAllHref="/orders" createHref={createHref} />
+            </div>
+            <section className="glass-panel flex h-full flex-col rounded-3xl p-6 md:p-7" aria-label="Recent activity">
+              <h3 className="font-display text-xl font-semibold tracking-tight text-primary">Recent Activity</h3>
+              <div className="mt-5 flex-grow">
+                <ActivityTimeline entries={timeline} viewAllHref="/dashboard/notifications" />
+              </div>
+            </section>
+          </div>
+        )}
+
+        {/* ─── Seller Tasks ─── */}
         {isSeller && (
-          <section className="grid gap-4 sm:grid-cols-3" aria-label="Tasks">
-            <TaskCard href="/agent/requests" icon={Inbox} title="Quote requests" value={formatNumber(pendingRequests)} hint={pendingRequests > 0 ? 'Customers are waiting for your proposal' : 'No open requests'} />
-            <TaskCard href="/agent/services" icon={Store} title="Services in review" value={`${sellerServices.length}`} hint={sellerServices.length > 0 ? `${sellerServices.length} draft or pending` : 'All services live'} />
-            <TaskCard href="/agent/withdrawals" icon={WalletCards} title="Withdraw earnings" value={Number(wallet?.available_balance) > 0 ? formatMoney(wallet?.available_balance, wallet?.currency) : '—'} hint="Move earnings to your bank" />
-          </section>
+          <Reveal delay={120}>
+            <SellerTasks
+              pendingRequests={pendingRequests}
+              draftServices={sellerServices.length}
+              availableBalance={Number(wallet?.available_balance) || 0}
+              currency={wallet?.currency ?? 'NGN'}
+            />
+          </Reveal>
         )}
 
-        {/* Recommended services */}
+        {/* ─── Recommended Services ─── */}
         {recommended.length > 0 && (
-          <section aria-label="Recommended for you">
-            <div className="flex items-center justify-between">
-              <h2 className="font-display text-xl font-semibold tracking-tight text-primary">Recommended for you</h2>
-              <Link href="/marketplace" className="group inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline">
-                Browse all <ArrowRight className="size-4 transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true" />
-              </Link>
-            </div>
-            <div className="mt-4 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {recommended.map((svc) => {
-                const a = Array.isArray(svc.agencies) ? svc.agencies[0] : svc.agencies
-                return <ServiceCard key={svc.id} service={{ ...svc, agencies: a as ServiceRow['agencies'] }} />
-              })}
-            </div>
-          </section>
+          <Reveal delay={140}>
+            <section aria-label="Recommended for you">
+              <div className="flex items-center justify-between">
+                <h2 className="font-display text-xl font-bold tracking-tight text-primary">Recommended for you</h2>
+                <Link href="/marketplace" className="group inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline">
+                  Browse all <ArrowRight className="size-4 transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true" />
+                </Link>
+              </div>
+              <div className="mt-4 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                {recommended.map((svc) => {
+                  const a = Array.isArray(svc.agencies) ? svc.agencies[0] : svc.agencies
+                  return (
+                    <PremiumServiceCard
+                      key={svc.id}
+                      service={{ ...svc, agencies: a as ServiceRow['agencies'] }}
+                      imageUrl={svc.images?.[0] ? publicImageUrl(svc.images[0]) : null}
+                    />
+                  )
+                })}
+              </div>
+            </section>
+          </Reveal>
         )}
 
-        {/* Quick links */}
-        <section aria-label="Quick links">
-          <h2 className="font-display text-xl font-semibold tracking-tight text-primary">Quick links</h2>
-          <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {[
-              { href: '/marketplace', label: 'Find services', detail: 'Browse verified travel professionals', icon: BriefcaseBusiness },
-              { href: '/orders', label: 'Orders', detail: 'Track your agreements', icon: FileText },
-              { href: '/messages', label: 'Messages', detail: 'Chat with your travel partners', icon: MessageSquareText },
-              { href: '/dashboard/wallet', label: 'Wallet', detail: 'Add funds for secure payment', icon: WalletCards },
-              ...(isSeller
-                ? [
-                    { href: '/agent/services', label: 'Sell services', detail: 'Manage your services', icon: Store },
-                    { href: '/agent/requests', label: 'Quote requests', detail: 'Respond to customers', icon: Inbox },
-                  ]
-                : []),
-            ].map(({ href, label, detail, icon: Icon }) => (
-              <Link
-                key={href}
-                href={href}
-                className="glass-card group flex items-center justify-between rounded-xl p-4 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 active:scale-[0.995]"
-              >
-                <span className="flex items-center gap-3">
-                  <span className="grid size-10 place-items-center rounded-full bg-primary-fixed/40 text-primary transition-all duration-300 group-hover:bg-primary group-hover:text-on-primary" aria-hidden="true">
-                    <Icon className="size-5" />
+        {/* ─── Quick Actions ─── */}
+        <Reveal delay={160}>
+          <section aria-label="Quick actions">
+            <h2 className="font-display text-xl font-bold tracking-tight text-primary">
+              {hasData ? 'Quick actions' : 'What would you like to do?'}
+            </h2>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              {[...QUICK_ACTIONS, ...(isSeller ? SELLER_ACTIONS : [])].slice(0, isSeller ? 5 : 4).map(({ href, label, detail, icon: Icon }) => (
+                <Link
+                  key={href}
+                  href={href}
+                  className="glass-card group flex items-center justify-between rounded-xl p-4 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 active:scale-[0.995]"
+                >
+                  <span className="flex items-center gap-3">
+                    <span className="grid size-10 place-items-center rounded-xl bg-primary/10 text-primary transition-all duration-300 group-hover:bg-primary group-hover:text-on-primary" aria-hidden="true">
+                      <Icon className="size-5" />
+                    </span>
+                    <span>
+                      <span className="block text-sm font-bold text-primary">{label}</span>
+                      <span className="block text-xs text-on-surface-variant">{detail}</span>
+                    </span>
                   </span>
-                  <span>
-                    <span className="block text-sm font-bold text-primary">{label}</span>
-                    <span className="block text-sm text-on-surface-variant">{detail}</span>
-                  </span>
-                </span>
-                <ArrowRight className="size-4 text-on-surface-variant transition-all duration-200 group-hover:translate-x-0.5 group-hover:text-primary" aria-hidden="true" />
-              </Link>
-            ))}
-          </div>
-        </section>
+                  <ArrowRight className="size-4 text-on-surface-variant transition-all duration-200 group-hover:translate-x-0.5 group-hover:text-primary" aria-hidden="true" />
+                </Link>
+              ))}
+            </div>
+          </section>
+        </Reveal>
       </div>
     </main>
-  )
-}
-
-function TaskCard({ href, icon: Icon, title, value, hint }: { href: string; icon: LucideIcon; title: string; value: string; hint: string }) {
-  return (
-    <Link
-      href={href}
-      className="glass-card group flex flex-col gap-3 rounded-xl p-5 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 active:scale-[0.995]"
-    >
-      <span className="grid size-10 place-items-center rounded-full bg-primary-fixed/40 text-primary transition-all duration-300 group-hover:bg-primary group-hover:text-on-primary" aria-hidden="true">
-        <Icon className="size-5" />
-      </span>
-      <div>
-        <p className="font-display text-2xl font-semibold tracking-tight text-primary">{value}</p>
-        <p className="text-sm font-bold text-primary">{title}</p>
-        <p className="mt-1 text-xs text-on-surface-variant">{hint}</p>
-      </div>
-    </Link>
   )
 }
